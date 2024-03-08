@@ -6,12 +6,18 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.os.Build;
 
 import com.jmormar.opentasker.entities.Agenda;
+import com.jmormar.opentasker.entities.Hora;
+import com.jmormar.opentasker.entities.Horario;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.Period;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * <h1>DBHelper</h1>
@@ -74,7 +80,7 @@ public class DBHelper extends SQLiteOpenHelper {
             } catch (ParseException p){
                 System.err.println("La fecha no ha podido ser leída de la base de datos.");
             }
-            //Horror
+            //Horror (conversión de int a byte)
             ad.setBeginningDay((byte) c.getInt(c.getColumnIndexOrThrow("beginningDay")));
             ad.setWeekLength((byte) c.getInt(c.getColumnIndexOrThrow("weekLength")));
         }
@@ -83,7 +89,7 @@ public class DBHelper extends SQLiteOpenHelper {
         return ad;
     }
 
-    //No hará falta eliminar agenda porque si la eliminas se van todos al carajo (añadir un reset por alguna parte con su correspondiende activity)
+    //No hará falta eliminar agenda porque si la eliminas se van todos al carajo
 
     public boolean actualizarAgenda(Agenda agenda){
         @SuppressLint("SimpleDateFormat") SimpleDateFormat encoder = new SimpleDateFormat("yyyy-MM-dd");
@@ -109,14 +115,93 @@ public class DBHelper extends SQLiteOpenHelper {
     private static final String SQL_CREATE_HORARIO =
             "CREATE TABLE Horario (" +
                     "idHorario INTEGER PRIMARY KEY," +
+                    "idAgenda INTEGER, "+
+                    "FOREIGN KEY(idAgenda) REFERENCES Agenda(idAgenda)"+
                     ")";
     private static final String SQL_DELETE_HORARIO = "DROP TABLE IF EXISTS Horario";
 
+    //Sólo se ejecutará una sola vez porque no vas a crear 19 horarios, TODO: implementar el reset con su activity
+    //Por tanto no hará falta un borrar 1 horario, porque el reset borrará el único que hay TODO:buscar on delete cascade
+    public boolean insertarHorario(Horario horario){
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        for (Hora h : horario.getHoras()) {
+            if(!insertarHora(h)) System.err.println("No se ha introducido la hora.");
+        }
+
+        ContentValues values = new ContentValues();
+        values.put("idAgenda", horario.getIdAgenda());
+
+        //Como esto de error me va a entrar puto sida
+        return db.insert("Horario", null, values) > 0;
+    }
+
+    //No hace falta getHorario porque como las horas no van a tener nada más que 1 horario se hace desde el getHoras()
     private static final String SQL_CREATE_HORA =
             "CREATE TABLE Hora (" +
-                    "idHorario INTEGER PRIMARY KEY," +
+                    "idHora INTEGER PRIMARY KEY," +
+                    "fechayTiempoInicio TEXT, " +
+                    "totalTiempo TEXT, " +
+                    "idHorario INTEGER, "+
+                    "FOREIGN KEY(idHorario) REFERENCES Horario(idHorario)" +
                     ")";
-    private static final String SQL_DELETE_HORA = "DROP TABLE IF EXISTS Horario";
+    private static final String SQL_DELETE_HORA = "DROP TABLE IF EXISTS Hora";
+    public boolean insertarHora(Hora hora){
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put("fechayTiempoInicio", hora.getFechayTiempoInicio().toString());
+        values.put("totalTiempo", hora.getTotalTiempo().toString());
+        values.put("idHorario", hora.getIdHorario());
+
+        return db.insert("Hora", null, values) > 0;
+    }
+
+    public List<Hora> getHoras(){
+        SQLiteDatabase db=this.getReadableDatabase();
+        @SuppressLint("SimpleDateFormat") SimpleDateFormat decoder = new SimpleDateFormat("yyyy-MM-dd");
+
+        String[] projection = {"idHora", "fechayTiempoInicio", "totalTiempo", "idHorario"};
+        Cursor c=db.query("Hora",projection,null, null, null, null, null);
+
+        List<Hora> list = new ArrayList<>();
+
+        while(c.moveToNext()){
+            Hora hr = new Hora();
+            hr.setIdHora(c.getInt(c.getColumnIndexOrThrow("idHora")));
+            hr.setFechayTiempoInicio(LocalDateTime.parse(c.getString(c.getColumnIndexOrThrow("fechayTiempoInicio"))));
+            hr.setTotalTiempo(Period.parse(c.getString(c.getColumnIndexOrThrow("totalTiempo"))));
+            hr.setIdHorario(c.getInt(c.getColumnIndexOrThrow("idHorario")));
+            list.add(hr);
+        }
+        c.close();
+
+        return list;
+    }
+
+    public boolean deleteHora(int idHora){
+        SQLiteDatabase db = this.getWritableDatabase();
+        String selection = "idHora = ?";
+        String[] selectionArgs = { String.valueOf(idHora) };
+        return db.delete("Hora", selection, selectionArgs)>0;
+    }
+
+    public boolean actualizarHora(Hora hora){
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put("fechayTiempoInicio", hora.getFechayTiempoInicio().toString());
+        values.put("totalTiempo", hora.getTotalTiempo().toString());
+        values.put("idHorario", hora.getIdHorario());
+
+        String selection = "idHora = ?";
+
+        String[] selectionArgs = { String.valueOf(hora.getIdHora()) };
+
+        return db.update("Hora", values, selection, selectionArgs) > 0;
+    }
+
+
 
 
 
@@ -139,11 +224,15 @@ public class DBHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
         //Ejecutar todos los create
         sqLiteDatabase.execSQL(SQL_CREATE_AGENDA);
+        sqLiteDatabase.execSQL(SQL_CREATE_HORA);
+        sqLiteDatabase.execSQL(SQL_CREATE_HORARIO);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int i1) {
         sqLiteDatabase.execSQL(SQL_DELETE_AGENDA);
+        sqLiteDatabase.execSQL(SQL_DELETE_HORA);
+        sqLiteDatabase.execSQL(SQL_DELETE_HORARIO);
         onCreate(sqLiteDatabase);
     }
 }
