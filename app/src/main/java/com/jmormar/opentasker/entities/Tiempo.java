@@ -12,4 +12,5 @@ public class Tiempo {
     private Period tiempo;
     //No permitir poner nombre en rest (o sí no se)
     private boolean rest;
+    private int idPomodoro;
 }
