@@ -14,6 +14,7 @@ import com.jmormar.opentasker.entities.Hora;
 import com.jmormar.opentasker.entities.Horario;
 import com.jmormar.opentasker.entities.Nota;
 import com.jmormar.opentasker.entities.Pomodoro;
+import com.jmormar.opentasker.entities.Tiempo;
 import com.jmormar.opentasker.entities.Tipo;
 
 import java.text.ParseException;
@@ -692,6 +693,97 @@ public class DBHelper extends SQLiteOpenHelper {
         return null;
     }
 
+    //TIEMPO
+
+    private static final String SQL_CREATE_TIEMPO =
+            "CREATE TABLE Tiempo (" +
+                    "idTiempo INTEGER PRIMARY KEY," +
+                    "nombre TEXT, " +
+                    "tiempo TEXT,"+
+                    "rest INTEGER,"+
+                    "idPomodoro INTEGER,"+
+                    "FOREIGN KEY(idPomodoro) REFERENCES Pomodoro(idPomodoro)"+
+                    ")";
+    private static final String SQL_DELETE_TIEMPO = "DROP TABLE IF EXISTS Tiempo";
+
+    public boolean insertarTiempo(Tiempo tm) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put("nombre", tm.getNombre());
+        values.put("tiempo", tm.getTiempo().toString());
+        values.put("rest", tm.isRest()?1:0);
+        values.put("idPomodoro", tm.getIdPomodoro());
+
+        return db.insert("Tiempo", null, values) > 0;
+    }
+
+    public List<Tiempo> getTiempos() {
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        String[] projection = {"idTiempo", "nombre", "tiempo", "rest", "idPomodoro"};
+        Cursor c = db.query("Tiempo", projection, null, null, null, null, null);
+
+        List<Tiempo> list = new ArrayList<>();
+
+        while (c.moveToNext()) {
+            Tiempo tm = new Tiempo();
+            tm.setIdTiempo(c.getInt(c.getColumnIndexOrThrow("idTiempo")));
+            tm.setNombre((c.getString(c.getColumnIndexOrThrow("nombre"))));
+            tm.setTiempo(Period.parse(c.getString(c.getColumnIndexOrThrow("tiempo"))));
+            tm.setRest(c.getInt(c.getColumnIndexOrThrow("rest"))==1);
+            tm.setIdPomodoro(c.getInt(c.getColumnIndexOrThrow("idPomodoro")));
+            list.add(tm);
+        }
+        c.close();
+
+        return list;
+    }
+
+    public boolean deleteTiempo(int idTiempo) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        String selection = "idTiempo = ?";
+        String[] selectionArgs = {String.valueOf(idTiempo)};
+        return db.delete("Tiempo", selection, selectionArgs) > 0;
+    }
+
+    public boolean actualizarTiempo(Tiempo tm) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put("nombre", tm.getNombre());
+
+        String selection = "idTiempo = ?";
+
+        String[] selectionArgs = {String.valueOf(tm.getIdTiempo())};
+
+        return db.update("Tiempo", values, selection, selectionArgs) > 0;
+    }
+
+    public Tiempo getTiempo(int idTiempo) {
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        String[] projection = {"idTiempo", "nombre"};
+        String[] selectionArgs = {String.valueOf(idTiempo)};
+        String selection = "idTiempo = ?";
+
+        Cursor c = db.query("Tiempo", projection, selection, selectionArgs, null, null, null);
+        List<Tiempo> lista = new ArrayList<>();
+
+        while (c.moveToNext()) {
+            Tiempo tp = new Tiempo();
+            tp.setIdTiempo(c.getInt(c.getColumnIndexOrThrow("idTiempo")));
+            tp.setNombre((c.getString(c.getColumnIndexOrThrow("nombre"))));
+            lista.add(tp);
+        }
+        c.close();
+
+        if (!lista.isEmpty()) return lista.get(0);
+
+        return null;
+    }
+
+
     public DBHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
@@ -708,18 +800,30 @@ public class DBHelper extends SQLiteOpenHelper {
     }
 
     @Override
-    public void onCreate(SQLiteDatabase sqLiteDatabase) {
+    public void onCreate(SQLiteDatabase db) {
         //Ejecutar todos los create
-        sqLiteDatabase.execSQL(SQL_CREATE_AGENDA);
-        sqLiteDatabase.execSQL(SQL_CREATE_HORA);
-        sqLiteDatabase.execSQL(SQL_CREATE_HORARIO);
+        db.execSQL(SQL_CREATE_AGENDA);
+        db.execSQL(SQL_CREATE_HORA);
+        db.execSQL(SQL_CREATE_HORARIO);
+        db.execSQL(SQL_CREATE_POMODORO);
+        db.execSQL(SQL_CREATE_CATEGORIA);
+        db.execSQL(SQL_CREATE_NOTA);
+        db.execSQL(SQL_CREATE_EVENTO);
+        db.execSQL(SQL_CREATE_TIPO);
+        db.execSQL(SQL_CREATE_TIEMPO);
     }
 
     @Override
-    public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int i1) {
-        sqLiteDatabase.execSQL(SQL_DELETE_AGENDA);
-        sqLiteDatabase.execSQL(SQL_DELETE_HORA);
-        sqLiteDatabase.execSQL(SQL_DELETE_HORARIO);
-        onCreate(sqLiteDatabase);
+    public void onUpgrade(SQLiteDatabase db, int i, int i1) {
+        db.execSQL(SQL_DELETE_AGENDA);
+        db.execSQL(SQL_DELETE_HORA);
+        db.execSQL(SQL_DELETE_HORARIO);
+        db.execSQL(SQL_DELETE_POMODORO);
+        db.execSQL(SQL_DELETE_CATEGORIA);
+        db.execSQL(SQL_DELETE_NOTA);
+        db.execSQL(SQL_DELETE_EVENTO);
+        db.execSQL(SQL_DELETE_TIPO);
+        db.execSQL(SQL_DELETE_TIEMPO);
+        onCreate(db);
     }
 }
