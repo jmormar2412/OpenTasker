@@ -1,24 +1,35 @@
 package com.jmormar.opentasker;
 
 import android.os.Bundle;
+import android.widget.TextView;
 
-import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
+
+import com.jmormar.opentasker.entities.Agenda;
+import com.jmormar.opentasker.util.DBHelper;
+
+import java.util.Date;
 
 public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
-        });
+        TextView label = findViewById(R.id.displayLabel);
+
+        DBHelper helper = DBHelper.getInstance(this);
+
+        Agenda pp = new Agenda();
+        pp.setNombre("Test");
+        pp.setFechaInicio(new Date(454545465));
+        pp.setFechaFinal( new Date(460000000));
+
+        if(helper.insertarAgenda(pp)){
+            label.setText("Todo ha ido bien");
+            return;
+        }
+        label.setText("Jey ror");
+
     }
 }

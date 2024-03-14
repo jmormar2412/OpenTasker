@@ -33,7 +33,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
     private static volatile DBHelper me = null;
     @SuppressLint("SimpleDateFormat")
-    private final SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd");
+    private final SimpleDateFormat dateFormatter=new SimpleDateFormat("yyyy-MM-dd");
     public static final int DATABASE_VERSION = 1;
     public static final String DATABASE_NAME = "OpenTaskerBase.db";
 
@@ -52,13 +52,12 @@ public class DBHelper extends SQLiteOpenHelper {
     private static final String SQL_DELETE_AGENDA = "DROP TABLE IF EXISTS Agenda";
 
     public boolean insertarAgenda(Agenda agenda) {
-        @SuppressLint("SimpleDateFormat") SimpleDateFormat encoder = new SimpleDateFormat("yyyy-MM-dd");
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
         values.put("nombre", agenda.getNombre());
-        values.put("fechaInicio", encoder.format(agenda.getFechaInicio()));
-        values.put("fechaFinal", encoder.format(agenda.getFechaFinal()));
+        values.put("fechaInicio", dateFormatter.format(agenda.getFechaInicio()));
+        values.put("fechaFinal", dateFormatter.format(agenda.getFechaFinal()));
         values.put("beginningDay", agenda.getBeginningDay());
         values.put("weekLength", agenda.getWeekLength());
 
@@ -217,6 +216,8 @@ public class DBHelper extends SQLiteOpenHelper {
         Cursor c = db.query("Hora", projection, selection, selectionArgs, null, null, null);
         List<Hora> lista = new ArrayList<>();
 
+        //Mucho cuidado aquí:
+        //Si no hay fecha ni periodo (nulos) se va a la mierda!!!!!!!!
         while (c.moveToNext()) {
             Hora hr = new Hora();
             hr.setIdHora(c.getInt(c.getColumnIndexOrThrow("idHora")));
@@ -360,6 +361,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
         List<Evento> list = new ArrayList<>();
 
+        //Mucho cuidado aquí que como no exista la fecha se va a la mierda
         while (c.moveToNext()) {
             Evento evt = new Evento();
             evt.setIdEvento(c.getInt(c.getColumnIndexOrThrow("idEvento")));
@@ -413,6 +415,7 @@ public class DBHelper extends SQLiteOpenHelper {
         Cursor c = db.query("Evento", projection, selection, selectionArgs, null, null, null);
         List<Evento> lista = new ArrayList<>();
 
+        //Mucho cuidado aquí que como no exista la fecha se va a la mierda
         while (c.moveToNext()) {
             Evento evt = new Evento();
             evt.setIdEvento(c.getInt(c.getColumnIndexOrThrow("idEvento")));
@@ -443,10 +446,7 @@ public class DBHelper extends SQLiteOpenHelper {
                     "texto TEXT," +
                     "color TEXT," +
                     "idCategoria INTEGER," +
-                    "idAgenda INTEGER," +
-                    "FOREIGN KEY(idTipo) REFERENCES Tipo(idTipo)," +
-                    "FOREIGN KEY(idCategoria) REFERENCES Categoria(idCategoria)," +
-                    "FOREIGN KEY(idAgenda) REFERENCES Agenda(idAgenda)" +
+                    "FOREIGN KEY(idCategoria) REFERENCES Categoria(idCategoria)" +
                     ")";
     private static final String SQL_DELETE_NOTA = "DROP TABLE IF EXISTS Nota";
 
@@ -470,6 +470,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
         List<Nota> list = new ArrayList<>();
 
+        //Asegurarse de que la categoría existe, vaya a ser que se vaya a la mierda todas las cosas
         while (c.moveToNext()) {
             Nota nota = new Nota();
             nota.setIdNota(c.getInt(c.getColumnIndexOrThrow("idNota")));
@@ -517,6 +518,7 @@ public class DBHelper extends SQLiteOpenHelper {
         Cursor c = db.query("Nota", projection, selection, selectionArgs, null, null, null);
         List<Evento> lista = new ArrayList<>();
 
+        //Asegurarse de que la categoría existe, vaya a ser que se vaya a la mierda todas las cosas
         while (c.moveToNext()) {
             Evento evt = new Evento();
             evt.setIdEvento(c.getInt(c.getColumnIndexOrThrow("idNota")));
@@ -799,17 +801,18 @@ public class DBHelper extends SQLiteOpenHelper {
         return me;
     }
 
+    //El orden aquí es muy importante
     @Override
     public void onCreate(SQLiteDatabase db) {
         //Ejecutar todos los create
         db.execSQL(SQL_CREATE_AGENDA);
-        db.execSQL(SQL_CREATE_HORA);
         db.execSQL(SQL_CREATE_HORARIO);
-        db.execSQL(SQL_CREATE_POMODORO);
+        db.execSQL(SQL_CREATE_TIPO);
         db.execSQL(SQL_CREATE_CATEGORIA);
+        db.execSQL(SQL_CREATE_HORA);
         db.execSQL(SQL_CREATE_NOTA);
         db.execSQL(SQL_CREATE_EVENTO);
-        db.execSQL(SQL_CREATE_TIPO);
+        db.execSQL(SQL_CREATE_POMODORO);
         db.execSQL(SQL_CREATE_TIEMPO);
     }
 
