@@ -331,6 +331,7 @@ public class DBHelper extends SQLiteOpenHelper {
                     "idEvento INTEGER PRIMARY KEY," +
                     "nombre TEXT, " +
                     "fecha TEXT, " +
+                    "hecho INTEGER," +
                     "idTipo INTEGER, " +
                     "idCategoria INTEGER," +
                     "idAgenda INTEGER," +
@@ -346,6 +347,7 @@ public class DBHelper extends SQLiteOpenHelper {
         ContentValues values = new ContentValues();
         values.put("nombre", evt.getNombre());
         values.put("fecha", dateFormatter.format(evt.getFecha()));
+        values.put("hecho", evt.isHecho()?1:0);
         values.put("idTipo", evt.getIdTipo());
         values.put("idCategoria", evt.getIdCategoria());
         values.put("idAgenda", evt.getIdAgenda());
@@ -366,6 +368,7 @@ public class DBHelper extends SQLiteOpenHelper {
             Evento evt = new Evento();
             evt.setIdEvento(c.getInt(c.getColumnIndexOrThrow("idEvento")));
             evt.setNombre((c.getString(c.getColumnIndexOrThrow("nombre"))));
+            evt.setHecho(c.getInt(c.getColumnIndexOrThrow("hecho"))==1);
             try {
                 evt.setFecha(dateFormatter.parse(c.getString(c.getColumnIndexOrThrow("fecha"))));
             } catch (ParseException e) {
@@ -394,6 +397,7 @@ public class DBHelper extends SQLiteOpenHelper {
         ContentValues values = new ContentValues();
         values.put("nombre", evt.getNombre());
         values.put("fecha", dateFormatter.format(evt.getFecha()));
+        values.put("hecho", evt.isHecho()?1:0);
         values.put("idTipo", evt.getIdTipo());
         values.put("idCategoria", evt.getIdCategoria());
         values.put("idAgenda", evt.getIdAgenda());
@@ -420,6 +424,7 @@ public class DBHelper extends SQLiteOpenHelper {
             Evento evt = new Evento();
             evt.setIdEvento(c.getInt(c.getColumnIndexOrThrow("idEvento")));
             evt.setNombre((c.getString(c.getColumnIndexOrThrow("nombre"))));
+            evt.setHecho(c.getInt(c.getColumnIndexOrThrow("hecho"))==1);
             try {
                 evt.setFecha(dateFormatter.parse(c.getString(c.getColumnIndexOrThrow("fecha"))));
             } catch (ParseException e) {
@@ -784,6 +789,11 @@ public class DBHelper extends SQLiteOpenHelper {
 
         return null;
     }
+
+    //INITRIGGER
+
+
+
 
 
     public DBHelper(Context context) {

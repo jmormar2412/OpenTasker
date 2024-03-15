@@ -14,6 +14,7 @@ public class Evento {
     private String nombre;
     private Date fecha;
     //Ver como se almacenarían ids de tipo, categoría y agenda.
+    private boolean hecho;
     private int idTipo;
     private int idCategoria;
     private int idAgenda;
