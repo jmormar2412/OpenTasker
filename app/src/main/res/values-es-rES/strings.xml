@@ -5,4 +5,6 @@
     <string name="horario">Horario</string>
     <string name="notas">Notas</string>
     <string name="ajustes">Ajustes</string>
+    <string name="nodatos">No hay datos que mostrar</string>
+    <string name="tituloeventos">Eventos</string>
 </resources>
