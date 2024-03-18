@@ -51,6 +51,9 @@ public class EventoAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
+        //Por favor no te cargues la totota :)
+        if(eventos.isEmpty()) return null;
+
         View item=convertView;
         EventoWrapper evWrapper;
         if(item==null){
