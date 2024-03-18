@@ -7,4 +7,7 @@
     <string name="ajustes">Ajustes</string>
     <string name="nodatos">No hay datos que mostrar</string>
     <string name="tituloeventos">Eventos</string>
+    <string name="addnota">Crear nota</string>
+    <string name="addevent">Crear evento</string>
+    <string name="titulonotas">Notas</string>
 </resources>

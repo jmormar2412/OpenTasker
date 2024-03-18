@@ -1,6 +1,7 @@
 package com.jmormar.opentasker;
 
 import android.os.Bundle;
+import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -13,5 +14,11 @@ public class MainActivity extends AppCompatActivity {
 
 
 
+    }
+
+    public void irNuevoEvento(View view) {
+    }
+
+    public void irNuevaNota(View view) {
     }
 }

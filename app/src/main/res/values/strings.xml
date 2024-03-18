@@ -7,4 +7,7 @@
     <string name="ajustes">Settings</string>
     <string name="nodatos">It\'s empty over here.</string>
     <string name="tituloeventos">Events</string>
+    <string name="addnota">Create note</string>
+    <string name="addevent">Create event</string>
+    <string name="titulonotas">Notes</string>
 </resources>
