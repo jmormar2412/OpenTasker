@@ -6,4 +6,108 @@
     android:layout_height="match_parent"
     tools:context=".NuevoEvento">
 
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/tv_nuevoevento_titulo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/nuevo_evento"
+                android:textAlignment="center"
+                android:textSize="30sp"
+                android:layout_marginTop="10sp"
+                android:layout_marginBottom="30sp"/>
+
+            <TextView
+                android:id="@+id/tv_nuevoevento_nombre"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/nombre_evento"
+                android:layout_below="@id/tv_nuevoevento_titulo"
+                android:layout_margin="10sp"
+                android:textSize="20sp"/>
+
+            <EditText
+                android:id="@+id/et_nuevoevento_nombre"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/tv_nuevoevento_nombre"
+                android:layout_margin="10sp"
+                android:textSize="20sp"
+                android:hint="@string/escriba_aqui" />
+
+            <TextView
+                android:id="@+id/tv_nuevoevento_categoria"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/categoria"
+                android:layout_below="@id/et_nuevoevento_nombre"
+                android:layout_margin="10sp"
+                android:textSize="20sp"/>
+
+            <Spinner
+                android:id="@+id/sp_nuevoevento_categoria"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/tv_nuevoevento_categoria"
+                android:layout_margin="10sp"
+                android:textSize="20sp"/>
+
+            <TextView
+                android:id="@+id/tv_nuevoevento_tipo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/tipo"
+                android:layout_below="@id/sp_nuevoevento_categoria"
+                android:layout_margin="10sp"
+                android:textSize="20sp"/>
+
+            <Spinner
+                android:id="@+id/sp_nuevoevento_tipo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/tv_nuevoevento_tipo"
+                android:layout_margin="10sp"
+                android:textSize="20sp"/>
+
+            <TextView
+                android:id="@+id/tv_nuevoevento_fecha"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/sp_nuevoevento_tipo"
+                android:text="@string/fecha_evento"
+                android:layout_margin="20dp"
+                android:textSize="20sp" />
+
+            <EditText
+                android:id="@+id/et_nuevoevento_fecha"
+                android:layout_width="180dp"
+                android:layout_height="wrap_content"
+                android:textSize="20sp"
+                android:hint="@string/date_format"
+                android:textAlignment="center"
+                android:layout_margin="10sp"
+                android:layout_alignParentEnd="true"
+                android:layout_below="@id/sp_nuevoevento_tipo"/>
+
+            <Button
+                android:id="@+id/bt_nuevoevento_aceptar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/crear_evento"
+                android:layout_margin="60sp"
+                android:layout_below="@id/tv_nuevoevento_fecha"
+                android:layout_centerHorizontal="true"
+                android:onClick="aceptar"/>
+
+        </RelativeLayout>
+
+    </ScrollView>
+
 </androidx.constraintlayout.widget.ConstraintLayout>
