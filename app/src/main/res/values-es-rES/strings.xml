@@ -10,4 +10,12 @@
     <string name="addnota">Crear nota</string>
     <string name="addevent">Crear evento</string>
     <string name="titulonotas">Notas</string>
+    <string name="inicio">Inicio</string>
+    <string name="abierto">Abierto</string>
+    <string name="cerrado">Cerrado</string>
+    <string name="nuevo_evento">Nuevo evento</string>
+    <string name="nombre_evento">Nombre del evento</string>
+    <string name="escriba_aqui">Escriba aquí</string>
+    <string name="categoria">Categoría</string>
+    <string name="tipo">Tipo</string>
 </resources>
