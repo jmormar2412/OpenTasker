@@ -21,9 +21,9 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
-import com.jmormar.opentasker.entities.Categoria;
-import com.jmormar.opentasker.entities.Evento;
-import com.jmormar.opentasker.entities.Tipo;
+import com.jmormar.opentasker.models.Categoria;
+import com.jmormar.opentasker.models.Evento;
+import com.jmormar.opentasker.models.Tipo;
 import com.jmormar.opentasker.util.DBHelper;
 
 import java.text.ParseException;
@@ -32,7 +32,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
-public class NuevoEvento extends AppCompatActivity {
+public class NewEventoActivity extends AppCompatActivity {
 
     private DatePickerDialog dpdFecha;
     private EditText etFecha;

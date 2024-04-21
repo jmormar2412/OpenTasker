@@ -1,7 +1,9 @@
 package com.jmormar.opentasker;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
@@ -19,22 +21,36 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.navigation.NavigationView;
 import com.jmormar.opentasker.adapters.EventoAdapter;
-import com.jmormar.opentasker.entities.Evento;
-import com.jmormar.opentasker.entities.Nota;
+import com.jmormar.opentasker.models.Agenda;
+import com.jmormar.opentasker.models.Categoria;
+import com.jmormar.opentasker.models.Evento;
+import com.jmormar.opentasker.models.Nota;
+import com.jmormar.opentasker.models.Tipo;
+import com.jmormar.opentasker.util.DBHelper;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     private DrawerLayout drawerLayout;
-    private ArrayList<Evento> eventos;
-    private ArrayList<Nota> notas;
     //Implementar notasadapter para que se muestre como en el google keep.
-    private EventoAdapter adapter;
-    private ListView listView;
+    private EventoAdapter eventoAdapter;
+    private RecyclerView recyclerViewEventos;
+    private DBHelper helper;
+
+    private static final String NOMBRE_PREFERENCIAS = "PreferenciasOpentasker";
+    private static final String LLAVE_PRIMERA_INSERCION = "PrimeraInsercionHecha";
 
     private ActivityResultLauncher<Intent> eventoResultLauncher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
@@ -70,6 +86,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        helper = DBHelper.getInstance(this);
 
         getOnBackPressedDispatcher().addCallback(this, onBackPressedCallback);
 
@@ -90,6 +107,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         MenuItem menuItem=navigationView.getMenu().getItem(0);
         onNavigationItemSelected(menuItem);
         menuItem.setChecked(true);
+
+        if(!comprobarPrimerasInserciones()){
+            realizarPrimerasInserciones();
+            confirmarPrimerasInserciones();
+        }
 
         cargarEventos();
         cargarNotas();
@@ -124,23 +146,23 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         Fragment fragment;
         String titulo = switch (fragmento) {
             case 1 -> {
-                fragment = HomePage.newInstance("", "");
+                fragment = HomeFragment.newInstance("", "");
                 yield getString(R.string.inicio);
             }
             case 2 -> {
-                fragment = DisplayHorario.newInstance("", "");
+                fragment = HorarioFragment.newInstance("", "");
                 yield getString(R.string.horario);
             }
             case 3 -> {
-                fragment = DisplayPomodoro.newInstance("", "");
+                fragment = PomodoroFragment.newInstance("", "");
                 yield getString(R.string.pomodoro);
             }
             case 4 -> {
-                fragment = Notas.newInstance("", "");
+                fragment = NotasFragment.newInstance("", "");
                 yield getString(R.string.notas);
             }
             default -> {
-                fragment = Ajustes.newInstance("", "");
+                fragment = AjustesFragment.newInstance("", "");
                 yield getString(R.string.ajustes);
             }
         };
@@ -153,16 +175,69 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     public void irNuevoEvento(View view) {
-        Intent myIntent = new Intent(this, NuevoEvento.class);
+        Intent myIntent = new Intent(this, NewEventoActivity.class);
         eventoResultLauncher.launch(myIntent);
     }
 
     public void irNuevaNota(View view) {
-        Intent myIntent = new Intent(this, NuevaNota.class);
+        Intent myIntent = new Intent(this, NewNotaActivity.class);
         notaResultLauncher.launch(myIntent);
     }
 
+    //Comprobar primeras inserciones
+    private boolean comprobarPrimerasInserciones(){
+        SharedPreferences prefs = getSharedPreferences(NOMBRE_PREFERENCIAS, Context.MODE_PRIVATE);
+        return prefs.getBoolean(LLAVE_PRIMERA_INSERCION, false);
+    }
+
+    private void realizarPrimerasInserciones(){
+        if(helper == null) helper = DBHelper.getInstance(this);
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+
+        Agenda agendaPrimaria = new Agenda();
+        agendaPrimaria.setIdAgenda(0);
+        agendaPrimaria.setWeekLength((byte) 5);
+        agendaPrimaria.setBeginningDay((byte) 0);
+        try {
+            agendaPrimaria.setFechaInicio(dateFormat.parse("15/09/2001"));
+            agendaPrimaria.setFechaFinal(dateFormat.parse("25/06/2002"));
+        } catch (ParseException e) {
+            System.err.println("No se ha podido leer la fecha -> realizarPrimerasInserciones()");
+        }
+
+        helper.insertarAgenda(agendaPrimaria);
+
+        Tipo examen = new Tipo();
+        examen.setNombre("Examen");
+
+        Tipo tarea = new Tipo();
+        tarea.setNombre("Tarea");
+
+        Categoria mates = new Categoria();
+        mates.setIdAgenda(0);
+        mates.setNombre("Matemáticas");
+
+        helper.insertarTipo(examen);
+        helper.insertarTipo(tarea);
+
+        helper.insertarCategoria(mates);
+    }
+
+    private void confirmarPrimerasInserciones(){
+        SharedPreferences prefs = getSharedPreferences(NOMBRE_PREFERENCIAS, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putBoolean(LLAVE_PRIMERA_INSERCION, true);
+        editor.apply();
+    }
+
     private void cargarEventos() {
+        if(helper == null) helper = DBHelper.getInstance(this);
+        List<Evento> eventos = helper.getEventos();
+        eventoAdapter = new EventoAdapter(this, eventos);
+        recyclerViewEventos.setAdapter(eventoAdapter);
+        recyclerViewEventos.setLayoutManager(new LinearLayoutManager(this));
+        recyclerViewEventos.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
+        recyclerViewEventos.setItemAnimator(new DefaultItemAnimator());
     }
 
     private void cargarNotas() {

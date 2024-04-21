@@ -1,102 +1,67 @@
 package com.jmormar.opentasker.adapters;
 
-import android.app.Activity;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
 import android.widget.TextView;
-
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
 import com.jmormar.opentasker.R;
-import com.jmormar.opentasker.entities.Evento;
-import com.jmormar.opentasker.entities.Tipo;
+import com.jmormar.opentasker.models.Evento;
+import com.jmormar.opentasker.models.Tipo;
 import com.jmormar.opentasker.util.DBHelper;
-
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
-public class EventoAdapter extends BaseAdapter {
-
-    private Context context;
+public class EventoAdapter extends RecyclerView.Adapter<EventoAdapter.EventoViewHolder> {
     private List<Evento> eventos;
-    private EventosAdapterCallback callback;
     private DBHelper helper;
 
-    public EventoAdapter(Context context, ArrayList<Evento> eventos){
-        super();
-        this.helper = DBHelper.getInstance(context);
-        this.context=context;
-        this.eventos=eventos;
+    public EventoAdapter(Context context, List<Evento> eventos) {
+        this.eventos = eventos;
+        helper = DBHelper.getInstance(context);
+    }
+
+    @NonNull
+    @Override
+    public EventoViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_evento, parent, false);
+        return new EventoViewHolder(itemView);
     }
 
     @Override
-    public int getCount() {
+    public void onBindViewHolder(@NonNull EventoViewHolder holder, int position) {
+        Evento evento = eventos.get(position);
+        holder.bind(evento);
+    }
+
+    @Override
+    public int getItemCount() {
         return eventos.size();
     }
 
-    @Override
-    public Object getItem(int position) {
-        if(eventos==null){
-            return null;
-        }
-        return eventos.get(position);
-    }
-
-    @Override
-    public long getItemId(int position) {
-        return position;
-    }
-
-    @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
-        //Por favor no te cargues la totota :)
-        if(eventos.isEmpty()) return null;
-
-        View item=convertView;
-        EventoWrapper evWrapper;
-        if(item==null){
-            evWrapper = new EventoWrapper();
-            LayoutInflater inflater = ((Activity) context).getLayoutInflater();
-            item = inflater.inflate(R.layout.list_evento, parent, false);
-            evWrapper.nombre = item.findViewById(R.id.evli_nombre);
-            evWrapper.fecha = item.findViewById(R.id.evli_fecha);
-            evWrapper.tipo = item.findViewById(R.id.evli_tipo);
-            evWrapper.categoria = item.findViewById(R.id.evli_categoria);
-            item.setTag(evWrapper);
-        } else{
-            evWrapper=(EventoWrapper) item.getTag();
-        }
-        Evento evento = eventos.get(position);
-        evWrapper.nombre.setText(evento.getNombre());
-        SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd");
-        if(evento.getFecha()!=null){
-            evWrapper.fecha.setText(dateFormatter.format(evento.getFecha()));
-        }
-        else{
-            evWrapper.fecha.setText("");
-        }
-        //TODO: preguntar al profe como no cargarme el móvil
-        Tipo tp = helper.getTipo(evento.getIdTipo());
-        evWrapper.tipo.setText(tp.getNombre());
-
-        return item;
-    }
-
-    static class EventoWrapper{
+    class EventoViewHolder extends RecyclerView.ViewHolder {
         TextView nombre;
         TextView fecha;
         TextView tipo;
         TextView categoria;
-    }
 
-    public void setCallback(EventosAdapterCallback callback){
-        this.callback = callback;
-    }
+        EventoViewHolder(@NonNull View itemView) {
+            super(itemView);
+            nombre = itemView.findViewById(R.id.evli_nombre);
+            fecha = itemView.findViewById(R.id.evli_fecha);
+            tipo = itemView.findViewById(R.id.evli_tipo);
+            categoria = itemView.findViewById(R.id.evli_categoria);
+        }
 
-    public interface EventosAdapterCallback{
-        public void deletePressed(int position);
-        public void editPressed(int position);
+        void bind(Evento evento) {
+            nombre.setText(evento.getNombre());
+            SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd");
+            fecha.setText(evento.getFecha() != null ? dateFormatter.format(evento.getFecha()) : "");
+            Tipo tp = helper.getTipo(evento.getIdTipo());
+            tipo.setText(tp.getNombre());
+        }
     }
 }

@@ -8,7 +8,7 @@ import android.os.PersistableBundle;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.jmormar.opentasker.entities.Agenda;
+import com.jmormar.opentasker.models.Agenda;
 import com.jmormar.opentasker.util.DBHelper;
 
 import org.junit.Assert;

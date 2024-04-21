@@ -1,4 +1,4 @@
-package com.jmormar.opentasker.entities;
+package com.jmormar.opentasker.models;
 
 import java.util.ArrayList;
 

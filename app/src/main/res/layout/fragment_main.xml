@@ -5,7 +5,8 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    tools:context=".MainActivity"
+    android:orientation="vertical">
 
     <ScrollView
         android:layout_width="match_parent"
@@ -39,8 +40,8 @@
                     android:text="@string/nodatos" />
 
 
-                <ListView
-                    android:id="@+id/lv_main_eventos"
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rv_main_eventos"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_below="@id/tv_main_eventostitle"
@@ -95,8 +96,8 @@
                     android:text="@string/nodatos" />
 
 
-                <ListView
-                    android:id="@+id/lv_main_notas"
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rv_main_notas"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_below="@id/tv_main_notastitle"

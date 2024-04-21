@@ -7,15 +7,15 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-import com.jmormar.opentasker.entities.Agenda;
-import com.jmormar.opentasker.entities.Categoria;
-import com.jmormar.opentasker.entities.Evento;
-import com.jmormar.opentasker.entities.Hora;
-import com.jmormar.opentasker.entities.Horario;
-import com.jmormar.opentasker.entities.Nota;
-import com.jmormar.opentasker.entities.Pomodoro;
-import com.jmormar.opentasker.entities.Tiempo;
-import com.jmormar.opentasker.entities.Tipo;
+import com.jmormar.opentasker.models.Agenda;
+import com.jmormar.opentasker.models.Categoria;
+import com.jmormar.opentasker.models.Evento;
+import com.jmormar.opentasker.models.Hora;
+import com.jmormar.opentasker.models.Horario;
+import com.jmormar.opentasker.models.Nota;
+import com.jmormar.opentasker.models.Pomodoro;
+import com.jmormar.opentasker.models.Tiempo;
+import com.jmormar.opentasker.models.Tipo;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -358,7 +358,7 @@ public class DBHelper extends SQLiteOpenHelper {
     public List<Evento> getEventos() {
         SQLiteDatabase db = this.getReadableDatabase();
 
-        String[] projection = {"idEvento", "nombre", "color", "idTipo", "idCategoria", "idAgenda"};
+        String[] projection = {"idEvento", "nombre", "fecha", "hecho", "idTipo", "idCategoria", "idAgenda"};
         Cursor c = db.query("Evento", projection, null, null, null, null, null);
 
         List<Evento> list = new ArrayList<>();
@@ -790,13 +790,7 @@ public class DBHelper extends SQLiteOpenHelper {
         return null;
     }
 
-    //INITRIGGER
-
-
-
-
-
-    public DBHelper(Context context) {
+    private DBHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 
@@ -816,12 +810,12 @@ public class DBHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         //Ejecutar todos los create
         db.execSQL(SQL_CREATE_AGENDA);
-        db.execSQL(SQL_CREATE_HORARIO);
+        db.execSQL(SQL_CREATE_EVENTO);
         db.execSQL(SQL_CREATE_TIPO);
         db.execSQL(SQL_CREATE_CATEGORIA);
+        db.execSQL(SQL_CREATE_HORARIO);
         db.execSQL(SQL_CREATE_HORA);
         db.execSQL(SQL_CREATE_NOTA);
-        db.execSQL(SQL_CREATE_EVENTO);
         db.execSQL(SQL_CREATE_POMODORO);
         db.execSQL(SQL_CREATE_TIEMPO);
     }
