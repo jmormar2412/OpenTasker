@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <TextView
+        android:id="@+id/evli_nombre"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:text="Multihilo"/>
+
+    <TextView
+        android:id="@+id/evli_categoria"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/evli_nombre"
+        android:layout_margin="10dp"
+        android:text="Programación de Redes y Servicios" />
+
+    <TextView
+        android:id="@+id/evli_fecha"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:text="10/5/24"
+        android:layout_alignParentEnd="true" />
+
+    <TextView
+        android:id="@+id/evli_tipo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Examen"
+        android:layout_margin="10dp"
+        android:layout_below="@id/evli_fecha"
+        android:layout_alignParentEnd="true" />
+
+</RelativeLayout>
