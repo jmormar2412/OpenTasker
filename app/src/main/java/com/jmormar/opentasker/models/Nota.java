@@ -13,7 +13,7 @@ public class Nota {
     private int idNota;
     private String nombre;
     private String texto;
-    private String color;
+    private int color;
     //Almacenar categoría de la nota.
     private int idCategoria;
     //Almacenar color de la nota.
