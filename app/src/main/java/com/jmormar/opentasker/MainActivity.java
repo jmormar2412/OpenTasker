@@ -7,7 +7,6 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ListView;
 
 import androidx.activity.OnBackPressedCallback;
 import androidx.activity.result.ActivityResult;
@@ -21,44 +20,37 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.DefaultItemAnimator;
-import androidx.recyclerview.widget.DividerItemDecoration;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.navigation.NavigationView;
-import com.jmormar.opentasker.adapters.EventoAdapter;
+import com.jmormar.opentasker.fragments.AjustesFragment;
+import com.jmormar.opentasker.fragments.HomeFragment;
+import com.jmormar.opentasker.fragments.HorarioFragment;
+import com.jmormar.opentasker.fragments.NotasFragment;
+import com.jmormar.opentasker.fragments.PomodoroFragment;
 import com.jmormar.opentasker.models.Agenda;
 import com.jmormar.opentasker.models.Categoria;
-import com.jmormar.opentasker.models.Evento;
-import com.jmormar.opentasker.models.Nota;
 import com.jmormar.opentasker.models.Tipo;
+import com.jmormar.opentasker.objectbuilders.NewEventoActivity;
+import com.jmormar.opentasker.objectbuilders.NewNotaActivity;
 import com.jmormar.opentasker.util.DBHelper;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     private DrawerLayout drawerLayout;
-    //Implementar notasadapter para que se muestre como en el google keep.
-    private EventoAdapter eventoAdapter;
-    private RecyclerView recyclerViewEventos;
     private DBHelper helper;
-
     private static final String NOMBRE_PREFERENCIAS = "PreferenciasOpentasker";
     private static final String LLAVE_PRIMERA_INSERCION = "PrimeraInsercionHecha";
-
+    //Implementar notasadapter para que se muestre como en el google keep.
     private ActivityResultLauncher<Intent> eventoResultLauncher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
             new ActivityResultCallback<ActivityResult>() {
                 @Override
                 public void onActivityResult(ActivityResult result) {
                     if (result.getResultCode() == Activity.RESULT_OK) {
-                        cargarEventos();
+                        //cargarEventos();
                     }
                 }
             });
@@ -71,11 +63,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 @Override
                 public void onActivityResult(ActivityResult result) {
                     if (result.getResultCode() == Activity.RESULT_OK) {
-                        cargarNotas();
+                        //cargarNotas();
                     }
                 }
             });
-
 
     private OnBackPressedCallback onBackPressedCallback=new OnBackPressedCallback(true) {
         @Override
@@ -86,7 +77,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        helper = DBHelper.getInstance(this);
 
         getOnBackPressedDispatcher().addCallback(this, onBackPressedCallback);
 
@@ -112,9 +102,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             realizarPrimerasInserciones();
             confirmarPrimerasInserciones();
         }
-
-        cargarEventos();
-        cargarNotas();
     }
 
     private void atras(){
@@ -223,24 +210,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         helper.insertarCategoria(mates);
     }
 
-    private void confirmarPrimerasInserciones(){
+    private void confirmarPrimerasInserciones() {
         SharedPreferences prefs = getSharedPreferences(NOMBRE_PREFERENCIAS, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putBoolean(LLAVE_PRIMERA_INSERCION, true);
         editor.apply();
-    }
-
-    private void cargarEventos() {
-        if(helper == null) helper = DBHelper.getInstance(this);
-        List<Evento> eventos = helper.getEventos();
-        eventoAdapter = new EventoAdapter(this, eventos);
-        recyclerViewEventos.setAdapter(eventoAdapter);
-        recyclerViewEventos.setLayoutManager(new LinearLayoutManager(this));
-        recyclerViewEventos.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
-        recyclerViewEventos.setItemAnimator(new DefaultItemAnimator());
-    }
-
-    private void cargarNotas() {
-
     }
 }
