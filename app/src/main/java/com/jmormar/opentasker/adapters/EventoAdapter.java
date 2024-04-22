@@ -8,11 +8,11 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import com.jmormar.opentasker.R;
+import com.jmormar.opentasker.models.Categoria;
 import com.jmormar.opentasker.models.Evento;
 import com.jmormar.opentasker.models.Tipo;
 import com.jmormar.opentasker.util.DBHelper;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.List;
 
 public class EventoAdapter extends RecyclerView.Adapter<EventoAdapter.EventoViewHolder> {
@@ -27,7 +27,7 @@ public class EventoAdapter extends RecyclerView.Adapter<EventoAdapter.EventoView
     @NonNull
     @Override
     public EventoViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_evento, parent, false);
+        View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_evento, parent, false);
         return new EventoViewHolder(itemView);
     }
 
@@ -62,6 +62,8 @@ public class EventoAdapter extends RecyclerView.Adapter<EventoAdapter.EventoView
             fecha.setText(evento.getFecha() != null ? dateFormatter.format(evento.getFecha()) : "");
             Tipo tp = helper.getTipo(evento.getIdTipo());
             tipo.setText(tp.getNombre());
+            Categoria cat = helper.getCategoria(evento.getIdCategoria());
+            categoria.setText(cat.getNombre());
         }
     }
 }
