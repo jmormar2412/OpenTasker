@@ -481,7 +481,7 @@ public class DBHelper extends SQLiteOpenHelper {
             nota.setIdNota(c.getInt(c.getColumnIndexOrThrow("idNota")));
             nota.setNombre((c.getString(c.getColumnIndexOrThrow("nombre"))));
             nota.setTexto(c.getString(c.getColumnIndexOrThrow("texto")));
-            nota.setColor(c.getString(c.getColumnIndexOrThrow("color")));
+            nota.setColor(c.getInt(c.getColumnIndexOrThrow("color")));
             nota.setIdCategoria(c.getInt(c.getColumnIndexOrThrow("idCategoria")));
             list.add(nota);
         }
