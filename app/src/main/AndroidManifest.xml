@@ -13,13 +13,13 @@
         android:theme="@style/Theme.OpenTasker"
         tools:targetApi="31">
         <activity
-            android:name=".NewCategoriaActivity"
+            android:name=".objectbuilders.NewCategoriaActivity"
             android:exported="false" />
         <activity
-            android:name=".NewEventoActivity"
+            android:name=".objectbuilders.NewEventoActivity"
             android:exported="false" />
         <activity
-            android:name=".NewNotaActivity"
+            android:name=".objectbuilders.NewNotaActivity"
             android:exported="false" />
         <activity
             android:name=".MainActivity"
