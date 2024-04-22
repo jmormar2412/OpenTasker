@@ -1,4 +1,4 @@
-package com.jmormar.opentasker;
+package com.jmormar.opentasker.objectbuilders;
 
 import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
@@ -21,6 +21,7 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.jmormar.opentasker.R;
 import com.jmormar.opentasker.models.Categoria;
 import com.jmormar.opentasker.models.Evento;
 import com.jmormar.opentasker.models.Tipo;
