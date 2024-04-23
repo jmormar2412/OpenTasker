@@ -35,9 +35,9 @@ import java.util.Date;
 
 public class NewEventoActivity extends AppCompatActivity {
 
-    private DatePickerDialog dpdFecha;
+    private DatePickerDialog datePickerFecha;
     private EditText etFecha;
-    private String sfecha;
+    private String fechaString;
     private DBHelper helper;
     private ArrayList<Integer> posicionesCategoria;
     private ArrayList<Integer> posicionesTipos;
@@ -55,19 +55,19 @@ public class NewEventoActivity extends AppCompatActivity {
 
         if(helper==null) helper = DBHelper.getInstance(this);
         if(savedInstanceState!=null){
-            sfecha = savedInstanceState.getString("sfecha","");
+            fechaString = savedInstanceState.getString("sfecha","");
         }
         else{
-            sfecha="";
+            fechaString = "";
         }
         @SuppressLint("SimpleDateFormat") SimpleDateFormat dateFormatter = new SimpleDateFormat("dd/MM/yyyy");
         Date fecha;
-        if(sfecha.isEmpty()){
+        if(fechaString.isEmpty()){
             fecha=new Date();
         }
         else {
             try {
-                fecha = dateFormatter.parse(sfecha);
+                fecha = dateFormatter.parse(fechaString);
             } catch (ParseException e) {
                 System.err.println("Error al leer la fecha: NuevoEvento -> onCreate()");
                 fecha = new Date();
@@ -85,14 +85,14 @@ public class NewEventoActivity extends AppCompatActivity {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
                 if(hasFocus) {
-                    dpdFecha.show();
+                    datePickerFecha.show();
                 }
                 v.clearFocus();
             }
         });
         Calendar newCalendar = Calendar.getInstance();
         newCalendar.setTime(inicio);
-        dpdFecha = new DatePickerDialog(this, new DatePickerDialog.OnDateSetListener() {
+        datePickerFecha = new DatePickerDialog(this, new DatePickerDialog.OnDateSetListener() {
             public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
                 Calendar newDate = Calendar.getInstance();
                 newDate.set(year, monthOfYear, dayOfMonth);
@@ -111,26 +111,30 @@ public class NewEventoActivity extends AppCompatActivity {
         Spinner scategorias = (Spinner) findViewById(R.id.sp_nuevoevento_categoria);
 
         //Para el de tipos
-        ArrayList<Tipo> tips = new ArrayList<>(helper.getTipos());
-        ArrayList<String> tipos = new ArrayList<>();
-        for (Tipo tip : tips) {
-            tipos.add(tip.getNombre());
+        ArrayList<Tipo> tipos = new ArrayList<>(helper.getTipos());
+        ArrayList<String> tiposStrings = new ArrayList<>();
+
+        tipos.forEach(tip -> {
+            tiposStrings.add(tip.getNombre());
             posicionesTipos.add(tip.getIdTipo());
-        }
-        ArrayAdapter<String> adtipos = new ArrayAdapter<>(this,android.R.layout.simple_spinner_item,
-                tipos);
-        adtipos.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        stipos.setAdapter(adtipos);
+        });
+
+        ArrayAdapter<String> adapterTipos = new ArrayAdapter<>(this,android.R.layout.simple_spinner_item,
+                tiposStrings);
+        adapterTipos.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        stipos.setAdapter(adapterTipos);
 
         //Para el de categorias
-        ArrayList<Categoria> cats = new ArrayList<>(helper.getCategorias());
-        ArrayList<String> categorias = new ArrayList<>();
-        for (Categoria cat : cats) {
-            categorias.add(cat.getNombre());
+        ArrayList<Categoria> categorias = new ArrayList<>(helper.getCategorias());
+        ArrayList<String> categoriasStrings = new ArrayList<>();
+
+        categorias.forEach(cat -> {
+            categoriasStrings.add(cat.getNombre());
             posicionesCategoria.add(cat.getIdCategoria());
-        }
+        });
+
         ArrayAdapter<String> adcategorias = new ArrayAdapter<>(this,android.R.layout.simple_spinner_item,
-                categorias);
+                categoriasStrings);
         adcategorias.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         scategorias.setAdapter(adcategorias);
     }
@@ -141,8 +145,8 @@ public class NewEventoActivity extends AppCompatActivity {
         if(etFecha==null){
             etFecha=findViewById(R.id.et_nuevoevento_fecha);
         }
-        sfecha=etFecha.getText().toString();
-        outState.putString("sfecha", sfecha);
+        fechaString =etFecha.getText().toString();
+        outState.putString("sfecha", fechaString);
     }
 
     public void aceptar(View view) {
@@ -153,17 +157,16 @@ public class NewEventoActivity extends AppCompatActivity {
         Spinner sTipo = findViewById(R.id.sp_nuevoevento_tipo);
         Spinner sCategoria = findViewById(R.id.sp_nuevoevento_categoria);
 
-        sfecha=etFecha.getText().toString();
+        fechaString =etFecha.getText().toString();
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
         Date fecha;
         try {
-            fecha = dateFormat.parse(sfecha);
+            fecha = dateFormat.parse(fechaString);
         } catch (ParseException e) {
             System.err.println("La fecha no ha sido introducida correctamente: NuevoEvento -> aceptar()");
             fecha = null;
         }
         String nombre = etNombre.getText().toString();
-        String tipo = sTipo.getSelectedItem().toString();
 
         Button btAceptar= findViewById(R.id.bt_nuevoevento_aceptar);
         btAceptar.setEnabled(false);
