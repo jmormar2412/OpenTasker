@@ -15,7 +15,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.jmormar.opentasker.R;
 import com.jmormar.opentasker.adapters.EventoAdapter;
+import com.jmormar.opentasker.adapters.NotaAdapter;
 import com.jmormar.opentasker.models.Evento;
+import com.jmormar.opentasker.models.Nota;
 import com.jmormar.opentasker.util.DBHelper;
 
 import java.util.List;
@@ -29,8 +31,9 @@ public class HomeFragment extends Fragment {
     private static final String ARG_PARAM1 = "param1", ARG_PARAM2 = "param2";
     private String mParam1, mParam2;
     private DBHelper helper;
-    private RecyclerView recyclerViewEventos;
+    private RecyclerView recyclerViewEventos, recyclerViewNotas;
     private EventoAdapter eventoAdapter;
+    private NotaAdapter notaAdapter;
     private TextView tvEventosNoData, tvNotasNoData;
     private Context context;
 
@@ -67,11 +70,13 @@ public class HomeFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
         this.context = requireContext();
+
         this.recyclerViewEventos = rootView.findViewById(R.id.rv_main_eventos);
+        this.recyclerViewNotas = rootView.findViewById(R.id.rv_main_notas);
 
         this.tvEventosNoData = rootView.findViewById(R.id.tv_main_eventos_nodata);
         this.tvNotasNoData = rootView.findViewById(R.id.tv_main_notas_nodata);
@@ -94,7 +99,11 @@ public class HomeFragment extends Fragment {
     }
 
     private void cargarNotas() {
-
+        if(helper == null) helper = DBHelper.getInstance(this.context);
+        List<Nota> notas = helper.getNotas();
+        if(!notas.isEmpty()) this.tvNotasNoData.setVisibility(View.GONE);
+        notaAdapter = new NotaAdapter(this.context, notas);
+        recyclerViewNotas.setAdapter(notaAdapter);
     }
 
     @Override
