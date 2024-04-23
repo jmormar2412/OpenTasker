@@ -13,6 +13,9 @@
         android:theme="@style/Theme.OpenTasker"
         tools:targetApi="31">
         <activity
+            android:name=".objectmodifiers.ModifyNotasActivity"
+            android:exported="false" />
+        <activity
             android:name=".objectbuilders.NewCategoriaActivity"
             android:exported="false" />
         <activity

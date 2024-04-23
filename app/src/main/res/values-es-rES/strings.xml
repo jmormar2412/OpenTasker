@@ -5,7 +5,7 @@
     <string name="horario">Horario</string>
     <string name="notas">Notas</string>
     <string name="ajustes">Ajustes</string>
-    <string name="nodatos">No hay datos que mostrar</string>
+    <string name="nodatos">Que vacío todo.</string>
     <string name="tituloeventos">Eventos</string>
     <string name="addnota">Crear nota</string>
     <string name="addevent">Crear evento</string>
@@ -18,4 +18,11 @@
     <string name="escriba_aqui">Escriba aquí</string>
     <string name="categoria">Categoría</string>
     <string name="tipo">Tipo</string>
+    <string name="fecha_evento">Fecha del evento</string>
+    <string name="crear_evento">Crear evento</string>
+    <string name="error_bd">Error al ejecutar la petición</string>
+    <string name="error_unknown">Error desconocido</string>
+    <string name="titulo">Título</string>
+    <string name="include_category">¿Incluir categoría?</string>
+    <string name="guardar">Guardar</string>
 </resources>

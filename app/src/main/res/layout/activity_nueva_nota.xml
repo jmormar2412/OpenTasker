@@ -11,7 +11,7 @@
         android:id="@+id/et_nuevanota_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="@string/title" />
+        android:hint="@string/titulo" />
 
     <CheckBox
         android:id="@+id/cb_nuevanota_includecategory"
@@ -37,7 +37,7 @@
         android:layout_height="460sp"
         android:layout_below="@id/cb_nuevanota_includecategory"
         android:gravity="start|top"
-        android:hint="@string/write_here"
+        android:hint="@string/escriba_aqui"
         android:inputType="textMultiLine"
         android:scrollbars="vertical"
         android:scrollbarStyle="insideInset"
@@ -51,7 +51,7 @@
         android:layout_centerHorizontal="true"
         android:layout_below="@id/et_nuevanota_text"
         android:layout_margin="10sp"
-        android:text="Save" />
+        android:text="@string/guardar" />
 
 
 </RelativeLayout>

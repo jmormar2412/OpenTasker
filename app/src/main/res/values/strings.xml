@@ -13,16 +13,19 @@
     <string name="inicio">Home</string>
     <string name="abierto">Open</string>
     <string name="cerrado">Closed</string>
-<!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment" translatable="false">Hello blank fragment</string>
     <string name="nuevo_evento">New event</string>
     <string name="nombre_evento">Name of the event</string>
     <string name="escriba_aqui">Write here</string>
     <string name="categoria">Category</string>
     <string name="tipo">Type</string>
     <string name="fecha_evento">Date of the event</string>
-    <string name="date_format">dd/mm/yyyy</string>
+    <string name="date_format" translatable="false">dd/mm/yyyy</string>
     <string name="crear_evento">Create event</string>
     <string name="error_bd">Error while executing query</string>
     <string name="error_unknown">Unknown error</string>
+    <string name="titulo">Title</string>
+    <string name="include_category">Include category?</string>
+    <string name="guardar">Save</string>
 </resources>
