@@ -11,7 +11,7 @@ import lombok.Data;
 @Data
 public class Nota {
     private int idNota;
-    private String nombre;
+    private String titulo;
     private String texto;
     private int color;
     //Almacenar categoría de la nota.
