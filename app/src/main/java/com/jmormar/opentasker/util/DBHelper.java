@@ -447,7 +447,7 @@ public class DBHelper extends SQLiteOpenHelper {
     private static final String SQL_CREATE_NOTA =
             "CREATE TABLE Nota (" +
                     "idNota INTEGER PRIMARY KEY," +
-                    "nombre TEXT, " +
+                    "titulo TEXT, " +
                     "texto TEXT," +
                     "color TEXT," +
                     "idCategoria INTEGER," +
@@ -455,14 +455,14 @@ public class DBHelper extends SQLiteOpenHelper {
                     ")";
     private static final String SQL_DELETE_NOTA = "DROP TABLE IF EXISTS Nota";
 
-    public boolean insertarNota(Nota evt) {
+    public boolean insertarNota(Nota nota) {
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
-        values.put("nombre", evt.getNombre());
-        values.put("texto", evt.getTexto());
-        values.put("color", evt.getColor());
-        values.put("idCategoria", evt.getIdCategoria());
+        values.put("titulo", nota.getTitulo());
+        values.put("texto", nota.getTexto());
+        values.put("color", nota.getColor());
+        values.put("idCategoria", nota.getIdCategoria());
 
         return db.insert("Nota", null, values) > 0;
     }
@@ -470,7 +470,7 @@ public class DBHelper extends SQLiteOpenHelper {
     public List<Nota> getNotas() {
         SQLiteDatabase db = this.getReadableDatabase();
 
-        String[] projection = {"idNota", "nombre", "texto", "color", "idCategoria"};
+        String[] projection = {"idNota", "titulo", "texto", "color", "idCategoria"};
         Cursor c = db.query("Nota", projection, null, null, null, null, null);
 
         List<Nota> list = new ArrayList<>();
@@ -479,7 +479,7 @@ public class DBHelper extends SQLiteOpenHelper {
         while (c.moveToNext()) {
             Nota nota = new Nota();
             nota.setIdNota(c.getInt(c.getColumnIndexOrThrow("idNota")));
-            nota.setNombre((c.getString(c.getColumnIndexOrThrow("nombre"))));
+            nota.setTitulo((c.getString(c.getColumnIndexOrThrow("titulo"))));
             nota.setTexto(c.getString(c.getColumnIndexOrThrow("texto")));
             nota.setColor(c.getInt(c.getColumnIndexOrThrow("color")));
             nota.setIdCategoria(c.getInt(c.getColumnIndexOrThrow("idCategoria")));
@@ -497,39 +497,39 @@ public class DBHelper extends SQLiteOpenHelper {
         return db.delete("Nota", selection, selectionArgs) > 0;
     }
 
-    public boolean actualizarNota(Nota evt) {
+    public boolean actualizarNota(Nota nota) {
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
-        values.put("nombre", evt.getNombre());
-        values.put("texto", evt.getTexto());
-        values.put("color", evt.getColor());
-        values.put("idCategoria", evt.getIdCategoria());
+        values.put("titulo", nota.getTitulo());
+        values.put("texto", nota.getTexto());
+        values.put("color", nota.getColor());
+        values.put("idCategoria", nota.getIdCategoria());
 
         String selection = "idNota = ?";
 
-        String[] selectionArgs = {String.valueOf(evt.getIdNota())};
+        String[] selectionArgs = {String.valueOf(nota.getIdNota())};
 
         return db.update("Nota", values, selection, selectionArgs) > 0;
     }
 
-    public Evento getNota(int idNota) {
+    public Nota getNota(int idNota) {
         SQLiteDatabase db = this.getReadableDatabase();
 
-        String[] projection = {"idNota", "nombre", "texto", "color", "idCategoria"};
+        String[] projection = {"idNota", "titulo", "texto", "color", "idCategoria"};
         String[] selectionArgs = {String.valueOf(idNota)};
         String selection = "idNota = ?";
 
         Cursor c = db.query("Nota", projection, selection, selectionArgs, null, null, null);
-        List<Evento> lista = new ArrayList<>();
+        List<Nota> lista = new ArrayList<>();
 
         //Asegurarse de que la categoría existe, vaya a ser que se vaya a la mierda todas las cosas
         while (c.moveToNext()) {
-            Evento evt = new Evento();
-            evt.setIdEvento(c.getInt(c.getColumnIndexOrThrow("idNota")));
-            evt.setNombre((c.getString(c.getColumnIndexOrThrow("nombre"))));
-            evt.setIdTipo(c.getInt(c.getColumnIndexOrThrow("texto")));
-            evt.setIdAgenda(c.getInt(c.getColumnIndexOrThrow("color")));
+            Nota evt = new Nota();
+            evt.setIdNota(c.getInt(c.getColumnIndexOrThrow("idNota")));
+            evt.setTitulo((c.getString(c.getColumnIndexOrThrow("titulo"))));
+            evt.setTexto(c.getString(c.getColumnIndexOrThrow("texto")));
+            evt.setColor(c.getInt(c.getColumnIndexOrThrow("color")));
             evt.setIdCategoria(c.getInt(c.getColumnIndexOrThrow("idCategoria")));
             lista.add(evt);
         }
