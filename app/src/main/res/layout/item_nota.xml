@@ -1,38 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_margin="10sp"
+    android:layout_width="180sp"
+    android:layout_height="wrap_content"
+    android:background="@drawable/border_background"
+    >
 
     <TextView
-        android:id="@+id/evli_nombre"
+        android:id="@+id/noli_titulo"
+        android:textStyle="bold"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
-        android:text="Multihilo"/>
+        android:text="Hacer esto"/>
 
     <TextView
-        android:id="@+id/evli_categoria"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/evli_nombre"
-        android:layout_margin="10dp"
-        android:text="Programación de Redes y Servicios" />
-
-    <TextView
-        android:id="@+id/evli_fecha"
+        android:id="@+id/noli_categoria"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
-        android:text="10/5/24"
-        android:layout_alignParentEnd="true" />
+        android:text="Mates"
+        android:layout_alignParentEnd="true"/>
 
     <TextView
-        android:id="@+id/evli_tipo"
-        android:layout_width="wrap_content"
+        android:id="@+id/noli_texto"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Examen"
+        android:layout_below="@id/noli_titulo"
         android:layout_margin="10dp"
-        android:layout_below="@id/evli_fecha"
-        android:layout_alignParentEnd="true" />
+        android:text="Hacer la tarea que nos mandaron el otro día, ya no me acuerdo en verdad"
+        android:ellipsize="end"
+        android:gravity="start"
+        android:breakStrategy="balanced"
+        android:hyphenationFrequency="normal"
+        />
+
+
 
 </RelativeLayout>
