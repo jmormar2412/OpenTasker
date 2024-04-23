@@ -5,13 +5,16 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
 import com.jmormar.opentasker.R;
 import com.jmormar.opentasker.models.Categoria;
 import com.jmormar.opentasker.models.Evento;
 import com.jmormar.opentasker.models.Tipo;
 import com.jmormar.opentasker.util.DBHelper;
+
 import java.text.SimpleDateFormat;
 import java.util.List;
 
