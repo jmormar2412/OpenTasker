@@ -22,51 +22,33 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 
 import com.google.android.material.navigation.NavigationView;
+import com.jmormar.opentasker.adapters.NotaAdapter;
 import com.jmormar.opentasker.fragments.AjustesFragment;
+import com.jmormar.opentasker.fragments.EventosFragment;
 import com.jmormar.opentasker.fragments.HomeFragment;
 import com.jmormar.opentasker.fragments.HorarioFragment;
 import com.jmormar.opentasker.fragments.NotasFragment;
 import com.jmormar.opentasker.fragments.PomodoroFragment;
 import com.jmormar.opentasker.models.Agenda;
 import com.jmormar.opentasker.models.Categoria;
+import com.jmormar.opentasker.models.Nota;
 import com.jmormar.opentasker.models.Tipo;
 import com.jmormar.opentasker.objectbuilders.NewEventoActivity;
 import com.jmormar.opentasker.objectbuilders.NewNotaActivity;
+import com.jmormar.opentasker.objectmodifiers.ModifyNotasActivity;
 import com.jmormar.opentasker.util.DBHelper;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.List;
+import java.util.stream.Collectors;
 
-public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener{
 
     private DrawerLayout drawerLayout;
     private DBHelper helper;
     private static final String NOMBRE_PREFERENCIAS = "PreferenciasOpentasker";
     private static final String LLAVE_PRIMERA_INSERCION = "PrimeraInsercionHecha";
-    //Implementar notasadapter para que se muestre como en el google keep.
-    private ActivityResultLauncher<Intent> eventoResultLauncher = registerForActivityResult(
-            new ActivityResultContracts.StartActivityForResult(),
-            new ActivityResultCallback<ActivityResult>() {
-                @Override
-                public void onActivityResult(ActivityResult result) {
-                    if (result.getResultCode() == Activity.RESULT_OK) {
-                        //cargarEventos();
-                    }
-                }
-            });
-
-
-
-    private ActivityResultLauncher<Intent> notaResultLauncher = registerForActivityResult(
-            new ActivityResultContracts.StartActivityForResult(),
-            new ActivityResultCallback<ActivityResult>() {
-                @Override
-                public void onActivityResult(ActivityResult result) {
-                    if (result.getResultCode() == Activity.RESULT_OK) {
-                        //cargarNotas();
-                    }
-                }
-            });
 
     private OnBackPressedCallback onBackPressedCallback=new OnBackPressedCallback(true) {
         @Override
@@ -77,6 +59,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        helper = DBHelper.getInstance(this);
 
         getOnBackPressedDispatcher().addCallback(this, onBackPressedCallback);
 
@@ -126,7 +109,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         if(omenu == R.id.nav_horario) return 2;
         if(omenu == R.id.nav_pomodoro) return 3;
         if(omenu == R.id.nav_notas) return 4;
-        return 5;
+        if(omenu == R.id.nav_eventos) return 5;
+        return 6;
     }
 
     private void mostrarFragmento(int fragmento){
@@ -148,6 +132,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 fragment = NotasFragment.newInstance("", "");
                 yield getString(R.string.notas);
             }
+            case 5 -> {
+                fragment = EventosFragment.newInstance("", "");
+                yield getString(R.string.eventos);
+            }
             default -> {
                 fragment = AjustesFragment.newInstance("", "");
                 yield getString(R.string.ajustes);
@@ -159,16 +147,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 .replace(R.id.home_content, fragment)
                 .commit();
         setTitle(titulo);
-    }
-
-    public void irNuevoEvento(View view) {
-        Intent myIntent = new Intent(this, NewEventoActivity.class);
-        eventoResultLauncher.launch(myIntent);
-    }
-
-    public void irNuevaNota(View view) {
-        Intent myIntent = new Intent(this, NewNotaActivity.class);
-        notaResultLauncher.launch(myIntent);
     }
 
     //Comprobar primeras inserciones
