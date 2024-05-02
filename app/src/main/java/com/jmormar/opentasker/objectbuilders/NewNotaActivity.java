@@ -46,8 +46,7 @@ public class NewNotaActivity extends AppCompatActivity {
         helper = DBHelper.getInstance(this);
 
         CheckBox checkBox = findViewById(R.id.cb_nuevanota_includecategory);
-        Button saveButton = findViewById(R.id.bt_nuevanota_guardar);
-        addListeners(checkBox, saveButton);
+        addListener(checkBox);
 
         populateSpinner();
     }
@@ -72,7 +71,7 @@ public class NewNotaActivity extends AppCompatActivity {
         scategorias.setAdapter(adcategorias);
     }
 
-    private void addListeners(CheckBox checkBox, Button button){
+    private void addListener(CheckBox checkBox){
 
         Spinner spinnerCategoria = findViewById(R.id.sp_nuevanota_categoria);
         checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -83,34 +82,6 @@ public class NewNotaActivity extends AppCompatActivity {
                     return;
                 }
                 spinnerCategoria.setVisibility(View.GONE);
-            }
-        });
-
-        EditText titulo = findViewById(R.id.et_nuevanota_title);
-        EditText texto = findViewById(R.id.et_nuevanota_text);
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Nota nota = new Nota();
-                nota.setTitulo(titulo.getText().toString());
-                nota.setTexto(texto.getText().toString());
-
-                if(spinnerCategoria.getVisibility() == View.VISIBLE){
-                    nota.setIdCategoria(posicionesCategoria.get(spinnerCategoria.getSelectedItemPosition()));
-                } else{
-                    nota.setIdCategoria(-1);
-                }
-
-                boolean insertado;
-                insertado = helper.insertarNota(nota);
-                if(insertado){
-                    setResult(RESULT_OK);
-                    finish();
-                } else{
-                    button.setEnabled(true);
-                    button.setClickable(true);
-                    showError("error.IOException");
-                }
             }
         });
     }
@@ -131,5 +102,33 @@ public class NewNotaActivity extends AppCompatActivity {
         Toast toast = Toast.makeText(context, message, duration);
         toast.setGravity(Gravity.CENTER, 0, 0);
         toast.show();
+    }
+
+    public void crearNota(View view) {
+        Button button = findViewById(R.id.bt_nuevanota_guardar);
+        Spinner spinnerCategoria = findViewById(R.id.sp_nuevanota_categoria);
+        EditText titulo = findViewById(R.id.et_nuevanota_title);
+        EditText texto = findViewById(R.id.et_nuevanota_text);
+
+        Nota nota = new Nota();
+        nota.setTitulo(titulo.getText().toString());
+        nota.setTexto(texto.getText().toString());
+
+        if(spinnerCategoria.getVisibility() == View.VISIBLE){
+            nota.setIdCategoria(posicionesCategoria.get(spinnerCategoria.getSelectedItemPosition()));
+        } else{
+            nota.setIdCategoria(-1);
+        }
+
+        boolean insertado;
+        insertado = helper.insertarNota(nota);
+        if(insertado){
+            setResult(RESULT_OK);
+            finish();
+        } else{
+            button.setEnabled(true);
+            button.setClickable(true);
+            showError("error.IOException");
+        }
     }
 }

@@ -17,7 +17,7 @@
         android:id="@+id/cb_nuevanota_includecategory"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/include_category"
+        android:text="@string/incluir_categoria"
         android:layout_below="@id/et_nuevanota_title"/>
 
     <Spinner
@@ -50,6 +50,7 @@
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_below="@id/et_nuevanota_text"
+        android:onClick="crearNota"
         android:layout_margin="10sp"
         android:text="@string/guardar" />
 
