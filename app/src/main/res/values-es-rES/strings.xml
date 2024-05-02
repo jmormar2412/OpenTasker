@@ -23,6 +23,7 @@
     <string name="error_bd">Error al ejecutar la petición</string>
     <string name="error_unknown">Error desconocido</string>
     <string name="titulo">Título</string>
-    <string name="include_category">¿Incluir categoría?</string>
+    <string name="incluir_categoria">¿Incluir categoría?</string>
     <string name="guardar">Guardar</string>
+    <string name="borrar_nota">Borrar nota</string>
 </resources>

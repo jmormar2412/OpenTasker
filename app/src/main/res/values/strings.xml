@@ -26,6 +26,9 @@
     <string name="error_bd">Error while executing query</string>
     <string name="error_unknown">Unknown error</string>
     <string name="titulo">Title</string>
-    <string name="include_category">Include category?</string>
+    <string name="incluir_categoria">Include category?</string>
     <string name="guardar">Save</string>
+    <string name="borrar_nota">Delete note</string>
+    <string name="eventos_completados">Eventos Completados</string>
+    <string name="eventos">Eventos</string>
 </resources>
