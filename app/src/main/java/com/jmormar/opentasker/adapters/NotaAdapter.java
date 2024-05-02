@@ -1,5 +1,6 @@
 package com.jmormar.opentasker.adapters;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -20,6 +21,7 @@ import java.util.List;
 public class NotaAdapter extends RecyclerView.Adapter<NotaAdapter.NotaViewHolder> {
     private final List<Nota> notas;
     private final DBHelper helper;
+    private OnNoteClickListener onNoteClickListener;
 
     public NotaAdapter(Context context, List<Nota> notas) {
         this.notas = notas;
@@ -35,6 +37,13 @@ public class NotaAdapter extends RecyclerView.Adapter<NotaAdapter.NotaViewHolder
 
     @Override
     public void onBindViewHolder(@NonNull NotaAdapter.NotaViewHolder holder, int position) {
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(onNoteClickListener != null) onNoteClickListener.onNoteClick(holder.getAdapterPosition());
+            }
+        });
+
         Nota nota = notas.get(position);
         holder.bind(nota);
     }
@@ -42,6 +51,10 @@ public class NotaAdapter extends RecyclerView.Adapter<NotaAdapter.NotaViewHolder
     @Override
     public int getItemCount() {
         return notas.size();
+    }
+
+    public void setOnNoteClickListener(OnNoteClickListener onNoteClickListener) {
+        this.onNoteClickListener = onNoteClickListener;
     }
 
     class NotaViewHolder extends RecyclerView.ViewHolder {
@@ -66,5 +79,9 @@ public class NotaAdapter extends RecyclerView.Adapter<NotaAdapter.NotaViewHolder
             }
             texto.setText(nota.getTexto()==null?"":nota.getTexto());
         }
+    }
+
+    public interface OnNoteClickListener{
+        void onNoteClick(int position);
     }
 }
