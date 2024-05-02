@@ -29,6 +29,6 @@
     <string name="incluir_categoria">Include category?</string>
     <string name="guardar">Save</string>
     <string name="borrar_nota">Delete note</string>
-    <string name="eventos_completados">Eventos Completados</string>
-    <string name="eventos">Eventos</string>
+    <string name="eventos_completados">Completed Events</string>
+    <string name="eventos">Events</string>
 </resources>
