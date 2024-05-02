@@ -3,6 +3,7 @@ package com.jmormar.opentasker.util;
 import android.annotation.SuppressLint;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
@@ -32,10 +33,14 @@ import java.util.List;
 public class DBHelper extends SQLiteOpenHelper {
 
     private static volatile DBHelper me = null;
+    private Context context;
     @SuppressLint("SimpleDateFormat")
     private final SimpleDateFormat dateFormatter=new SimpleDateFormat("yyyy-MM-dd");
-    public static final int DATABASE_VERSION = 1;
+    public static final int DATABASE_VERSION = 5;
     public static final String DATABASE_NAME = "OpenTaskerBase.db";
+
+    private static final String NOMBRE_PREFERENCIAS = "PreferenciasOpentasker";
+    private static final String LLAVE_PRIMERA_INSERCION = "PrimeraInsercionHecha";
 
     // Aquí van todas las cosas (prepárate para las 2 millones de líneas)
 
@@ -449,7 +454,7 @@ public class DBHelper extends SQLiteOpenHelper {
                     "idNota INTEGER PRIMARY KEY," +
                     "titulo TEXT, " +
                     "texto TEXT," +
-                    "color TEXT," +
+                    "color INTEGER," +
                     "idCategoria INTEGER," +
                     "FOREIGN KEY(idCategoria) REFERENCES Categoria(idCategoria)" +
                     ")";
@@ -499,8 +504,8 @@ public class DBHelper extends SQLiteOpenHelper {
 
     public boolean actualizarNota(Nota nota) {
         SQLiteDatabase db = this.getWritableDatabase();
-
         ContentValues values = new ContentValues();
+
         values.put("titulo", nota.getTitulo());
         values.put("texto", nota.getTexto());
         values.put("color", nota.getColor());
@@ -525,13 +530,13 @@ public class DBHelper extends SQLiteOpenHelper {
 
         //Asegurarse de que la categoría existe, vaya a ser que se vaya a la mierda todas las cosas
         while (c.moveToNext()) {
-            Nota evt = new Nota();
-            evt.setIdNota(c.getInt(c.getColumnIndexOrThrow("idNota")));
-            evt.setTitulo((c.getString(c.getColumnIndexOrThrow("titulo"))));
-            evt.setTexto(c.getString(c.getColumnIndexOrThrow("texto")));
-            evt.setColor(c.getInt(c.getColumnIndexOrThrow("color")));
-            evt.setIdCategoria(c.getInt(c.getColumnIndexOrThrow("idCategoria")));
-            lista.add(evt);
+            Nota nota = new Nota();
+            nota.setIdNota(c.getInt(c.getColumnIndexOrThrow("idNota")));
+            nota.setTitulo((c.getString(c.getColumnIndexOrThrow("titulo"))));
+            nota.setTexto(c.getString(c.getColumnIndexOrThrow("texto")));
+            nota.setColor(c.getInt(c.getColumnIndexOrThrow("color")));
+            nota.setIdCategoria(c.getInt(c.getColumnIndexOrThrow("idCategoria")));
+            lista.add(nota);
         }
         c.close();
 
@@ -792,6 +797,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
     private DBHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
+        this.context = context;
     }
 
     public static DBHelper getInstance(Context context) {
@@ -811,17 +817,22 @@ public class DBHelper extends SQLiteOpenHelper {
         //Ejecutar todos los create
         db.execSQL(SQL_CREATE_AGENDA);
         db.execSQL(SQL_CREATE_EVENTO);
+        db.execSQL(SQL_CREATE_NOTA);
         db.execSQL(SQL_CREATE_TIPO);
         db.execSQL(SQL_CREATE_CATEGORIA);
         db.execSQL(SQL_CREATE_HORARIO);
         db.execSQL(SQL_CREATE_HORA);
-        db.execSQL(SQL_CREATE_NOTA);
         db.execSQL(SQL_CREATE_POMODORO);
         db.execSQL(SQL_CREATE_TIEMPO);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int i, int i1) {
+        SharedPreferences prefs = context.getSharedPreferences(NOMBRE_PREFERENCIAS, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putBoolean(LLAVE_PRIMERA_INSERCION, false);
+        editor.apply();
+
         db.execSQL(SQL_DELETE_AGENDA);
         db.execSQL(SQL_DELETE_HORA);
         db.execSQL(SQL_DELETE_HORARIO);
