@@ -31,4 +31,5 @@
     <string name="borrar_nota">Delete note</string>
     <string name="eventos_completados">Completed Events</string>
     <string name="eventos">Events</string>
+    <string name="modify_evento">Modify event</string>
 </resources>

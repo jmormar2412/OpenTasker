@@ -1,8 +1,6 @@
 package com.jmormar.opentasker.adapters;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -57,7 +55,7 @@ public class NotaAdapter extends RecyclerView.Adapter<NotaAdapter.NotaViewHolder
         this.onNoteClickListener = onNoteClickListener;
     }
 
-    class NotaViewHolder extends RecyclerView.ViewHolder {
+    public class NotaViewHolder extends RecyclerView.ViewHolder {
         TextView titulo;
         TextView texto;
         TextView categoria;
