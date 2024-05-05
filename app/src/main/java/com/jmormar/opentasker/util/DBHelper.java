@@ -24,6 +24,7 @@ import java.time.LocalDateTime;
 import java.time.Period;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * <h1>DBHelper</h1>
@@ -32,15 +33,24 @@ import java.util.List;
  */
 public class DBHelper extends SQLiteOpenHelper {
 
-    private static volatile DBHelper me = null;
-    private Context context;
-    @SuppressLint("SimpleDateFormat")
-    private final SimpleDateFormat dateFormatter=new SimpleDateFormat("yyyy-MM-dd");
+    private static DBHelper me = null;
+    private final SimpleDateFormat dateFormatter=new SimpleDateFormat("yyyy-MM-dd", new Locale("es_ES"));
     public static final int DATABASE_VERSION = 5;
     public static final String DATABASE_NAME = "OpenTaskerBase.db";
 
     private static final String NOMBRE_PREFERENCIAS = "PreferenciasOpentasker";
     private static final String LLAVE_PRIMERA_INSERCION = "PrimeraInsercionHecha";
+
+    private DBHelper(Context context) {
+        super(context, DATABASE_NAME, null, DATABASE_VERSION);
+    }
+
+    public static synchronized DBHelper getInstance(Context context) {
+        if (me == null) {
+            me = new DBHelper(context.getApplicationContext());
+        }
+        return me;
+    }
 
     // Aquí van todas las cosas (prepárate para las 2 millones de líneas)
 
@@ -417,7 +427,7 @@ public class DBHelper extends SQLiteOpenHelper {
     public Evento getEvento(int idEvento) {
         SQLiteDatabase db = this.getReadableDatabase();
 
-        String[] projection = {"idEvento", "nombre", "fecha", "idTipo", "idCategoria", "idAgenda"};
+        String[] projection = {"idEvento", "nombre", "hecho", "fecha","idTipo", "idCategoria", "idAgenda"};
         String[] selectionArgs = {String.valueOf(idEvento)};
         String selection = "idEvento = ?";
 
@@ -795,22 +805,6 @@ public class DBHelper extends SQLiteOpenHelper {
         return null;
     }
 
-    private DBHelper(Context context) {
-        super(context, DATABASE_NAME, null, DATABASE_VERSION);
-        this.context = context;
-    }
-
-    public static DBHelper getInstance(Context context) {
-        if (me == null) {
-            synchronized (DBHelper.class) {
-                if (me == null) {
-                    me = new DBHelper(context);
-                }
-            }
-        }
-        return me;
-    }
-
     //El orden aquí es muy importante
     @Override
     public void onCreate(SQLiteDatabase db) {
@@ -828,11 +822,6 @@ public class DBHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int i, int i1) {
-        SharedPreferences prefs = context.getSharedPreferences(NOMBRE_PREFERENCIAS, Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = prefs.edit();
-        editor.putBoolean(LLAVE_PRIMERA_INSERCION, false);
-        editor.apply();
-
         db.execSQL(SQL_DELETE_AGENDA);
         db.execSQL(SQL_DELETE_HORA);
         db.execSQL(SQL_DELETE_HORARIO);
