@@ -1,8 +1,9 @@
-package com.jmormar.opentasker.objectbuilders;
+package com.jmormar.opentasker.objectmodifiers;
 
 import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.util.Log;
@@ -16,12 +17,10 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
-
 import com.jmormar.opentasker.R;
 import com.jmormar.opentasker.models.Categoria;
 import com.jmormar.opentasker.models.Evento;
@@ -33,21 +32,22 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
-public class NewEventoActivity extends AppCompatActivity {
+public class ModifyEventosActivity extends AppCompatActivity {
 
+    private int idEvento, idAgenda;
+    private DBHelper helper;
+    private List<Integer> posicionesCategoria, posicionesTipo;
     private DatePickerDialog datePickerFecha;
     private EditText etFecha;
     private String fechaString;
-    private DBHelper helper;
-    private ArrayList<Integer> posicionesCategoria;
-    private ArrayList<Integer> posicionesTipos;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
-        setContentView(R.layout.activity_nuevo_evento);
+        setContentView(R.layout.activity_modify_eventos);
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
@@ -55,12 +55,14 @@ public class NewEventoActivity extends AppCompatActivity {
         });
 
         if(helper==null) helper = DBHelper.getInstance(this);
+
         if(savedInstanceState!=null){
             fechaString = savedInstanceState.getString("sfecha","");
         }
         else{
             fechaString = "";
         }
+
         @SuppressLint("SimpleDateFormat") SimpleDateFormat dateFormatter = new SimpleDateFormat("dd/MM/yyyy");
         Date fecha;
         if(fechaString.isEmpty()){
@@ -74,13 +76,15 @@ public class NewEventoActivity extends AppCompatActivity {
                 fecha = new Date();
             }
         }
+
         prepararFecha(fecha);
         populateSpinners();
+        loadData();
     }
 
-    private void prepararFecha(Date inicio){
+    private void prepararFecha(Date fecha) {
         if(etFecha==null) {
-            etFecha = findViewById(R.id.et_nuevoevento_fecha);
+            etFecha = findViewById(R.id.et_modifyevento_fecha);
         }
         etFecha.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
@@ -92,7 +96,7 @@ public class NewEventoActivity extends AppCompatActivity {
             }
         });
         Calendar newCalendar = Calendar.getInstance();
-        newCalendar.setTime(inicio);
+        newCalendar.setTime(fecha);
         datePickerFecha = new DatePickerDialog(this, new DatePickerDialog.OnDateSetListener() {
             public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
                 Calendar newDate = Calendar.getInstance();
@@ -104,104 +108,117 @@ public class NewEventoActivity extends AppCompatActivity {
                 newCalendar.get(Calendar.DAY_OF_MONTH));
     }
 
-    private void populateSpinners(){
+    private void populateSpinners() {
         posicionesCategoria = new ArrayList<>();
-        posicionesTipos = new ArrayList<>();
 
-        Spinner stipos = findViewById(R.id.sp_nuevoevento_tipo);
-        Spinner scategorias = findViewById(R.id.sp_nuevoevento_categoria);
+        Spinner spinnerCategorias = findViewById(R.id.sp_modifyevento_categoria);
 
-        //Para el de tipos
-        ArrayList<Tipo> tipos = new ArrayList<>(helper.getTipos());
-        ArrayList<String> tiposStrings = new ArrayList<>();
-
-        tipos.forEach(tip -> {
-            tiposStrings.add(tip.getNombre());
-            posicionesTipos.add(tip.getIdTipo());
-        });
-
-        ArrayAdapter<String> adapterTipos = new ArrayAdapter<>(this,android.R.layout.simple_spinner_item,
-                tiposStrings);
-        adapterTipos.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        stipos.setAdapter(adapterTipos);
-
-        //Para el de categorias
-        ArrayList<Categoria> categorias = new ArrayList<>(helper.getCategorias());
+        List<Categoria> categorias = helper.getCategorias();
         ArrayList<String> categoriasStrings = new ArrayList<>();
 
-        categorias.forEach(cat -> {
-            categoriasStrings.add(cat.getNombre());
-            posicionesCategoria.add(cat.getIdCategoria());
+        categorias.forEach(e -> {
+            categoriasStrings.add(e.getNombre());
+            posicionesCategoria.add(e.getIdCategoria());
         });
 
         ArrayAdapter<String> adcategorias = new ArrayAdapter<>(this,android.R.layout.simple_spinner_item,
                 categoriasStrings);
         adcategorias.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        scategorias.setAdapter(adcategorias);
+        spinnerCategorias.setAdapter(adcategorias);
+
+        posicionesTipo = new ArrayList<>();
+
+        Spinner spinnerTipos = findViewById(R.id.sp_modifyevento_tipo);
+
+        List<Tipo> tipos = helper.getTipos();
+        ArrayList<String> tiposStrings = new ArrayList<>();
+
+        tipos.forEach(e -> {
+            tiposStrings.add(e.getNombre());
+            posicionesTipo.add(e.getIdTipo());
+        });
+
+        ArrayAdapter<String> adtipos = new ArrayAdapter<>(this,android.R.layout.simple_spinner_item,
+                tiposStrings);
+        adtipos.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerTipos.setAdapter(adtipos);
     }
 
-    @Override
-    public void onSaveInstanceState(@NonNull Bundle outState) {
-        super.onSaveInstanceState(outState);
-        if(etFecha==null){
-            etFecha=findViewById(R.id.et_nuevoevento_fecha);
-        }
-        fechaString =etFecha.getText().toString();
-        outState.putString("sfecha", fechaString);
-    }
+    private void loadData() {
+        Intent intent = getIntent();
+        int id = intent.getIntExtra("id", -1);
 
-    public void crear(View view) {
-        if(helper == null) helper=DBHelper.getInstance(this);
+        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
 
-        EditText etNombre = findViewById(R.id.et_nuevoevento_nombre);
-        if(etFecha==null) etFecha= findViewById(R.id.et_nuevoevento_fecha);
-        Spinner sTipo = findViewById(R.id.sp_nuevoevento_tipo);
-        Spinner sCategoria = findViewById(R.id.sp_nuevoevento_categoria);
-
-        if(etNombre.getText().toString().isEmpty()){
-            etNombre.setError("No has rellenado este campo");
+        if(id == -1){
+            System.err.println("No se ha recuperado el id -> loadData() en ModifyEventos");
             return;
         }
 
-        if(etFecha.getText().toString().isEmpty()){
-            etFecha.setError("No has rellenado este campo");
+        if(helper == null) helper = DBHelper.getInstance(this);
+        Evento evento = helper.getEvento(id);
+
+        this.idEvento = evento.getIdEvento();
+        this.idAgenda = evento.getIdAgenda();
+
+        EditText nombre = findViewById(R.id.et_modifyevento_nombre);
+        Spinner spinnerCategoria = findViewById(R.id.sp_modifyevento_categoria);
+        Spinner spinnerTipo = findViewById(R.id.sp_modifyevento_tipo);
+        EditText fecha = findViewById(R.id.et_modifyevento_fecha);
+
+        int positionTipo = posicionesTipo.indexOf(evento.getIdTipo());
+        int positionCategoria = posicionesTipo.indexOf(evento.getIdCategoria());
+
+        nombre.setText(evento.getNombre());
+        spinnerCategoria.setSelection(positionCategoria);
+        spinnerTipo.setSelection(positionTipo);
+        fecha.setText(formatter.format(evento.getFecha()));
+    }
+
+    public void aceptar(View view) {
+        EditText nombre = findViewById(R.id.et_modifyevento_nombre);
+        Spinner spinnerCategoria = findViewById(R.id.sp_modifyevento_categoria);
+        Spinner spinnerTipo = findViewById(R.id.sp_modifyevento_tipo);
+        EditText fecha = findViewById(R.id.et_modifyevento_fecha);
+        Button aceptar = findViewById(R.id.bt_modifyevento_aceptar);
+
+        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+
+        if(nombre.getText().toString().isEmpty()){
+            nombre.setError("No has rellenado este campo");
             return;
         }
 
-        fechaString =etFecha.getText().toString();
-        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-        Date fecha;
-        try {
-            fecha = dateFormat.parse(fechaString);
+        if(fecha.getText().toString().isEmpty()){
+            fecha.setError("No has rellenado este campo");
+            return;
+        }
+
+        Evento evento = new Evento();
+        evento.setIdEvento(idEvento);
+        evento.setNombre(nombre.getText().toString());
+
+        evento.setIdCategoria(posicionesCategoria.get(spinnerCategoria.getSelectedItemPosition()));
+
+        Log.d("TIPOSELECCIONADO: ", String.valueOf(spinnerTipo.getSelectedItemPosition()));
+        Log.d("POSICIONESTIPO: ", String.valueOf(posicionesTipo));
+        evento.setIdTipo(posicionesTipo.get(spinnerTipo.getSelectedItemPosition()));
+        evento.setIdAgenda(idAgenda);
+        try{
+            evento.setFecha(formatter.parse(fecha.getText().toString()));
         } catch (ParseException e) {
-            System.err.println("La fecha no ha sido introducida correctamente: NuevoEvento -> aceptar()");
-            fecha = null;
+            System.err.println("No se ha reconocido la fecha -> aceptar() en ModifyEventos");
+            return;
         }
-        String nombre = etNombre.getText().toString();
 
-        Button btAceptar= findViewById(R.id.bt_nuevoevento_aceptar);
-        btAceptar.setEnabled(false);
-        btAceptar.setClickable(false);
-
-        if(helper!=null){
-            Evento evento = new Evento();
-            evento.setNombre(nombre);
-            evento.setFecha(fecha);
-            //Gracias profe eres el salvador de las vidas en Vietnam :)
-            evento.setIdTipo(posicionesTipos.get(sTipo.getSelectedItemPosition()));
-            evento.setIdCategoria(posicionesCategoria.get(sCategoria.getSelectedItemPosition()));
-            evento.setIdAgenda(helper.getAgenda().getIdAgenda());
-
-            boolean insertado;
-            insertado = helper.insertarEvento(evento);
-            if(insertado){
-                setResult(RESULT_OK);
-                finish();
-            } else{
-                btAceptar.setEnabled(true);
-                btAceptar.setClickable(true);
-                showError("error.IOException");
-            }
+        boolean insertado;
+        insertado = helper.actualizarEvento(evento);
+        if(insertado){
+            finish();
+        } else{
+            aceptar.setEnabled(true);
+            aceptar.setClickable(true);
+            showError("error.IOException");
         }
     }
 

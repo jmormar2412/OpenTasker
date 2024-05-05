@@ -4,9 +4,14 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.os.Bundle;
+import android.util.Log;
+import android.util.Pair;
+import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
 import androidx.activity.OnBackPressedCallback;
 import androidx.activity.result.ActivityResult;
@@ -40,7 +45,10 @@ import com.jmormar.opentasker.util.DBHelper;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener{
@@ -49,6 +57,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private DBHelper helper;
     private static final String NOMBRE_PREFERENCIAS = "PreferenciasOpentasker";
     private static final String LLAVE_PRIMERA_INSERCION = "PrimeraInsercionHecha";
+    private Map<Integer, Pair<String, Fragment>> fragmentMap;
 
     private OnBackPressedCallback onBackPressedCallback=new OnBackPressedCallback(true) {
         @Override
@@ -59,6 +68,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        fillFragmentoMap();
         helper = DBHelper.getInstance(this);
 
         getOnBackPressedDispatcher().addCallback(this, onBackPressedCallback);
@@ -87,6 +97,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
     }
 
+    private void fillFragmentoMap() {
+        fragmentMap = new HashMap<>();
+        fragmentMap.put(1, new Pair<>(getString(R.string.inicio), HomeFragment.newInstance("","")));
+        fragmentMap.put(2, new Pair<>(getString(R.string.horario), HorarioFragment.newInstance("","")));
+        fragmentMap.put(3, new Pair<>(getString(R.string.pomodoro), PomodoroFragment.newInstance("","")));
+        fragmentMap.put(4, new Pair<>(getString(R.string.notas), NotasFragment.newInstance("","")));
+        fragmentMap.put(5, new Pair<>(getString(R.string.eventos), EventosFragment.newInstance("","")));
+        fragmentMap.put(6, new Pair<>(getString(R.string.ajustes), AjustesFragment.newInstance("","")));
+    }
+
     private void atras(){
         if(drawerLayout.isDrawerOpen(GravityCompat.START)){
             drawerLayout.closeDrawer(GravityCompat.START);
@@ -110,43 +130,20 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         if(omenu == R.id.nav_pomodoro) return 3;
         if(omenu == R.id.nav_notas) return 4;
         if(omenu == R.id.nav_eventos) return 5;
-        return 6;
+        if(omenu == R.id.nav_ajustes) return 6;
+        return -1;
     }
 
     private void mostrarFragmento(int fragmento){
-        Fragment fragment;
-        String titulo = switch (fragmento) {
-            case 1 -> {
-                fragment = HomeFragment.newInstance("", "");
-                yield getString(R.string.inicio);
-            }
-            case 2 -> {
-                fragment = HorarioFragment.newInstance("", "");
-                yield getString(R.string.horario);
-            }
-            case 3 -> {
-                fragment = PomodoroFragment.newInstance("", "");
-                yield getString(R.string.pomodoro);
-            }
-            case 4 -> {
-                fragment = NotasFragment.newInstance("", "");
-                yield getString(R.string.notas);
-            }
-            case 5 -> {
-                fragment = EventosFragment.newInstance("", "");
-                yield getString(R.string.eventos);
-            }
-            default -> {
-                fragment = AjustesFragment.newInstance("", "");
-                yield getString(R.string.ajustes);
-            }
-        };
+        Pair<String, Fragment> fragmentPair = fragmentMap.get(fragmento);
 
-        getSupportFragmentManager()
-                .beginTransaction()
-                .replace(R.id.home_content, fragment)
-                .commit();
-        setTitle(titulo);
+        if (fragmentPair != null) {
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.home_content, fragmentPair.second)
+                    .commit();
+            setTitle(fragmentPair.first);
+        }
     }
 
     //Comprobar primeras inserciones
@@ -157,10 +154,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     private void realizarPrimerasInserciones(){
         if(helper == null) helper = DBHelper.getInstance(this);
-        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", new Locale("es_ES"));
 
         Agenda agendaPrimaria = new Agenda();
-        agendaPrimaria.setIdAgenda(0);
+        agendaPrimaria.setNombre("Agenda Primaria");
         agendaPrimaria.setWeekLength((byte) 5);
         agendaPrimaria.setBeginningDay((byte) 0);
         try {
@@ -171,6 +168,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
 
         helper.insertarAgenda(agendaPrimaria);
+        int idAgenda = helper.getAgenda().getIdAgenda();
 
         Tipo examen = new Tipo();
         examen.setNombre("Examen");
@@ -179,8 +177,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         tarea.setNombre("Tarea");
 
         Categoria mates = new Categoria();
-        mates.setIdAgenda(0);
+        mates.setIdAgenda(idAgenda);
         mates.setNombre("Matemáticas");
+
 
         helper.insertarTipo(examen);
         helper.insertarTipo(tarea);
