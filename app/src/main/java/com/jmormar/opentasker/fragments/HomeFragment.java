@@ -6,13 +6,13 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -29,7 +29,6 @@ import com.jmormar.opentasker.objectmodifiers.ModifyEventosActivity;
 import com.jmormar.opentasker.objectmodifiers.ModifyNotasActivity;
 import com.jmormar.opentasker.util.DBHelper;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -40,28 +39,15 @@ import java.util.stream.Collectors;
  */
 public class HomeFragment extends Fragment implements NotaAdapter.OnNoteClickListener, EventoAdapter.OnEventoClickListener{
     private static final String ARG_PARAM1 = "param1", ARG_PARAM2 = "param2";
-    private String mParam1, mParam2;
     private DBHelper helper;
     private RecyclerView recyclerViewEventos, recyclerViewNotas;
-    private EventoAdapter eventoAdapter;
-    private NotaAdapter notaAdapter;
+    private List<Evento> eventos;
     private TextView tvEventosNoData, tvNotasNoData;
     private Context context;
 
 
-    public HomeFragment() {
-        // Required empty public constructor
-    }
+    public HomeFragment() {}
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment Main.
-     */
-    // TODO: Rename and change types and number of parameters
     public static HomeFragment newInstance(String param1, String param2) {
         HomeFragment fragment = new HomeFragment();
         Bundle args = new Bundle();
@@ -75,8 +61,8 @@ public class HomeFragment extends Fragment implements NotaAdapter.OnNoteClickLis
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
+            getArguments().getString(ARG_PARAM1);
+            getArguments().getString(ARG_PARAM2);
         }
     }
 
@@ -101,15 +87,14 @@ public class HomeFragment extends Fragment implements NotaAdapter.OnNoteClickLis
             @Override
             public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
                 int position = viewHolder.getAdapterPosition();
-                List<Evento> eventos = helper.getEventos();
                 Evento evento = eventos.get(position);
                 switch (direction) {
                     case ItemTouchHelper.LEFT:
-                        helper.deleteEvento(helper.getEventos().get(position).getIdEvento());
+                        helper.deleteEvento(evento.getIdEvento());
                         cargarEventos();
                         break;
                     case ItemTouchHelper.RIGHT:
-                        evento.setHecho(true);
+                        evento.setHecho(!evento.isHecho());
                         helper.actualizarEvento(evento);
                         cargarEventos();
                         break;
@@ -119,6 +104,8 @@ public class HomeFragment extends Fragment implements NotaAdapter.OnNoteClickLis
 
 
         new ItemTouchHelper(swipeCallback).attachToRecyclerView(recyclerViewEventos);
+
+        recyclerViewNotas.setLayoutManager(new GridLayoutManager(this.context, 2));
 
         addListenersToButtons(rootView);
 
@@ -132,24 +119,16 @@ public class HomeFragment extends Fragment implements NotaAdapter.OnNoteClickLis
         FloatingActionButton btAddEvento = rootView.findViewById(R.id.fab_nuevo_evento);
         FloatingActionButton btAddNota = rootView.findViewById(R.id.fab_nueva_nota);
 
-        btAddEvento.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                irNuevoEvento();
-            }
-        });
+        btAddEvento.setOnClickListener(v -> irNuevoEvento());
 
-        btAddNota.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                irNuevaNota();
-            }
-        });
+        btAddNota.setOnClickListener(v -> irNuevaNota());
     }
 
     private void cargarEventos() {
         if(helper == null) helper = DBHelper.getInstance(this.context);
-        List<Evento> eventos = helper.getEventos();
+        List<Evento> helperEventos = helper.getEventos();
+
+        this.eventos = helperEventos.stream().filter(e -> !e.isHecho()).collect(Collectors.toList());
 
         if(!eventos.isEmpty()){
             this.tvEventosNoData.setVisibility(View.GONE);
@@ -157,7 +136,7 @@ public class HomeFragment extends Fragment implements NotaAdapter.OnNoteClickLis
             this.tvEventosNoData.setVisibility(View.VISIBLE);
         }
 
-        eventoAdapter = new EventoAdapter(this.context, eventos, false);
+        EventoAdapter eventoAdapter = new EventoAdapter(this.context, eventos, "unico");
         eventoAdapter.setOnEventoClickListener(this);
 
         recyclerViewEventos.setAdapter(eventoAdapter);
@@ -176,7 +155,7 @@ public class HomeFragment extends Fragment implements NotaAdapter.OnNoteClickLis
             this.tvNotasNoData.setVisibility(View.VISIBLE);
         }
 
-        notaAdapter = new NotaAdapter(this.context, notas);
+        NotaAdapter notaAdapter = new NotaAdapter(this.context, notas);
         notaAdapter.setOnNoteClickListener(this);
 
         recyclerViewNotas.setAdapter(notaAdapter);
@@ -197,9 +176,10 @@ public class HomeFragment extends Fragment implements NotaAdapter.OnNoteClickLis
     }
 
     @Override
-    public void onEventoClick(int position) {
+    public void onEventoClick(int position, String identificadorAdapter) {
         Intent myIntent = new Intent(this.context, ModifyEventosActivity.class);
-        myIntent.putExtra("position", position);
+        int id = eventos.get(position).getIdEvento();
+        myIntent.putExtra("id", id);
         startActivity(myIntent);
     }
 

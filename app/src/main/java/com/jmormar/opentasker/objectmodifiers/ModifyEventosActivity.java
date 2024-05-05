@@ -33,6 +33,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 public class ModifyEventosActivity extends AppCompatActivity {
 
@@ -41,7 +42,6 @@ public class ModifyEventosActivity extends AppCompatActivity {
     private List<Integer> posicionesCategoria, posicionesTipo;
     private DatePickerDialog datePickerFecha;
     private EditText etFecha;
-    private String fechaString;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,6 +56,7 @@ public class ModifyEventosActivity extends AppCompatActivity {
 
         if(helper==null) helper = DBHelper.getInstance(this);
 
+        String fechaString;
         if(savedInstanceState!=null){
             fechaString = savedInstanceState.getString("sfecha","");
         }
@@ -86,24 +87,19 @@ public class ModifyEventosActivity extends AppCompatActivity {
         if(etFecha==null) {
             etFecha = findViewById(R.id.et_modifyevento_fecha);
         }
-        etFecha.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                if(hasFocus) {
-                    datePickerFecha.show();
-                }
-                v.clearFocus();
+        etFecha.setOnFocusChangeListener((v, hasFocus) -> {
+            if(hasFocus) {
+                datePickerFecha.show();
             }
+            v.clearFocus();
         });
         Calendar newCalendar = Calendar.getInstance();
         newCalendar.setTime(fecha);
-        datePickerFecha = new DatePickerDialog(this, new DatePickerDialog.OnDateSetListener() {
-            public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-                Calendar newDate = Calendar.getInstance();
-                newDate.set(year, monthOfYear, dayOfMonth);
-                @SuppressLint("SimpleDateFormat") SimpleDateFormat dateFormatter = new SimpleDateFormat("dd/MM/yyyy");
-                etFecha.setText(dateFormatter.format(newDate.getTime()));
-            }
+        datePickerFecha = new DatePickerDialog(this, (view, year, monthOfYear, dayOfMonth) -> {
+            Calendar newDate = Calendar.getInstance();
+            newDate.set(year, monthOfYear, dayOfMonth);
+            @SuppressLint("SimpleDateFormat") SimpleDateFormat dateFormatter = new SimpleDateFormat("dd/MM/yyyy");
+            etFecha.setText(dateFormatter.format(newDate.getTime()));
         },newCalendar.get(Calendar.YEAR), newCalendar.get(Calendar.MONTH),
                 newCalendar.get(Calendar.DAY_OF_MONTH));
     }
@@ -148,7 +144,7 @@ public class ModifyEventosActivity extends AppCompatActivity {
         Intent intent = getIntent();
         int id = intent.getIntExtra("id", -1);
 
-        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy", new Locale("es_ES"));
 
         if(id == -1){
             System.err.println("No se ha recuperado el id -> loadData() en ModifyEventos");
@@ -182,7 +178,7 @@ public class ModifyEventosActivity extends AppCompatActivity {
         EditText fecha = findViewById(R.id.et_modifyevento_fecha);
         Button aceptar = findViewById(R.id.bt_modifyevento_aceptar);
 
-        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy", new Locale("es_ES"));
 
         if(nombre.getText().toString().isEmpty()){
             nombre.setError("No has rellenado este campo");
