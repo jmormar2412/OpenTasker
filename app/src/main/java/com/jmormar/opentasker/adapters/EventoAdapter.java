@@ -23,14 +23,13 @@ public class EventoAdapter extends RecyclerView.Adapter<EventoAdapter.EventoView
     private List<Evento> eventos;
     private DBHelper helper;
     private OnEventoClickListener mListener;
-    private boolean showHechos;
+    private String identificadorAdapter;
 
 
-
-    public EventoAdapter(Context context, List<Evento> eventos, boolean showHechos) {
+    public EventoAdapter(Context context, List<Evento> eventos, String identificadorAdapter) {
         this.eventos = eventos;
         helper = DBHelper.getInstance(context);
-        this.showHechos = showHechos;
+        this.identificadorAdapter = identificadorAdapter;
     }
 
     @NonNull
@@ -74,30 +73,25 @@ public class EventoAdapter extends RecyclerView.Adapter<EventoAdapter.EventoView
                 @Override
                 public void onClick(View v) {
                     int position = getAdapterPosition();
-                    if(position!=RecyclerView.NO_POSITION && mListener!=null) mListener.onEventoClick(position);
+                    if(position!=RecyclerView.NO_POSITION && mListener!=null) mListener.onEventoClick(position, identificadorAdapter);
                 }
             });
         }
 
         void bind(Evento evento) {
-            if (showHechos || !evento.isHecho()) {
-                nombre.setText(evento.getNombre());
-                SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd");
-                fecha.setText(evento.getFecha() != null ? dateFormatter.format(evento.getFecha()) : "");
-                Tipo tp = helper.getTipo(evento.getIdTipo());
-                tipo.setText(tp.getNombre());
-                Categoria cat = helper.getCategoria(evento.getIdCategoria());
-                categoria.setText(cat.getNombre());
-                itemView.setVisibility(View.VISIBLE); // Make sure the itemView is visible
-                itemView.setLayoutParams(new RecyclerView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)); // Reset the layout params to default
-            } else {
-                itemView.setVisibility(View.GONE);
-                itemView.setLayoutParams(new RecyclerView.LayoutParams(0, 0));
-            }
+            nombre.setText(evento.getNombre());
+            SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd");
+            fecha.setText(evento.getFecha() != null ? dateFormatter.format(evento.getFecha()) : "");
+            Tipo tp = helper.getTipo(evento.getIdTipo());
+            tipo.setText(tp.getNombre());
+            Categoria cat = helper.getCategoria(evento.getIdCategoria());
+            categoria.setText(cat.getNombre());
+            itemView.setVisibility(View.VISIBLE); // Make sure the itemView is visible
+            itemView.setLayoutParams(new RecyclerView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
         }
     }
 
     public interface OnEventoClickListener {
-        void onEventoClick(int position);
+        void onEventoClick(int position, String identificadorAdapter);
     }
 }
