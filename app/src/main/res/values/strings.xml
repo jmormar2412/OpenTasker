@@ -32,4 +32,6 @@
     <string name="eventos_completados">Completed Events</string>
     <string name="eventos">Events</string>
     <string name="modify_evento">Modify event</string>
+    <string name="escoger_color">Escoger color</string>
+    <string name="heredar_color">Heredar color de categoría</string>
 </resources>

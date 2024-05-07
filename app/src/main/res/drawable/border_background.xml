@@ -1,8 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<shape xmlns:android="http://schemas.android.com/apk/res/android"
-    android:shape="rectangle">
-    <corners android:radius="10dp"/>
-    <stroke
-        android:width="2dp"
-        android:color="@color/white"/>
-</shape>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Background with rounded corners -->
+    <item>
+        <shape android:shape="rectangle">
+            <corners android:radius="10dp"/>
+        </shape>
+    </item>
+    <!-- Dynamic background color layer -->
+    <item android:id="@+id/dynamic_color_layer">
+        <shape android:shape="rectangle">
+            <corners android:radius="10dp" />
+        </shape>
+    </item>
+</layer-list>
