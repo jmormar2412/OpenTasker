@@ -10,7 +10,6 @@ import lombok.Data;
 public class Categoria {
     private int idCategoria;
     private String nombre;
-    //El color se almacenará como #FFFF00 por ejemplo
-    private String color;
+    private int color;
     private int idAgenda;
 }

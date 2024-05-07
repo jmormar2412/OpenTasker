@@ -254,7 +254,7 @@ public class DBHelper extends SQLiteOpenHelper {
             "CREATE TABLE Categoria (" +
                     "idCategoria INTEGER PRIMARY KEY," +
                     "nombre TEXT, " +
-                    "color TEXT, " +
+                    "color INTEGER, " +
                     "idAgenda INTEGER," +
                     "FOREIGN KEY(idAgenda) REFERENCES Agenda(idAgenda)" +
                     ")";
@@ -283,7 +283,7 @@ public class DBHelper extends SQLiteOpenHelper {
             Categoria cat = new Categoria();
             cat.setIdCategoria(c.getInt(c.getColumnIndexOrThrow("idCategoria")));
             cat.setNombre((c.getString(c.getColumnIndexOrThrow("nombre"))));
-            cat.setColor(c.getString(c.getColumnIndexOrThrow("color")));
+            cat.setColor(c.getInt(c.getColumnIndexOrThrow("color")));
             cat.setIdAgenda(c.getInt(c.getColumnIndexOrThrow("idAgenda")));
             list.add(cat);
         }
@@ -328,7 +328,7 @@ public class DBHelper extends SQLiteOpenHelper {
             Categoria cat = new Categoria();
             cat.setIdCategoria(c.getInt(c.getColumnIndexOrThrow("idCategoria")));
             cat.setNombre((c.getString(c.getColumnIndexOrThrow("nombre"))));
-            cat.setColor(c.getString(c.getColumnIndexOrThrow("color")));
+            cat.setColor(c.getInt(c.getColumnIndexOrThrow("color")));
             cat.setIdAgenda(c.getInt(c.getColumnIndexOrThrow("idAgenda")));
             lista.add(cat);
         }
