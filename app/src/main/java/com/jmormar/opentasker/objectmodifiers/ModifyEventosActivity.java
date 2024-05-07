@@ -196,8 +196,6 @@ public class ModifyEventosActivity extends AppCompatActivity {
 
         evento.setIdCategoria(posicionesCategoria.get(spinnerCategoria.getSelectedItemPosition()));
 
-        Log.d("TIPOSELECCIONADO: ", String.valueOf(spinnerTipo.getSelectedItemPosition()));
-        Log.d("POSICIONESTIPO: ", String.valueOf(posicionesTipo));
         evento.setIdTipo(posicionesTipo.get(spinnerTipo.getSelectedItemPosition()));
         evento.setIdAgenda(idAgenda);
         try{
