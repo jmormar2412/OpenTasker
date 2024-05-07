@@ -1,12 +1,16 @@
 package com.jmormar.opentasker.adapters;
 
 import android.content.Context;
+import android.graphics.Color;
+import android.graphics.drawable.GradientDrawable;
+import android.graphics.drawable.LayerDrawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.jmormar.opentasker.R;
@@ -16,13 +20,18 @@ import com.jmormar.opentasker.util.DBHelper;
 
 import java.util.List;
 
+import lombok.Setter;
+
 public class NotaAdapter extends RecyclerView.Adapter<NotaAdapter.NotaViewHolder> {
     private final List<Nota> notas;
     private final DBHelper helper;
+    @Setter
     private OnNoteClickListener onNoteClickListener;
+    private final Context context;
 
     public NotaAdapter(Context context, List<Nota> notas) {
         this.notas = notas;
+        this.context = context;
         helper = DBHelper.getInstance(context);
     }
 
@@ -35,11 +44,8 @@ public class NotaAdapter extends RecyclerView.Adapter<NotaAdapter.NotaViewHolder
 
     @Override
     public void onBindViewHolder(@NonNull NotaAdapter.NotaViewHolder holder, int position) {
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(onNoteClickListener != null) onNoteClickListener.onNoteClick(holder.getAdapterPosition());
-            }
+        holder.itemView.setOnClickListener(v -> {
+            if(onNoteClickListener != null) onNoteClickListener.onNoteClick(holder.getAdapterPosition());
         });
 
         Nota nota = notas.get(position);
@@ -51,20 +57,18 @@ public class NotaAdapter extends RecyclerView.Adapter<NotaAdapter.NotaViewHolder
         return notas.size();
     }
 
-    public void setOnNoteClickListener(OnNoteClickListener onNoteClickListener) {
-        this.onNoteClickListener = onNoteClickListener;
-    }
-
     public class NotaViewHolder extends RecyclerView.ViewHolder {
         TextView titulo;
         TextView texto;
         TextView categoria;
+        View itemView;
 
         NotaViewHolder(@NonNull View itemView) {
             super(itemView);
             titulo = itemView.findViewById(R.id.noli_titulo);
             texto = itemView.findViewById(R.id.noli_texto);
             categoria = itemView.findViewById(R.id.noli_categoria);
+            this.itemView = itemView;
         }
 
         void bind(Nota nota) {
@@ -76,6 +80,22 @@ public class NotaAdapter extends RecyclerView.Adapter<NotaAdapter.NotaViewHolder
                 categoria.setText(cat.getNombre());
             }
             texto.setText(nota.getTexto()==null?"":nota.getTexto());
+            setBackgroundColor(darkenColor(nota.getColor()));
+        }
+
+        public void setBackgroundColor(int color){
+            LayerDrawable layerDrawable = (LayerDrawable) itemView.getBackground();
+            GradientDrawable dynamicColorLayer = (GradientDrawable) layerDrawable.findDrawableByLayerId(R.id.dynamic_color_layer);
+            dynamicColorLayer.setColor(color);
+        }
+
+        public static int darkenColor(int color) {
+            float factor = 0.55f; // Adjust this factor to control the darkness level
+            int alpha = Math.round(Color.alpha(color) * factor);
+            int red = Color.red(color);
+            int green = Color.green(color);
+            int blue = Color.blue(color);
+            return Color.argb(alpha, red, green, blue);
         }
     }
 
