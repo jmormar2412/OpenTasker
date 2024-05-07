@@ -11,7 +11,9 @@
         android:id="@+id/et_nuevanota_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="@string/titulo" />
+        android:hint="@string/titulo"
+        android:autofillHints=""
+        android:inputType="text" />
 
     <CheckBox
         android:id="@+id/cb_nuevanota_includecategory"
@@ -19,6 +21,30 @@
         android:layout_height="wrap_content"
         android:text="@string/incluir_categoria"
         android:layout_below="@id/et_nuevanota_title"/>
+
+    <CheckBox
+        android:id="@+id/cb_nuevanota_inheritcolor"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/heredar_color"
+        android:layout_below="@id/cb_nuevanota_includecategory"
+        android:visibility="gone"
+        />
+
+    <Button
+        android:id="@+id/bt_nuevanota_pickcolor"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/cb_nuevanota_includecategory"
+        android:layout_alignParentEnd="true"
+        android:text="@string/escoger_color"/>
+
+    <TextView
+        android:id="@+id/invisibleass"
+        android:layout_width="wrap_content"
+        android:layout_height="49sp"
+        android:layout_below="@id/cb_nuevanota_includecategory" />
+
 
     <Spinner
         android:id="@+id/sp_nuevanota_categoria"
@@ -34,14 +60,16 @@
     <EditText
         android:id="@+id/et_nuevanota_text"
         android:layout_width="match_parent"
-        android:layout_height="460sp"
-        android:layout_below="@id/cb_nuevanota_includecategory"
+        android:layout_height="wrap_content"
+        android:minHeight="460sp"
+        android:layout_below="@id/invisibleass"
         android:gravity="start|top"
         android:hint="@string/escriba_aqui"
         android:inputType="textMultiLine"
         android:scrollbars="vertical"
         android:scrollbarStyle="insideInset"
-        android:scrollbarSize="4sp"/>
+        android:scrollbarSize="4sp"
+        android:autofillHints="" />
 
 
     <Button
