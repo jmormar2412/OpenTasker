@@ -3,12 +3,11 @@
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/main"
-
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".objectmodifiers.ModifyNotasActivity"
-    android:orientation="vertical"
-    >
+    android:orientation="vertical">
+
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
@@ -26,9 +25,7 @@
     <RelativeLayout
         android:layout_height="match_parent"
         android:layout_width="match_parent"
-        android:padding="20sp"
-        >
-
+        android:padding="20sp">
 
 
         <EditText
@@ -53,13 +50,35 @@
             android:padding="13sp"
             android:visibility="gone"/>
 
+        <CheckBox
+            android:id="@+id/cb_modifynota_inheritcolor"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/heredar_color"
+            android:layout_below="@id/cb_modifynota_includecategory"
+            android:visibility="gone"
+            />
 
+        <Button
+            android:id="@+id/bt_modifynota_pickcolor"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/cb_modifynota_includecategory"
+            android:layout_alignParentEnd="true"
+            android:text="@string/escoger_color"/>
+
+        <TextView
+            android:id="@+id/invisibleass"
+            android:layout_width="wrap_content"
+            android:layout_height="49sp"
+            android:layout_below="@id/cb_modifynota_includecategory" />
 
         <EditText
             android:id="@+id/et_modifynota_text"
             android:layout_width="match_parent"
-            android:layout_height="390sp"
-            android:layout_below="@id/cb_modifynota_includecategory"
+            android:layout_height="wrap_content"
+            android:minHeight="390sp"
+            android:layout_below="@id/invisibleass"
             android:gravity="start|top"
             android:hint="@string/escriba_aqui"
             android:inputType="textMultiLine"
