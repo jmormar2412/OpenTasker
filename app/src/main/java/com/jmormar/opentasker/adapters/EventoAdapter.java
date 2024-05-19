@@ -7,7 +7,6 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.jmormar.opentasker.R;
@@ -18,12 +17,13 @@ import com.jmormar.opentasker.util.DBHelper;
 
 import java.text.SimpleDateFormat;
 import java.util.List;
+import java.util.Locale;
 
 public class EventoAdapter extends RecyclerView.Adapter<EventoAdapter.EventoViewHolder> {
-    private List<Evento> eventos;
-    private DBHelper helper;
+    private final List<Evento> eventos;
+    private final DBHelper helper;
     private OnEventoClickListener mListener;
-    private String identificadorAdapter;
+    private final String identificadorAdapter;
 
 
     public EventoAdapter(Context context, List<Evento> eventos, String identificadorAdapter) {
@@ -56,7 +56,7 @@ public class EventoAdapter extends RecyclerView.Adapter<EventoAdapter.EventoView
 
 
 
-    class EventoViewHolder extends RecyclerView.ViewHolder {
+    public class EventoViewHolder extends RecyclerView.ViewHolder {
         TextView nombre;
         TextView fecha;
         TextView tipo;
@@ -80,7 +80,7 @@ public class EventoAdapter extends RecyclerView.Adapter<EventoAdapter.EventoView
 
         void bind(Evento evento) {
             nombre.setText(evento.getNombre());
-            SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd");
+            SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd", new Locale("es_ES"));
             fecha.setText(evento.getFecha() != null ? dateFormatter.format(evento.getFecha()) : "");
             Tipo tp = helper.getTipo(evento.getIdTipo());
             tipo.setText(tp.getNombre());

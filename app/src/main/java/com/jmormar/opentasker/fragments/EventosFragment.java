@@ -15,15 +15,14 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.TextView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.jmormar.opentasker.R;
 import com.jmormar.opentasker.adapters.EventoAdapter;
 import com.jmormar.opentasker.models.Evento;
-import com.jmormar.opentasker.objectbuilders.NewEventoActivity;
-import com.jmormar.opentasker.objectmodifiers.ModifyEventosActivity;
+import com.jmormar.opentasker.activities.objectbuilders.NewEventoActivity;
+import com.jmormar.opentasker.activities.objectmodifiers.ModifyEventosActivity;
 import com.jmormar.opentasker.util.DBHelper;
 
 import java.util.List;
@@ -106,12 +105,12 @@ public class EventosFragment extends Fragment implements EventoAdapter.OnEventoC
                 Evento evento = eventos.get(position);
                 switch (direction) {
                     case ItemTouchHelper.LEFT:
-                        helper.deleteEvento(evento.getIdEvento());
+                        assert helper.deleteEvento(evento.getIdEvento()) : "No se pudo eliminar el evento -> EventosFragment onSwiped";
                         cargarEventos();
                         break;
                     case ItemTouchHelper.RIGHT:
                         evento.setHecho(!evento.isHecho());
-                        helper.actualizarEvento(evento);
+                        assert helper.actualizarEvento(evento) : "No se pudo actualizar el evento -> EventosFragment onSwiped";
                         cargarEventos();
                         break;
                 }
@@ -154,12 +153,9 @@ public class EventosFragment extends Fragment implements EventoAdapter.OnEventoC
 
     private void addListenerToButton(View rootView) {
         FloatingActionButton btAdd = rootView.findViewById(R.id.fab_nuevo_evento);
-        btAdd.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent myIntent = new Intent(context, NewEventoActivity.class);
-                startActivity(myIntent);
-            }
+        btAdd.setOnClickListener(v -> {
+            Intent myIntent = new Intent(context, NewEventoActivity.class);
+            startActivity(myIntent);
         });
     }
 

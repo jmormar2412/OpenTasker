@@ -1,23 +1,12 @@
 package com.jmormar.opentasker;
 
-import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.res.Resources;
 import android.os.Bundle;
-import android.util.Log;
 import android.util.Pair;
-import android.view.Gravity;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.Toast;
 
 import androidx.activity.OnBackPressedCallback;
-import androidx.activity.result.ActivityResult;
-import androidx.activity.result.ActivityResultCallback;
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
@@ -27,7 +16,6 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 
 import com.google.android.material.navigation.NavigationView;
-import com.jmormar.opentasker.adapters.NotaAdapter;
 import com.jmormar.opentasker.fragments.AjustesFragment;
 import com.jmormar.opentasker.fragments.EventosFragment;
 import com.jmormar.opentasker.fragments.HomeFragment;
@@ -36,20 +24,14 @@ import com.jmormar.opentasker.fragments.NotasFragment;
 import com.jmormar.opentasker.fragments.PomodoroFragment;
 import com.jmormar.opentasker.models.Agenda;
 import com.jmormar.opentasker.models.Categoria;
-import com.jmormar.opentasker.models.Nota;
 import com.jmormar.opentasker.models.Tipo;
-import com.jmormar.opentasker.objectbuilders.NewEventoActivity;
-import com.jmormar.opentasker.objectbuilders.NewNotaActivity;
-import com.jmormar.opentasker.objectmodifiers.ModifyNotasActivity;
 import com.jmormar.opentasker.util.DBHelper;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener{
 
@@ -167,7 +149,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             System.err.println("No se ha podido leer la fecha -> realizarPrimerasInserciones()");
         }
 
-        helper.insertarAgenda(agendaPrimaria);
+        assert helper.insertarAgenda(agendaPrimaria) : "No se ha podido insertar la agenda";
         int idAgenda = helper.getAgenda().getIdAgenda();
 
         Tipo examen = new Tipo();
@@ -181,10 +163,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         mates.setNombre("Matemáticas");
 
 
-        helper.insertarTipo(examen);
-        helper.insertarTipo(tarea);
+        assert helper.insertarTipo(examen) : "No se ha podido insertar el tipo examen";
+        assert helper.insertarTipo(tarea) : "No se ha podido insertar el tipo tarea";
 
-        helper.insertarCategoria(mates);
+        assert helper.insertarCategoria(mates) : "No se ha podido insertar la categoría matemáticas";
     }
 
     private void confirmarPrimerasInserciones() {
