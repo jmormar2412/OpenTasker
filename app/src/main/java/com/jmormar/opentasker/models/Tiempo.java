@@ -1,6 +1,8 @@
 package com.jmormar.opentasker.models;
 
-import java.time.Period;
+import android.os.CountDownTimer;
+
+import java.time.Duration;
 
 import lombok.Data;
 
@@ -11,8 +13,8 @@ import lombok.Data;
 @Data
 public class Tiempo {
     private int idTiempo;
-    private String nombre;
-    private Period tiempo;
+    private int setSeconds;
+    private int updatedSeconds;
     private boolean rest;
     private int idPomodoro;
 }
