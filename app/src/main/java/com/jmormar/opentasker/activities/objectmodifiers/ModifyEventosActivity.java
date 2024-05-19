@@ -1,4 +1,4 @@
-package com.jmormar.opentasker.objectmodifiers;
+package com.jmormar.opentasker.activities.objectmodifiers;
 
 import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;

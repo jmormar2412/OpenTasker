@@ -1,4 +1,4 @@
-package com.jmormar.opentasker.objectbuilders;
+package com.jmormar.opentasker.activities.objectbuilders;
 
 import android.os.Bundle;
 

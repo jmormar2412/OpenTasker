@@ -5,7 +5,7 @@
     android:padding="20sp"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".objectbuilders.NewNotaActivity">
+    tools:context=".activities.objectbuilders.NewNotaActivity">
 
     <EditText
         android:id="@+id/et_nuevanota_title"
