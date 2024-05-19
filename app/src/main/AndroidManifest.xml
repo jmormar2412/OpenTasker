@@ -13,19 +13,25 @@
         android:theme="@style/Theme.OpenTasker"
         tools:targetApi="31" >
         <activity
-            android:name=".objectmodifiers.ModifyEventosActivity"
+            android:name=".activities.objectbuilders.NewTiempoActivity"
             android:exported="false" />
         <activity
-            android:name=".objectmodifiers.ModifyNotasActivity"
+            android:name=".activities.TiemposActivity"
             android:exported="false" />
         <activity
-            android:name=".objectbuilders.NewCategoriaActivity"
+            android:name=".activities.objectmodifiers.ModifyEventosActivity"
             android:exported="false" />
         <activity
-            android:name=".objectbuilders.NewEventoActivity"
+            android:name=".activities.objectmodifiers.ModifyNotasActivity"
             android:exported="false" />
         <activity
-            android:name=".objectbuilders.NewNotaActivity"
+            android:name=".activities.objectbuilders.NewCategoriaActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activities.objectbuilders.NewEventoActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activities.objectbuilders.NewNotaActivity"
             android:exported="false" />
         <activity
             android:name=".MainActivity"

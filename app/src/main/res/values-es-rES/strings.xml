@@ -29,4 +29,15 @@
     <string name="eventos_completados">Eventos Completados</string>
     <string name="eventos">Eventos</string>
     <string name="modify_evento">Modificar evento</string>
+    <string name="escoger_color">Escoger color</string>
+    <string name="heredar_color">Heredar color de categoría</string>
+    <string name="addpomodoro">Añadir pomodoro</string>
+    <string name="empezar_pomodoro">Start pomodoro</string>
+    <string name="addtiempo">Add time</string>
+    <string name="reiniciar_pomodoro">Restart pomodoro</string>
+    <string name="cancelar">Cancel</string>
+    <string name="aceptar">Accept</string>
+    <string name="nombre_pomodoro">Name of the pomodoro</string>
+    <string name="descanso">Rest</string>
+    <string name="bucle">Loop</string>
 </resources>
