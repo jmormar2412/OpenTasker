@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".activities.objectbuilders.NewTiempoActivity">
+
+    <LinearLayout
+        android:id="@+id/ll_tiempo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="50sp"
+        android:gravity="center">
+        <NumberPicker
+            android:id="@+id/selector_minutos"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=":"
+            android:textSize="30sp"
+            tools:ignore="HardcodedText"
+            />
+        <NumberPicker
+            android:id="@+id/selector_segundos"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+
+
+
+
+    <com.google.android.material.switchmaterial.SwitchMaterial
+        android:id="@+id/sw_descanso"
+        android:layout_width="150sp"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/ll_tiempo"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="50sp"
+        android:text="@string/descanso"
+        android:textSize="20sp" />
+
+    <Button
+        android:id="@+id/bt_newtiempo_aceptar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="150sp"
+        android:text="@string/aceptar"
+        android:textSize="20sp" />
+
+</RelativeLayout>

@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".activities.TiemposActivity">
+
+    <TextView
+        android:id="@+id/tv_pomodoro_nombre"
+        android:layout_width="match_parent"
+        android:layout_height="50sp"
+        android:textSize="20sp"
+        android:gravity="center" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_tiempos"
+        android:layout_marginTop="50sp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tv_pomodoro_nombre"
+        android:layout_centerHorizontal="true"
+        android:padding="10sp"/>
+
+        <RelativeLayout
+            android:id="@+id/rl_botones"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20sp"
+            android:layout_centerHorizontal="true"
+            android:layout_alignParentBottom="true">
+
+            <CheckBox
+                android:id="@+id/cb_looping"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/bucle" />
+
+            <ImageButton
+                android:id="@+id/ib_delete"
+                android:layout_width="50sp"
+                android:layout_height="50sp"
+                android:src="@drawable/baseline_backspace_24"
+                android:layout_above="@id/ib_reset"
+                android:layout_toEndOf="@id/ib_startpause"/>
+
+            <ImageButton
+                android:id="@+id/add_tiempo"
+                android:src="@drawable/baseline_add_24"
+                android:layout_width="50sp"
+                android:layout_height="50sp"
+                android:layout_below="@id/cb_looping"
+                android:contentDescription="@string/addtiempo"/>
+
+            <ImageButton
+                android:id="@+id/ib_startpause"
+                android:layout_width="150sp"
+                android:layout_height="50sp"
+                android:layout_below="@id/cb_looping"
+                android:src="@drawable/baseline_play_circle_24"
+                android:contentDescription="@string/empezar_pomodoro"
+                android:layout_toEndOf="@id/add_tiempo"/>
+
+            <ImageButton
+                android:id="@+id/ib_reset"
+                android:layout_width="50sp"
+                android:layout_height="50sp"
+                android:layout_below="@id/cb_looping"
+                android:contentDescription="@string/reiniciar_pomodoro"
+                android:layout_toEndOf="@id/ib_startpause"
+                android:src="@drawable/baseline_stop_circle_24"/>
+        </RelativeLayout>
+
+</RelativeLayout>
