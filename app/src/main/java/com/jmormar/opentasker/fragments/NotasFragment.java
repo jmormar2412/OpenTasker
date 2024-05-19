@@ -9,15 +9,15 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.jmormar.opentasker.R;
 import com.jmormar.opentasker.adapters.NotaAdapter;
 import com.jmormar.opentasker.models.Nota;
-import com.jmormar.opentasker.objectbuilders.NewNotaActivity;
-import com.jmormar.opentasker.objectmodifiers.ModifyNotasActivity;
+import com.jmormar.opentasker.activities.objectbuilders.NewNotaActivity;
+import com.jmormar.opentasker.activities.objectmodifiers.ModifyNotasActivity;
 import com.jmormar.opentasker.util.DBHelper;
 
 import java.util.List;
@@ -65,7 +65,7 @@ public class NotasFragment extends Fragment implements NotaAdapter.OnNoteClickLi
         this.recyclerViewNotas = rootView.findViewById(R.id.rv_notas_notas);
         this.tvNotasNoData = rootView.findViewById(R.id.tv_notas_nodata);
 
-        recyclerViewNotas.setLayoutManager(new GridLayoutManager(this.context, 2));
+        recyclerViewNotas.setLayoutManager(new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL));
 
         FloatingActionButton btAddNota = rootView.findViewById(R.id.fab_nueva_nota);
         btAddNota.setOnClickListener(v -> irNuevaNota());

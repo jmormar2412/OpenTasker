@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.jmormar.opentasker.R;
@@ -23,10 +24,10 @@ import com.jmormar.opentasker.adapters.EventoAdapter;
 import com.jmormar.opentasker.adapters.NotaAdapter;
 import com.jmormar.opentasker.models.Evento;
 import com.jmormar.opentasker.models.Nota;
-import com.jmormar.opentasker.objectbuilders.NewEventoActivity;
-import com.jmormar.opentasker.objectbuilders.NewNotaActivity;
-import com.jmormar.opentasker.objectmodifiers.ModifyEventosActivity;
-import com.jmormar.opentasker.objectmodifiers.ModifyNotasActivity;
+import com.jmormar.opentasker.activities.objectbuilders.NewEventoActivity;
+import com.jmormar.opentasker.activities.objectbuilders.NewNotaActivity;
+import com.jmormar.opentasker.activities.objectmodifiers.ModifyEventosActivity;
+import com.jmormar.opentasker.activities.objectmodifiers.ModifyNotasActivity;
 import com.jmormar.opentasker.util.DBHelper;
 
 import java.util.List;
@@ -159,6 +160,7 @@ public class HomeFragment extends Fragment implements NotaAdapter.OnNoteClickLis
         notaAdapter.setOnNoteClickListener(this);
 
         recyclerViewNotas.setAdapter(notaAdapter);
+        recyclerViewNotas.setLayoutManager(new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL));
     }
 
     @Override
