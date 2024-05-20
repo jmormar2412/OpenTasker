@@ -12,8 +12,12 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -60,7 +64,6 @@ public class PomodoroFragment extends Fragment implements PomodoroAdapter.OnPomo
         }
     }
 
-    //TODO: Set slide to remove
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -77,10 +80,31 @@ public class PomodoroFragment extends Fragment implements PomodoroAdapter.OnPomo
         FloatingActionButton btAddPomodoro = rootView.findViewById(R.id.fab_nuevo_pomodoro);
         btAddPomodoro.setOnClickListener(v -> this.builder.show());
 
+        addSwipingFunctionality();
+
         createBuilder();
         cargarPomodoros();
 
         return rootView;
+    }
+
+    private void addSwipingFunctionality() {
+        ItemTouchHelper.SimpleCallback swipeCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.RIGHT) {
+            @Override
+            public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
+                return false;
+            }
+
+            @Override
+            public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
+                int position = viewHolder.getAdapterPosition();
+                Pomodoro pomodoro = helper.getPomodoros().get(position);
+                helper.deletePomodoro(pomodoro.getIdPomodoro());
+                cargarPomodoros();
+            }
+        };
+
+        new ItemTouchHelper(swipeCallback).attachToRecyclerView(recyclerViewPomodoros);
     }
 
     private void createBuilder() {
@@ -135,6 +159,9 @@ public class PomodoroFragment extends Fragment implements PomodoroAdapter.OnPomo
         pomodoroAdapter.setOnPomodoroClickListener(this);
 
         recyclerViewPomodoros.setAdapter(pomodoroAdapter);
+        recyclerViewPomodoros.setLayoutManager(new LinearLayoutManager(this.context));
+        recyclerViewPomodoros.addItemDecoration(new DividerItemDecoration(this.context, DividerItemDecoration.VERTICAL));
+        recyclerViewPomodoros.setItemAnimator(new DefaultItemAnimator());
     }
 
     @Override
