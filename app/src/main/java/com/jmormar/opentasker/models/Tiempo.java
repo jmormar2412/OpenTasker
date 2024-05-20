@@ -17,4 +17,8 @@ public class Tiempo {
     private int updatedSeconds;
     private boolean rest;
     private int idPomodoro;
+
+    public void resetSeconds(){
+        this.updatedSeconds = this.setSeconds;
+    }
 }
