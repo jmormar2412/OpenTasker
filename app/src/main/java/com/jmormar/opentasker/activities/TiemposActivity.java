@@ -92,7 +92,7 @@ public class TiemposActivity extends AppCompatActivity implements PomodoroTimer.
 
     private void wrapUp(){
         int idPomodoro = this.pomodoro.getIdPomodoro();
-        helper.actualizarOrInsertPosition(idPomodoro, position);
+        assert helper.actualizarOrInsertPosition(idPomodoro, position) : "No se pudo actualizar/insertar la posición";
         if(timer != null) pauseTimer();
         saveTiempos();
         finish();
@@ -132,13 +132,7 @@ public class TiemposActivity extends AppCompatActivity implements PomodoroTimer.
             }
         });
 
-        this.ibReset.setOnClickListener(v -> {
-            this.ibStartPause.setImageResource(R.drawable.baseline_play_circle_24);
-            if(timer!=null) timer.reset();
-            resetAllTiempos();
-            this.position = 0;
-            running = false;
-        });
+        this.ibReset.setOnClickListener(v -> reset());
 
         this.ibDelete.setOnClickListener(v -> {
             if(running){
@@ -146,15 +140,29 @@ public class TiemposActivity extends AppCompatActivity implements PomodoroTimer.
                 return;
             }
 
-            helper.deleteTiempo(tiempos.get(tiempos.size()-1).getIdTiempo());
-            tiempos.remove(tiempos.size()-1);
-            onResume();
+            if(position >= tiempos.size()) position = 0;
+
+            if(!tiempos.isEmpty()){
+                assert helper.deleteTiempo(tiempos.get(tiempos.size()-1).getIdTiempo()) : "No se pudo borrar el tiempo";
+                tiempos.remove(tiempos.size()-1);
+                updateAdapter();
+            } else{
+                Toast.makeText(this, "No hay tiempos para borrar", Toast.LENGTH_SHORT).show();
+            }
         });
 
         this.cbLooping.setOnCheckedChangeListener((buttonView, isChecked) -> {
             looping = isChecked;
         });
 
+    }
+
+    private void reset() {
+        this.ibStartPause.setImageResource(R.drawable.baseline_play_circle_24);
+        if(timer!=null) timer.reset();
+        resetAllTiempos();
+        this.position = 0;
+        running = false;
     }
 
     private void pauseTimer() {
@@ -223,6 +231,9 @@ public class TiemposActivity extends AppCompatActivity implements PomodoroTimer.
                 this.position = 0;
                 startTimerWithTiempo(tiempos.get(position));
             } else{
+                this.position = 0;
+                reset();
+                resetAllTiempos();
                 playSound(3);
             }
         } else {
@@ -235,14 +246,25 @@ public class TiemposActivity extends AppCompatActivity implements PomodoroTimer.
 
     private void playSound(int soundNumber){
         switch (soundNumber){
-            case 1 -> aDescansar.start();
-            case 2 -> lockIn.start();
-            case 3 -> finish.start();
+            case 1 -> {
+                if(aDescansar.isPlaying()) aDescansar.stop();
+                aDescansar.start();
+            }
+            case 2 -> {
+                if(lockIn.isPlaying()) lockIn.stop();
+                lockIn.start();
+            }
+            case 3 -> {
+                if(finish.isPlaying()) finish.stop();
+                finish.start();
+            }
         }
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     private void resetAllTiempos(){
-        tiempos.forEach(e -> e.setUpdatedSeconds(e.getSetSeconds()));
-        updateAdapter();
+        tiempos.forEach(Tiempo::resetSeconds);
+        assert rvTiempos.getAdapter() != null : "El adapter no puede ser nulo";
+        rvTiempos.getAdapter().notifyDataSetChanged();
     }
 }

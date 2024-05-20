@@ -20,8 +20,8 @@ import com.jmormar.opentasker.models.Tipo;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.Duration;
 import java.time.LocalDateTime;
-import java.time.Period;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -143,17 +143,25 @@ public class DBHelper extends SQLiteOpenHelper {
     //Sólo se ejecutará una sola vez porque no vas a crear 19 horarios, TODO: implementar el reset con su activity
     public boolean insertarHorario(Horario horario) {
         SQLiteDatabase db = this.getWritableDatabase();
-
-        for (Hora h : horario.getHoras()) {
-            if (!insertarHora(h))
-                System.err.println("No se ha introducido la hora. -> insertarHorario()");
-        }
-
         ContentValues values = new ContentValues();
         values.put("idAgenda", horario.getIdAgenda());
 
         //Como esto de error me va a entrar puto sida
         return db.insert("Horario", null, values) > 0;
+    }
+
+    public Horario getHorario(){
+        SQLiteDatabase db = this.getReadableDatabase();
+        String[] projection = {"idHorario", "idAgenda"};
+        Cursor c = db.query("Horario", projection, null, null, null, null, null);
+        Horario horario = null;
+        while (c.moveToNext()) {
+            horario = new Horario();
+            horario.setIdHorario(c.getInt(c.getColumnIndexOrThrow("idHorario")));
+            horario.setIdAgenda(c.getInt(c.getColumnIndexOrThrow("idAgenda")));
+        }
+        c.close();
+        return horario;
     }
 
     //No hace falta getHorario porque como las horas no van a tener nada más que 1 horario se hace desde el getHoras()
@@ -190,7 +198,7 @@ public class DBHelper extends SQLiteOpenHelper {
             Hora hr = new Hora();
             hr.setIdHora(c.getInt(c.getColumnIndexOrThrow("idHora")));
             hr.setFechayTiempoInicio(LocalDateTime.parse(c.getString(c.getColumnIndexOrThrow("fechayTiempoInicio"))));
-            hr.setTotalTiempo(Period.parse(c.getString(c.getColumnIndexOrThrow("totalTiempo"))));
+            hr.setTotalTiempo(Duration.parse(c.getString(c.getColumnIndexOrThrow("totalTiempo"))));
             hr.setIdHorario(c.getInt(c.getColumnIndexOrThrow("idHorario")));
             list.add(hr);
         }
@@ -232,20 +240,19 @@ public class DBHelper extends SQLiteOpenHelper {
         List<Hora> lista = new ArrayList<>();
 
         //Mucho cuidado aquí:
-        //Si no hay fecha ni periodo (nulos) se va a la mierda!!!!!!!!
+        //Si no hay fecha ni duración (nulos) se va a la mierda!!!!!!!!
         while (c.moveToNext()) {
             Hora hr = new Hora();
             hr.setIdHora(c.getInt(c.getColumnIndexOrThrow("idHora")));
             hr.setFechayTiempoInicio(LocalDateTime.parse(c.getString(c.getColumnIndexOrThrow("fechayTiempoInicio"))));
-            hr.setTotalTiempo(Period.parse(c.getString(c.getColumnIndexOrThrow("totalTiempo"))));
+            hr.setTotalTiempo(Duration.parse(c.getString(c.getColumnIndexOrThrow("totalTiempo"))));
             hr.setIdHorario(c.getInt(c.getColumnIndexOrThrow("idHorario")));
             lista.add(hr);
         }
         c.close();
 
-        if (!lista.isEmpty()) return lista.get(0);
+        return lista.stream().findFirst().orElse(null);
 
-        return null;
     }
 
     //CATEGORÍA
@@ -343,17 +350,17 @@ public class DBHelper extends SQLiteOpenHelper {
 
     private static final String SQL_CREATE_EVENTO =
             "CREATE TABLE Evento (" +
-                    "idEvento INTEGER PRIMARY KEY," +
-                    "nombre TEXT, " +
-                    "fecha TEXT, " +
-                    "hecho INTEGER," +
-                    "idTipo INTEGER, " +
-                    "idCategoria INTEGER," +
-                    "idAgenda INTEGER," +
-                    "FOREIGN KEY(idTipo) REFERENCES Tipo(idTipo)," +
-                    "FOREIGN KEY(idCategoria) REFERENCES Categoria(idCategoria)," +
-                    "FOREIGN KEY(idAgenda) REFERENCES Agenda(idAgenda)" +
-                    ")";
+                "idEvento INTEGER PRIMARY KEY," +
+                "nombre TEXT, " +
+                "fecha TEXT, " +
+                "hecho INTEGER," +
+                "idTipo INTEGER, " +
+                "idCategoria INTEGER," +
+                "idAgenda INTEGER," +
+                "FOREIGN KEY(idTipo) REFERENCES Tipo(idTipo)," +
+                "FOREIGN KEY(idCategoria) REFERENCES Categoria(idCategoria)," +
+                "FOREIGN KEY(idAgenda) REFERENCES Agenda(idAgenda)" +
+            ")";
     private static final String SQL_DELETE_EVENTO = "DROP TABLE IF EXISTS Evento";
 
     public boolean insertarEvento(Evento evt) {
@@ -720,11 +727,11 @@ public class DBHelper extends SQLiteOpenHelper {
     private static final String SQL_CREATE_TIEMPO =
             "CREATE TABLE Tiempo (" +
                     "idTiempo INTEGER PRIMARY KEY," +
-                    "nombre TEXT, " +
-                    "tiempo TEXT,"+
+                    "setSeconds INTEGER,"+
+                    "updatedSeconds INTEGER,"+
                     "rest INTEGER,"+
                     "idPomodoro INTEGER,"+
-                    "FOREIGN KEY(idPomodoro) REFERENCES Pomodoro(idPomodoro)"+
+                    "FOREIGN KEY(idPomodoro) REFERENCES Pomodoro(idPomodoro) ON DELETE CASCADE"+
                     ")";
     private static final String SQL_DELETE_TIEMPO = "DROP TABLE IF EXISTS Tiempo";
 
@@ -732,29 +739,31 @@ public class DBHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
-        values.put("nombre", tm.getNombre());
-        values.put("tiempo", tm.getTiempo().toString());
+        values.put("setSeconds", tm.getSetSeconds());
+        values.put("updatedSeconds", tm.getUpdatedSeconds());
         values.put("rest", tm.isRest()?1:0);
         values.put("idPomodoro", tm.getIdPomodoro());
 
         return db.insert("Tiempo", null, values) > 0;
     }
 
-    public List<Tiempo> getTiempos() {
+    public List<Tiempo> getTiempos(int idPomodoro) {
         SQLiteDatabase db = this.getReadableDatabase();
 
-        String[] projection = {"idTiempo", "nombre", "tiempo", "rest", "idPomodoro"};
-        Cursor c = db.query("Tiempo", projection, null, null, null, null, null);
+        String[] projection = {"idTiempo", "setSeconds", "updatedSeconds", "rest"};
+        String selection = "idPomodoro = ?";
+        String[] selectionArgs = {String.valueOf(idPomodoro)};
+        Cursor c = db.query("Tiempo", projection, selection, selectionArgs, null, null, null);
 
         List<Tiempo> list = new ArrayList<>();
 
         while (c.moveToNext()) {
             Tiempo tm = new Tiempo();
             tm.setIdTiempo(c.getInt(c.getColumnIndexOrThrow("idTiempo")));
-            tm.setNombre((c.getString(c.getColumnIndexOrThrow("nombre"))));
-            tm.setTiempo(Period.parse(c.getString(c.getColumnIndexOrThrow("tiempo"))));
+            tm.setSetSeconds(c.getInt(c.getColumnIndexOrThrow("setSeconds")));
+            tm.setUpdatedSeconds(c.getInt(c.getColumnIndexOrThrow("updatedSeconds")));
             tm.setRest(c.getInt(c.getColumnIndexOrThrow("rest"))==1);
-            tm.setIdPomodoro(c.getInt(c.getColumnIndexOrThrow("idPomodoro")));
+            tm.setIdPomodoro(idPomodoro);
             list.add(tm);
         }
         c.close();
@@ -773,7 +782,10 @@ public class DBHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
-        values.put("nombre", tm.getNombre());
+        values.put("setSeconds", tm.getSetSeconds());
+        values.put("updatedSeconds", tm.getUpdatedSeconds());
+        values.put("rest", tm.isRest()?1:0);
+        values.put("idPomodoro", tm.getIdPomodoro());
 
         String selection = "idTiempo = ?";
 
@@ -785,7 +797,7 @@ public class DBHelper extends SQLiteOpenHelper {
     public Tiempo getTiempo(int idTiempo) {
         SQLiteDatabase db = this.getReadableDatabase();
 
-        String[] projection = {"idTiempo", "nombre"};
+        String[] projection = {"idTiempo", "setSeconds", "updatedSeconds", "rest", "idPomodoro"};
         String[] selectionArgs = {String.valueOf(idTiempo)};
         String selection = "idTiempo = ?";
 
@@ -795,7 +807,10 @@ public class DBHelper extends SQLiteOpenHelper {
         while (c.moveToNext()) {
             Tiempo tp = new Tiempo();
             tp.setIdTiempo(c.getInt(c.getColumnIndexOrThrow("idTiempo")));
-            tp.setNombre((c.getString(c.getColumnIndexOrThrow("nombre"))));
+            tp.setSetSeconds(c.getInt(c.getColumnIndexOrThrow("setSeconds")));
+            tp.setUpdatedSeconds(c.getInt(c.getColumnIndexOrThrow("updatedSeconds")));
+            tp.setRest(c.getInt(c.getColumnIndexOrThrow("rest"))==1);
+            tp.setIdPomodoro(c.getInt(c.getColumnIndexOrThrow("idPomodoro")));
             lista.add(tp);
         }
         c.close();
@@ -805,7 +820,71 @@ public class DBHelper extends SQLiteOpenHelper {
         return null;
     }
 
-    //El orden aquí es muy importante
+    //POSITION
+
+    private static final String SQL_CREATE_POSITION =
+            "CREATE TABLE Position (" +
+                    "idPomodoro INTEGER PRIMARY KEY, " +
+                    "position INTEGER," +
+                    "FOREIGN KEY(idPomodoro) REFERENCES Pomodoro(idPomodoro)" +
+                    ")";
+
+    private static final String SQL_DELETE_POSITION = "DROP TABLE IF EXISTS Position";
+
+    public boolean actualizarOrInsertPosition(int idPomodoro, int position) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = null;
+        boolean result;
+
+        try {
+            // Check if a row with the same idPomodoro value exists
+            String[] selectionArgs = {String.valueOf(idPomodoro)};
+            cursor = db.query("Position", null, "idPomodoro = ?", selectionArgs, null, null, null);
+
+            ContentValues values = new ContentValues();
+            values.put("position", position);
+
+            // If a row with the same idPomodoro value exists, update it
+            if (cursor.moveToFirst()) {
+                result = db.update("Position", values, "idPomodoro = ?", selectionArgs) > 0;
+            } else {
+                // Otherwise, insert the new row
+                values.put("idPomodoro", idPomodoro);  // Correcting the insertion column
+                result = db.insert("Position", null, values) > 0;
+            }
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
+
+        return result;
+    }
+
+    public int getPosition(int idPomodoro) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor c = null;
+        int position = -1; // Default value indicating no position found
+
+        try {
+            String[] projection = {"position"};
+            String selection = "idPomodoro = ?";
+            String[] selectionArgs = {String.valueOf(idPomodoro)};
+
+            c = db.query("Position", projection, selection, selectionArgs, null, null, null);
+
+            if (c != null && c.moveToFirst()) {
+                position = c.getInt(c.getColumnIndexOrThrow("position"));
+            }
+        } finally {
+            if (c != null) {
+                c.close();
+            }
+        }
+
+        return position;
+    }
+
     @Override
     public void onCreate(SQLiteDatabase db) {
         //Ejecutar todos los create
@@ -818,6 +897,7 @@ public class DBHelper extends SQLiteOpenHelper {
         db.execSQL(SQL_CREATE_HORA);
         db.execSQL(SQL_CREATE_POMODORO);
         db.execSQL(SQL_CREATE_TIEMPO);
+        db.execSQL(SQL_CREATE_POSITION);
     }
 
     @Override
@@ -831,6 +911,7 @@ public class DBHelper extends SQLiteOpenHelper {
         db.execSQL(SQL_DELETE_EVENTO);
         db.execSQL(SQL_DELETE_TIPO);
         db.execSQL(SQL_DELETE_TIEMPO);
+        db.execSQL(SQL_DELETE_POSITION);
         onCreate(db);
     }
 }
