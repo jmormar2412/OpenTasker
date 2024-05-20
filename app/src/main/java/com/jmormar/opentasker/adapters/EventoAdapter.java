@@ -69,12 +69,9 @@ public class EventoAdapter extends RecyclerView.Adapter<EventoAdapter.EventoView
             tipo = itemView.findViewById(R.id.evli_tipo);
             categoria = itemView.findViewById(R.id.evli_categoria);
 
-            itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    int position = getAdapterPosition();
-                    if(position!=RecyclerView.NO_POSITION && mListener!=null) mListener.onEventoClick(position, identificadorAdapter);
-                }
+            itemView.setOnClickListener(v -> {
+                int position = getAdapterPosition();
+                if(position!=RecyclerView.NO_POSITION && mListener!=null) mListener.onEventoClick(position, identificadorAdapter);
             });
         }
 
