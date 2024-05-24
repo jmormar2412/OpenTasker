@@ -212,25 +212,7 @@ public class ModifyEventosActivity extends AppCompatActivity {
         } else{
             aceptar.setEnabled(true);
             aceptar.setClickable(true);
-            showError("error.IOException");
+            Toast.makeText(this, "No se ha podido modificar el evento", Toast.LENGTH_SHORT).show();
         }
-    }
-
-    private void showError(String error) {
-        String message;
-        Resources res = getResources();
-        int duration;
-        if(error.equals("error.IOException")){
-            duration = Toast.LENGTH_LONG;
-            message=res.getString(R.string.error_bd);
-        }
-        else {
-            duration = Toast.LENGTH_SHORT;
-            message = res.getString(R.string.error_unknown);
-        }
-        Context context = this.getApplicationContext();
-        Toast toast = Toast.makeText(context, message, duration);
-        toast.setGravity(Gravity.CENTER, 0, 0);
-        toast.show();
     }
 }

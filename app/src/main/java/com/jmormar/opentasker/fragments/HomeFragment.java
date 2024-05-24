@@ -43,6 +43,7 @@ public class HomeFragment extends Fragment implements NotaAdapter.OnNoteClickLis
     private DBHelper helper;
     private RecyclerView recyclerViewEventos, recyclerViewNotas;
     private List<Evento> eventos;
+    private List<Nota> notas;
     private TextView tvEventosNoData, tvNotasNoData;
     private Context context;
 
@@ -148,7 +149,7 @@ public class HomeFragment extends Fragment implements NotaAdapter.OnNoteClickLis
 
     private void cargarNotas() {
         if(helper == null) helper = DBHelper.getInstance(this.context);
-        List<Nota> notas = helper.getNotas();
+        this.notas = helper.getNotas();
 
         if(!notas.isEmpty()){
             this.tvNotasNoData.setVisibility(View.GONE);
@@ -173,7 +174,8 @@ public class HomeFragment extends Fragment implements NotaAdapter.OnNoteClickLis
     @Override
     public void onNoteClick(int position) {
         Intent myIntent = new Intent(this.context, ModifyNotasActivity.class);
-        myIntent.putExtra("position", position);
+        int idNota = notas.get(position).getIdNota();
+        myIntent.putExtra("idNota", idNota);
         startActivity(myIntent);
     }
 

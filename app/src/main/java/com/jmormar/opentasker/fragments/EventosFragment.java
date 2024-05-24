@@ -36,7 +36,6 @@ import java.util.stream.Collectors;
 public class EventosFragment extends Fragment implements EventoAdapter.OnEventoClickListener {
 
     private static final String ARG_PARAM1 = "param1", ARG_PARAM2 = "param2";
-    private String mParam1, mParam2;
     private Context context;
     private RecyclerView recyclerViewEventos, recyclerViewEventosCompletados;
     private EventoAdapter eventoAdapter, eventoAdapterCompletados;
@@ -44,19 +43,8 @@ public class EventosFragment extends Fragment implements EventoAdapter.OnEventoC
     private DBHelper helper;
     private TextView tvEventosNoData, tvCompletedNoData;
 
-    public EventosFragment() {
-        // Required empty public constructor
-    }
+    public EventosFragment() {}
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment EventosFragment.
-     */
-    // TODO: Rename and change types and number of parameters
     public static EventosFragment newInstance(String param1, String param2) {
         EventosFragment fragment = new EventosFragment();
         Bundle args = new Bundle();
@@ -70,8 +58,8 @@ public class EventosFragment extends Fragment implements EventoAdapter.OnEventoC
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
+            getArguments().getString(ARG_PARAM1);
+            getArguments().getString(ARG_PARAM2);
         }
     }
 

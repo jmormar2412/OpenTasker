@@ -27,11 +27,8 @@ public class NotaAdapter extends RecyclerView.Adapter<NotaAdapter.NotaViewHolder
     private final DBHelper helper;
     @Setter
     private OnNoteClickListener onNoteClickListener;
-    private final Context context;
-
     public NotaAdapter(Context context, List<Nota> notas) {
         this.notas = notas;
-        this.context = context;
         helper = DBHelper.getInstance(context);
     }
 

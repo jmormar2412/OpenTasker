@@ -5,12 +5,10 @@ import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.res.Resources;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
@@ -33,6 +31,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 
 public class NewEventoActivity extends AppCompatActivity {
 
@@ -82,24 +81,19 @@ public class NewEventoActivity extends AppCompatActivity {
         if(etFecha==null) {
             etFecha = findViewById(R.id.et_nuevoevento_fecha);
         }
-        etFecha.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                if(hasFocus) {
-                    datePickerFecha.show();
-                }
-                v.clearFocus();
+        etFecha.setOnFocusChangeListener((v, hasFocus) -> {
+            if(hasFocus) {
+                datePickerFecha.show();
             }
+            v.clearFocus();
         });
         Calendar newCalendar = Calendar.getInstance();
         newCalendar.setTime(inicio);
-        datePickerFecha = new DatePickerDialog(this, new DatePickerDialog.OnDateSetListener() {
-            public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-                Calendar newDate = Calendar.getInstance();
-                newDate.set(year, monthOfYear, dayOfMonth);
-                @SuppressLint("SimpleDateFormat") SimpleDateFormat dateFormatter = new SimpleDateFormat("dd/MM/yyyy");
-                etFecha.setText(dateFormatter.format(newDate.getTime()));
-            }
+        datePickerFecha = new DatePickerDialog(this, (view, year, monthOfYear, dayOfMonth) -> {
+            Calendar newDate = Calendar.getInstance();
+            newDate.set(year, monthOfYear, dayOfMonth);
+            @SuppressLint("SimpleDateFormat") SimpleDateFormat dateFormatter = new SimpleDateFormat("dd/MM/yyyy");
+            etFecha.setText(dateFormatter.format(newDate.getTime()));
         },newCalendar.get(Calendar.YEAR), newCalendar.get(Calendar.MONTH),
                 newCalendar.get(Calendar.DAY_OF_MONTH));
     }
@@ -169,7 +163,7 @@ public class NewEventoActivity extends AppCompatActivity {
         }
 
         fechaString =etFecha.getText().toString();
-        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", new Locale("es_ES"));
         Date fecha;
         try {
             fecha = dateFormat.parse(fechaString);
@@ -200,26 +194,8 @@ public class NewEventoActivity extends AppCompatActivity {
             } else{
                 btAceptar.setEnabled(true);
                 btAceptar.setClickable(true);
-                showError("error.IOException");
+                Toast.makeText(this, "Error al insertar el evento", Toast.LENGTH_SHORT).show();
             }
         }
-    }
-
-    private void showError(String error) {
-        String message;
-        Resources res = getResources();
-        int duration;
-        if(error.equals("error.IOException")){
-            duration = Toast.LENGTH_LONG;
-            message=res.getString(R.string.error_bd);
-        }
-        else {
-            duration = Toast.LENGTH_SHORT;
-            message = res.getString(R.string.error_unknown);
-        }
-        Context context = this.getApplicationContext();
-        Toast toast = Toast.makeText(context, message, duration);
-        toast.setGravity(Gravity.CENTER, 0, 0);
-        toast.show();
     }
 }
