@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <PreferenceCategory app:title="@string/categorias">
+        <Preference
+            app:key="managecategories"
+            app:title="@string/gestionar_categorias"/>
+
+    </PreferenceCategory>
+
+    <PreferenceCategory app:title="@string/tipos">
+        <Preference
+            app:key="managetypes"
+            app:title="@string/gestionar_tipos"/>
+
+    </PreferenceCategory>
+
+    <PreferenceCategory app:title="@string/agenda">
+        <Preference
+            app:key="startdate"
+            app:title="@string/fecha_inicio"
+            android:inputType="text" />
+
+        <Preference
+            app:key="endingdate"
+            app:title="@string/fecha_final"
+            android:inputType="text" />
+
+        <ListPreference
+            app:key="beginningday"
+            app:title="@string/dia_inicio"
+            app:summary="Select your theme"/>
+
+        <SeekBarPreference
+            app:key="weeklength"
+            app:title="@string/duracion_semana"
+            android:min="0"
+            android:max="7"
+            app:showSeekBarValue="true"
+            app:seekBarIncrement="1" />
+
+
+    </PreferenceCategory>
+<!--    <CheckBoxPreference-->
+<!--        app:key="notifications"-->
+<!--        app:title="Enable Notifications"-->
+<!--        app:summary="Receive notifications for updates" />-->
+
+<!--    <SwitchPreferenceCompat-->
+<!--        app:key="dark_mode"-->
+<!--        app:title="Dark Mode"-->
+<!--        app:summary="Enable dark theme" />-->
+
+
+
+<!--    <MultiSelectListPreference-->
+<!--        app:key="sync_options"-->
+<!--        app:title="Sync Options"-->
+<!--        app:summary="Select data to sync"/>-->
+
+<!--    <SeekBarPreference-->
+<!--        app:key="volume"-->
+<!--        app:title="Volume"-->
+<!--        app:summary="Set the volume"-->
+<!--        app:max="100" />-->
+
+<!--    <DropDownPreference-->
+<!--        app:key="dropdown_example"-->
+<!--        app:title="Dropdown Example"-->
+<!--        app:summary="Select an option" />-->
+</PreferenceScreen>
