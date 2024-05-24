@@ -38,9 +38,6 @@ public class DBHelper extends SQLiteOpenHelper {
     public static final int DATABASE_VERSION = 5;
     public static final String DATABASE_NAME = "OpenTaskerBase.db";
 
-    private static final String NOMBRE_PREFERENCIAS = "PreferenciasOpentasker";
-    private static final String LLAVE_PRIMERA_INSERCION = "PrimeraInsercionHecha";
-
     private DBHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
@@ -56,14 +53,18 @@ public class DBHelper extends SQLiteOpenHelper {
 
     // AGENDA
     private static final String SQL_CREATE_AGENDA =
-            "CREATE TABLE Agenda (" +
-                    "idAgenda INTEGER PRIMARY KEY," +
-                    "nombre TEXT NOT NULL," +
-                    "fechaInicio TEXT," +
-                    "fechaFinal TEXT ," +
-                    "beginningDay INTEGER," +
-                    "weekLength INTEGER" +
-                    ")";
+            """
+                    CREATE TABLE Agenda (
+                    idAgenda INTEGER PRIMARY KEY,
+                    nombre TEXT NOT NULL,
+                    fechaInicio TEXT,
+                    fechaFinal TEXT ,
+                    beginningDay INTEGER,
+                    weekLength INTEGER
+                    )
+            """;
+
+
     private static final String SQL_DELETE_AGENDA = "DROP TABLE IF EXISTS Agenda";
 
     public boolean insertarAgenda(Agenda agenda) {
@@ -132,12 +133,14 @@ public class DBHelper extends SQLiteOpenHelper {
     //HORACIO Y HORAS (son dependientes)
 
     private static final String SQL_CREATE_HORARIO =
-            "CREATE TABLE Horario (" +
-                    "idHorario INTEGER PRIMARY KEY," +
-                    "idAgenda INTEGER, " +
-                    "FOREIGN KEY(idAgenda) REFERENCES Agenda(idAgenda)" +
-                    "ON DELETE CASCADE" +
-                    ")";
+            """
+            CREATE TABLE Horario (
+                              idHorario INTEGER PRIMARY KEY,
+                              idAgenda INTEGER,
+                              FOREIGN KEY(idAgenda) REFERENCES Agenda(idAgenda)
+                              ON DELETE CASCADE
+                              )
+            """;
     private static final String SQL_DELETE_HORARIO = "DROP TABLE IF EXISTS Horario";
 
     //Sólo se ejecutará una sola vez porque no vas a crear 19 horarios, TODO: implementar el reset con su activity
@@ -166,13 +169,15 @@ public class DBHelper extends SQLiteOpenHelper {
 
     //No hace falta getHorario porque como las horas no van a tener nada más que 1 horario se hace desde el getHoras()
     private static final String SQL_CREATE_HORA =
-            "CREATE TABLE Hora (" +
-                    "idHora INTEGER PRIMARY KEY," +
-                    "fechayTiempoInicio TEXT, " +
-                    "totalTiempo TEXT, " +
-                    "idHorario INTEGER, " +
-                    "FOREIGN KEY(idHorario) REFERENCES Horario(idHorario)" +
-                    ")";
+            """
+                CREATE TABLE Hora (
+                     idHora INTEGER PRIMARY KEY,
+                     fechayTiempoInicio TEXT,
+                     totalTiempo TEXT,
+                     idHorario INTEGER,
+                     FOREIGN KEY(idHorario) REFERENCES Horario(idHorario)
+                     ) ;
+            """;
     private static final String SQL_DELETE_HORA = "DROP TABLE IF EXISTS Hora";
 
     public boolean insertarHora(Hora hora) {
@@ -258,13 +263,15 @@ public class DBHelper extends SQLiteOpenHelper {
     //CATEGORÍA
 
     private static final String SQL_CREATE_CATEGORIA =
-            "CREATE TABLE Categoria (" +
-                    "idCategoria INTEGER PRIMARY KEY," +
-                    "nombre TEXT, " +
-                    "color INTEGER, " +
-                    "idAgenda INTEGER," +
-                    "FOREIGN KEY(idAgenda) REFERENCES Agenda(idAgenda)" +
-                    ")";
+            """
+            CREATE TABLE Categoria (
+                    idCategoria INTEGER PRIMARY KEY,
+                    nombre TEXT,
+                    color INTEGER,
+                    idAgenda INTEGER,
+                    FOREIGN KEY(idAgenda) REFERENCES Agenda(idAgenda)
+                    );
+            """;
     private static final String SQL_DELETE_CATEGORIA = "DROP TABLE IF EXISTS Categoria";
 
     public boolean insertarCategoria(Categoria catg) {
@@ -312,7 +319,6 @@ public class DBHelper extends SQLiteOpenHelper {
         ContentValues values = new ContentValues();
         values.put("nombre", catg.getNombre());
         values.put("color", catg.getColor());
-        values.put("idAgenda", catg.getIdAgenda());
 
         String selection = "idCategoria = ?";
 
@@ -349,18 +355,20 @@ public class DBHelper extends SQLiteOpenHelper {
     //EVENTO
 
     private static final String SQL_CREATE_EVENTO =
-            "CREATE TABLE Evento (" +
-                "idEvento INTEGER PRIMARY KEY," +
-                "nombre TEXT, " +
-                "fecha TEXT, " +
-                "hecho INTEGER," +
-                "idTipo INTEGER, " +
-                "idCategoria INTEGER," +
-                "idAgenda INTEGER," +
-                "FOREIGN KEY(idTipo) REFERENCES Tipo(idTipo)," +
-                "FOREIGN KEY(idCategoria) REFERENCES Categoria(idCategoria)," +
-                "FOREIGN KEY(idAgenda) REFERENCES Agenda(idAgenda)" +
-            ")";
+            """
+            CREATE TABLE Evento (
+                idEvento INTEGER PRIMARY KEY,
+                nombre TEXT,
+                fecha TEXT,
+                hecho INTEGER,
+                idTipo INTEGER,
+                idCategoria INTEGER,
+                idAgenda INTEGER,
+                FOREIGN KEY(idTipo) REFERENCES Tipo(idTipo),
+                FOREIGN KEY(idCategoria) REFERENCES Categoria(idCategoria),
+                FOREIGN KEY(idAgenda) REFERENCES Agenda(idAgenda)
+            );
+            """;
     private static final String SQL_DELETE_EVENTO = "DROP TABLE IF EXISTS Evento";
 
     public boolean insertarEvento(Evento evt) {
@@ -467,14 +475,16 @@ public class DBHelper extends SQLiteOpenHelper {
     //NOTA
 
     private static final String SQL_CREATE_NOTA =
-            "CREATE TABLE Nota (" +
-                    "idNota INTEGER PRIMARY KEY," +
-                    "titulo TEXT, " +
-                    "texto TEXT," +
-                    "color INTEGER," +
-                    "idCategoria INTEGER," +
-                    "FOREIGN KEY(idCategoria) REFERENCES Categoria(idCategoria)" +
-                    ")";
+            """
+            CREATE TABLE Nota (
+                    idNota INTEGER PRIMARY KEY,
+                    titulo TEXT,
+                    texto TEXT,
+                    color INTEGER,
+                    idCategoria INTEGER,
+                    FOREIGN KEY(idCategoria) REFERENCES Categoria(idCategoria)
+                    );
+            """;
     private static final String SQL_DELETE_NOTA = "DROP TABLE IF EXISTS Nota";
 
     public boolean insertarNota(Nota nota) {
@@ -565,10 +575,12 @@ public class DBHelper extends SQLiteOpenHelper {
     // POMODORO
 
     private static final String SQL_CREATE_POMODORO =
-            "CREATE TABLE Pomodoro (" +
-                    "idPomodoro INTEGER PRIMARY KEY," +
-                    "nombre TEXT " +
-                    ")";
+            """
+            CREATE TABLE Pomodoro (
+                    idPomodoro INTEGER PRIMARY KEY,
+                    nombre TEXT
+                    );
+            """;
     private static final String SQL_DELETE_POMODORO = "DROP TABLE IF EXISTS Pomodoro";
 
     public boolean insertarPomodoro(Pomodoro pmd) {
@@ -645,10 +657,12 @@ public class DBHelper extends SQLiteOpenHelper {
     // TIPO
 
     private static final String SQL_CREATE_TIPO =
-            "CREATE TABLE Tipo (" +
-                    "idTipo INTEGER PRIMARY KEY," +
-                    "nombre TEXT " +
-                    ")";
+            """
+            CREATE TABLE Tipo (
+                    idTipo INTEGER PRIMARY KEY,
+                    nombre TEXT
+                    );
+            """;
     private static final String SQL_DELETE_TIPO = "DROP TABLE IF EXISTS Tipo";
 
     public boolean insertarTipo(Tipo tp) {
@@ -688,15 +702,23 @@ public class DBHelper extends SQLiteOpenHelper {
 
     public boolean actualizarTipo(Tipo tp) {
         SQLiteDatabase db = this.getWritableDatabase();
+        boolean isSuccess = false;
 
-        ContentValues values = new ContentValues();
-        values.put("nombre", tp.getNombre());
+        try {
+            ContentValues values = new ContentValues();
+            values.put("nombre", tp.getNombre());
 
-        String selection = "idTipo = ?";
+            String selection = "idTipo = ?";
+            String[] selectionArgs = {String.valueOf(tp.getIdTipo())};
 
-        String[] selectionArgs = {String.valueOf(tp.getIdTipo())};
+            isSuccess = db.update("Tipo", values, selection, selectionArgs) > 0;
+        } catch (Exception e) {
+            System.err.println("Ha ocurrido un error -> actualizarTipo(): "+e.getMessage());
+        } finally {
+            db.close();
+        }
 
-        return db.update("Tipo", values, selection, selectionArgs) > 0;
+        return isSuccess;
     }
 
     public Tipo getTipo(int idTipo) {
@@ -725,14 +747,16 @@ public class DBHelper extends SQLiteOpenHelper {
     //TIEMPO
 
     private static final String SQL_CREATE_TIEMPO =
-            "CREATE TABLE Tiempo (" +
-                    "idTiempo INTEGER PRIMARY KEY," +
-                    "setSeconds INTEGER,"+
-                    "updatedSeconds INTEGER,"+
-                    "rest INTEGER,"+
-                    "idPomodoro INTEGER,"+
-                    "FOREIGN KEY(idPomodoro) REFERENCES Pomodoro(idPomodoro) ON DELETE CASCADE"+
-                    ")";
+            """
+            CREATE TABLE Tiempo (
+                    idTiempo INTEGER PRIMARY KEY,
+                    setSeconds INTEGER,
+                    updatedSeconds INTEGER,
+                    rest INTEGER,
+                    idPomodoro INTEGER,
+                    FOREIGN KEY(idPomodoro) REFERENCES Pomodoro(idPomodoro) ON DELETE CASCADE
+                    );
+            """;
     private static final String SQL_DELETE_TIEMPO = "DROP TABLE IF EXISTS Tiempo";
 
     public boolean insertarTiempo(Tiempo tm) {
@@ -823,11 +847,13 @@ public class DBHelper extends SQLiteOpenHelper {
     //POSITION
 
     private static final String SQL_CREATE_POSITION =
-            "CREATE TABLE Position (" +
-                    "idPomodoro INTEGER PRIMARY KEY, " +
-                    "position INTEGER," +
-                    "FOREIGN KEY(idPomodoro) REFERENCES Pomodoro(idPomodoro)" +
-                    ")";
+            """
+            CREATE TABLE Position (
+                    idPomodoro INTEGER PRIMARY KEY,
+                    position INTEGER,
+                    FOREIGN KEY(idPomodoro) REFERENCES Pomodoro(idPomodoro)
+                    );
+            """;
 
     private static final String SQL_DELETE_POSITION = "DROP TABLE IF EXISTS Position";
 
