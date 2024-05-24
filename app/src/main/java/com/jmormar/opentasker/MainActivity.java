@@ -1,5 +1,8 @@
 package com.jmormar.opentasker;
 
+import static com.jmormar.opentasker.util.Constants.LLAVE_PRIMERA_INSERCION;
+import static com.jmormar.opentasker.util.Constants.NOMBRE_PREFERENCIAS;
+
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -37,11 +40,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     private DrawerLayout drawerLayout;
     private DBHelper helper;
-    private static final String NOMBRE_PREFERENCIAS = "PreferenciasOpentasker";
-    private static final String LLAVE_PRIMERA_INSERCION = "PrimeraInsercionHecha";
     private Map<Integer, Pair<String, Fragment>> fragmentMap;
 
-    private OnBackPressedCallback onBackPressedCallback=new OnBackPressedCallback(true) {
+    private final OnBackPressedCallback onBackPressedCallback=new OnBackPressedCallback(true) {
         @Override
         public void handleOnBackPressed(){atras();}
     };
@@ -86,7 +87,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         fragmentMap.put(3, new Pair<>(getString(R.string.pomodoro), PomodoroFragment.newInstance("","")));
         fragmentMap.put(4, new Pair<>(getString(R.string.notas), NotasFragment.newInstance("","")));
         fragmentMap.put(5, new Pair<>(getString(R.string.eventos), EventosFragment.newInstance("","")));
-        fragmentMap.put(6, new Pair<>(getString(R.string.ajustes), AjustesFragment.newInstance("","")));
+        fragmentMap.put(6, new Pair<>(getString(R.string.ajustes), new AjustesFragment()));
     }
 
     private void atras(){
@@ -99,9 +100,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+        drawerLayout.closeDrawer(GravityCompat.START);
         int titleId = getTitulo(item);
         mostrarFragmento(titleId);
-        drawerLayout.closeDrawer(GravityCompat.START);
         return true;
     }
 

@@ -33,6 +33,7 @@ public class NotasFragment extends Fragment implements NotaAdapter.OnNoteClickLi
     private DBHelper helper;
     private RecyclerView recyclerViewNotas;
     private TextView tvNotasNoData;
+    private List<Nota> notas;
 
     public NotasFragment() {}
 
@@ -81,7 +82,7 @@ public class NotasFragment extends Fragment implements NotaAdapter.OnNoteClickLi
 
     private void cargarNotas() {
         if(helper == null) helper = DBHelper.getInstance(this.context);
-        List<Nota> notas = helper.getNotas();
+        this.notas = helper.getNotas();
 
         if(!notas.isEmpty()){
             this.tvNotasNoData.setVisibility(View.GONE);
@@ -98,7 +99,8 @@ public class NotasFragment extends Fragment implements NotaAdapter.OnNoteClickLi
     @Override
     public void onNoteClick(int position) {
         Intent myIntent = new Intent(this.context, ModifyNotasActivity.class);
-        myIntent.putExtra("position", position);
+        int idNota = notas.get(position).getIdNota();
+        myIntent.putExtra("idNota", idNota);
         startActivity(myIntent);
     }
 

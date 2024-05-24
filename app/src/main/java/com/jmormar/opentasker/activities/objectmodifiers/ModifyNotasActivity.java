@@ -99,8 +99,8 @@ public class ModifyNotasActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         aceptar();
-        loadData();
         populateSpinner();
+        loadData();
     }
 
     @Override
@@ -126,20 +126,17 @@ public class ModifyNotasActivity extends AppCompatActivity {
     private void loadData(){
 
         Intent intent = getIntent();
-        int position = intent.getIntExtra("position", -1);
+        int idNota = intent.getIntExtra("idNota", -1);
 
-        if(position == -1){
-            System.err.println("No se ha recuperado la posición -> loadData() en ModifyNotas");
-            return;
-        }
+        assert idNota != -1 : "No se ha recuperado el id de la nota";
 
-        if(helper == null) helper = DBHelper.getInstance(this);
-        Nota nota = helper.getNotas().get(position);
+        Nota nota = helper.getNota(idNota);
 
         this.idNota = nota.getIdNota();
 
         EditText titulo = findViewById(R.id.et_modifynota_title);
         CheckBox checkBox = findViewById(R.id.cb_modifynota_includecategory);
+        CheckBox checkBoxInherit = findViewById(R.id.cb_modifynota_inheritcolor);
         Spinner spinner = findViewById(R.id.sp_modifynota_categoria);
         EditText texto = findViewById(R.id.et_modifynota_text);
 
@@ -147,6 +144,10 @@ public class ModifyNotasActivity extends AppCompatActivity {
         if(nota.getIdCategoria()!=-1){
             checkBox.setChecked(true);
             spinner.setVisibility(View.VISIBLE);
+            spinner.setSelection(posicionesCategoria.indexOf(nota.getIdCategoria()));
+            if(nota.getColor() == helper.getCategoria(nota.getIdCategoria()).getColor()){
+                checkBoxInherit.setChecked(true);
+            }
         }
         texto.setText(nota.getTexto());
 
@@ -155,7 +156,7 @@ public class ModifyNotasActivity extends AppCompatActivity {
     private void populateSpinner(){
         posicionesCategoria = new ArrayList<>();
 
-        Spinner spinnerCategorias = (Spinner) findViewById(R.id.sp_modifynota_categoria);
+        Spinner spinnerCategorias = findViewById(R.id.sp_modifynota_categoria);
 
         ArrayList<Categoria> categorias = new ArrayList<>(helper.getCategorias());
         ArrayList<String> categoriasStrings = new ArrayList<>();
@@ -176,6 +177,7 @@ public class ModifyNotasActivity extends AppCompatActivity {
         Button button = findViewById(R.id.bt_modifynota_guardar);
         EditText titulo = findViewById(R.id.et_modifynota_title);
         EditText texto = findViewById(R.id.et_modifynota_text);
+        CheckBox checkBoxInherit = findViewById(R.id.cb_modifynota_inheritcolor);
 
         button.setOnClickListener(v -> {
             Nota nota = new Nota();
@@ -185,7 +187,12 @@ public class ModifyNotasActivity extends AppCompatActivity {
             nota.setColor(this.color);
 
             if(spinnerCategoria.getVisibility() == View.VISIBLE){
-                nota.setIdCategoria(posicionesCategoria.get(spinnerCategoria.getSelectedItemPosition()));
+                Integer idCategoria = posicionesCategoria.get(spinnerCategoria.getSelectedItemPosition());
+                nota.setIdCategoria(idCategoria);
+                if(checkBoxInherit.isChecked()){
+                    Categoria cat = helper.getCategoria(idCategoria);
+                    nota.setColor(cat.getColor());
+                }
             } else{
                 nota.setIdCategoria(-1);
             }
