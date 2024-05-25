@@ -2,6 +2,7 @@ package com.jmormar.opentasker.fragments;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,14 +21,14 @@ import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.jmormar.opentasker.R;
-import com.jmormar.opentasker.adapters.EventoAdapter;
-import com.jmormar.opentasker.adapters.NotaAdapter;
-import com.jmormar.opentasker.models.Evento;
-import com.jmormar.opentasker.models.Nota;
 import com.jmormar.opentasker.activities.objectbuilders.NewEventoActivity;
 import com.jmormar.opentasker.activities.objectbuilders.NewNotaActivity;
 import com.jmormar.opentasker.activities.objectmodifiers.ModifyEventosActivity;
 import com.jmormar.opentasker.activities.objectmodifiers.ModifyNotasActivity;
+import com.jmormar.opentasker.adapters.EventoAdapter;
+import com.jmormar.opentasker.adapters.NotaAdapter;
+import com.jmormar.opentasker.models.Evento;
+import com.jmormar.opentasker.models.Nota;
 import com.jmormar.opentasker.util.DBHelper;
 
 import java.util.List;
@@ -161,7 +162,23 @@ public class HomeFragment extends Fragment implements NotaAdapter.OnNoteClickLis
         notaAdapter.setOnNoteClickListener(this);
 
         recyclerViewNotas.setAdapter(notaAdapter);
-        recyclerViewNotas.setLayoutManager(new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL));
+        setLayoutManager(getResources().getConfiguration().orientation);
+    }
+
+    private void setLayoutManager(int orientation) {
+        int spanCount;
+        if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            spanCount = 4;
+        } else {
+            spanCount = 2;
+        }
+        recyclerViewNotas.setLayoutManager(new StaggeredGridLayoutManager(spanCount, StaggeredGridLayoutManager.VERTICAL));
+    }
+
+    @Override
+    public void onConfigurationChanged(@NonNull Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        setLayoutManager(newConfig.orientation);
     }
 
     @Override
