@@ -1,9 +1,7 @@
 package com.jmormar.opentasker.util;
 
-import android.annotation.SuppressLint;
 import android.content.ContentValues;
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
@@ -54,14 +52,14 @@ public class DBHelper extends SQLiteOpenHelper {
     // AGENDA
     private static final String SQL_CREATE_AGENDA =
             """
-                    CREATE TABLE Agenda (
-                    idAgenda INTEGER PRIMARY KEY,
-                    nombre TEXT NOT NULL,
-                    fechaInicio TEXT,
-                    fechaFinal TEXT ,
-                    beginningDay INTEGER,
-                    weekLength INTEGER
-                    )
+            CREATE TABLE Agenda (
+                idAgenda INTEGER PRIMARY KEY,
+                nombre TEXT NOT NULL,
+                fechaInicio TEXT,
+                fechaFinal TEXT ,
+                beginningDay INTEGER,
+                weekLength INTEGER
+            );
             """;
 
 
@@ -135,11 +133,11 @@ public class DBHelper extends SQLiteOpenHelper {
     private static final String SQL_CREATE_HORARIO =
             """
             CREATE TABLE Horario (
-                              idHorario INTEGER PRIMARY KEY,
-                              idAgenda INTEGER,
-                              FOREIGN KEY(idAgenda) REFERENCES Agenda(idAgenda)
-                              ON DELETE CASCADE
-                              )
+                  idHorario INTEGER PRIMARY KEY,
+                  idAgenda INTEGER,
+                  FOREIGN KEY(idAgenda) REFERENCES Agenda(idAgenda)
+                  ON DELETE CASCADE
+            )
             """;
     private static final String SQL_DELETE_HORARIO = "DROP TABLE IF EXISTS Horario";
 
@@ -170,13 +168,13 @@ public class DBHelper extends SQLiteOpenHelper {
     //No hace falta getHorario porque como las horas no van a tener nada más que 1 horario se hace desde el getHoras()
     private static final String SQL_CREATE_HORA =
             """
-                CREATE TABLE Hora (
-                     idHora INTEGER PRIMARY KEY,
-                     fechayTiempoInicio TEXT,
-                     totalTiempo TEXT,
-                     idHorario INTEGER,
-                     FOREIGN KEY(idHorario) REFERENCES Horario(idHorario)
-                     ) ;
+            CREATE TABLE Hora (
+                 idHora INTEGER PRIMARY KEY,
+                 fechayTiempoInicio TEXT,
+                 totalTiempo TEXT,
+                 idHorario INTEGER,
+                 FOREIGN KEY(idHorario) REFERENCES Horario(idHorario)
+            );
             """;
     private static final String SQL_DELETE_HORA = "DROP TABLE IF EXISTS Hora";
 
@@ -265,12 +263,12 @@ public class DBHelper extends SQLiteOpenHelper {
     private static final String SQL_CREATE_CATEGORIA =
             """
             CREATE TABLE Categoria (
-                    idCategoria INTEGER PRIMARY KEY,
-                    nombre TEXT,
-                    color INTEGER,
-                    idAgenda INTEGER,
-                    FOREIGN KEY(idAgenda) REFERENCES Agenda(idAgenda)
-                    );
+                idCategoria INTEGER PRIMARY KEY,
+                nombre TEXT,
+                color INTEGER,
+                idAgenda INTEGER,
+                FOREIGN KEY(idAgenda) REFERENCES Agenda(idAgenda)
+            );
             """;
     private static final String SQL_DELETE_CATEGORIA = "DROP TABLE IF EXISTS Categoria";
 
@@ -477,13 +475,13 @@ public class DBHelper extends SQLiteOpenHelper {
     private static final String SQL_CREATE_NOTA =
             """
             CREATE TABLE Nota (
-                    idNota INTEGER PRIMARY KEY,
-                    titulo TEXT,
-                    texto TEXT,
-                    color INTEGER,
-                    idCategoria INTEGER,
-                    FOREIGN KEY(idCategoria) REFERENCES Categoria(idCategoria)
-                    );
+                idNota INTEGER PRIMARY KEY,
+                titulo TEXT,
+                texto TEXT,
+                color INTEGER,
+                idCategoria INTEGER,
+                FOREIGN KEY(idCategoria) REFERENCES Categoria(idCategoria)
+            );
             """;
     private static final String SQL_DELETE_NOTA = "DROP TABLE IF EXISTS Nota";
 
@@ -577,9 +575,9 @@ public class DBHelper extends SQLiteOpenHelper {
     private static final String SQL_CREATE_POMODORO =
             """
             CREATE TABLE Pomodoro (
-                    idPomodoro INTEGER PRIMARY KEY,
-                    nombre TEXT
-                    );
+                idPomodoro INTEGER PRIMARY KEY,
+                nombre TEXT
+            );
             """;
     private static final String SQL_DELETE_POMODORO = "DROP TABLE IF EXISTS Pomodoro";
 
@@ -659,9 +657,9 @@ public class DBHelper extends SQLiteOpenHelper {
     private static final String SQL_CREATE_TIPO =
             """
             CREATE TABLE Tipo (
-                    idTipo INTEGER PRIMARY KEY,
-                    nombre TEXT
-                    );
+                idTipo INTEGER PRIMARY KEY,
+                nombre TEXT
+            );
             """;
     private static final String SQL_DELETE_TIPO = "DROP TABLE IF EXISTS Tipo";
 
@@ -749,13 +747,13 @@ public class DBHelper extends SQLiteOpenHelper {
     private static final String SQL_CREATE_TIEMPO =
             """
             CREATE TABLE Tiempo (
-                    idTiempo INTEGER PRIMARY KEY,
-                    setSeconds INTEGER,
-                    updatedSeconds INTEGER,
-                    rest INTEGER,
-                    idPomodoro INTEGER,
-                    FOREIGN KEY(idPomodoro) REFERENCES Pomodoro(idPomodoro) ON DELETE CASCADE
-                    );
+                idTiempo INTEGER PRIMARY KEY,
+                setSeconds INTEGER,
+                updatedSeconds INTEGER,
+                rest INTEGER,
+                idPomodoro INTEGER,
+                FOREIGN KEY(idPomodoro) REFERENCES Pomodoro(idPomodoro) ON DELETE CASCADE
+            );
             """;
     private static final String SQL_DELETE_TIEMPO = "DROP TABLE IF EXISTS Tiempo";
 
@@ -818,41 +816,15 @@ public class DBHelper extends SQLiteOpenHelper {
         return db.update("Tiempo", values, selection, selectionArgs) > 0;
     }
 
-    public Tiempo getTiempo(int idTiempo) {
-        SQLiteDatabase db = this.getReadableDatabase();
-
-        String[] projection = {"idTiempo", "setSeconds", "updatedSeconds", "rest", "idPomodoro"};
-        String[] selectionArgs = {String.valueOf(idTiempo)};
-        String selection = "idTiempo = ?";
-
-        Cursor c = db.query("Tiempo", projection, selection, selectionArgs, null, null, null);
-        List<Tiempo> lista = new ArrayList<>();
-
-        while (c.moveToNext()) {
-            Tiempo tp = new Tiempo();
-            tp.setIdTiempo(c.getInt(c.getColumnIndexOrThrow("idTiempo")));
-            tp.setSetSeconds(c.getInt(c.getColumnIndexOrThrow("setSeconds")));
-            tp.setUpdatedSeconds(c.getInt(c.getColumnIndexOrThrow("updatedSeconds")));
-            tp.setRest(c.getInt(c.getColumnIndexOrThrow("rest"))==1);
-            tp.setIdPomodoro(c.getInt(c.getColumnIndexOrThrow("idPomodoro")));
-            lista.add(tp);
-        }
-        c.close();
-
-        if (!lista.isEmpty()) return lista.get(0);
-
-        return null;
-    }
-
     //POSITION
 
     private static final String SQL_CREATE_POSITION =
             """
             CREATE TABLE Position (
-                    idPomodoro INTEGER PRIMARY KEY,
-                    position INTEGER,
-                    FOREIGN KEY(idPomodoro) REFERENCES Pomodoro(idPomodoro)
-                    );
+                idPomodoro INTEGER PRIMARY KEY,
+                position INTEGER,
+                FOREIGN KEY(idPomodoro) REFERENCES Pomodoro(idPomodoro)
+            );
             """;
 
     private static final String SQL_DELETE_POSITION = "DROP TABLE IF EXISTS Position";
