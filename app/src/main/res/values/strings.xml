@@ -56,6 +56,7 @@
     <string name="nombre_categoria">Name of the category</string>
     <string name="modify_categoria">Modify category</string>
     <string name="addcategoria">Add category</string>
+    <string name="misc">Misc</string>
 
     <string-array name="dias_semana">
         <item>Lunes</item>

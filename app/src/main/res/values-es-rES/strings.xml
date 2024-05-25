@@ -53,4 +53,5 @@
     <string name="nombre_categoria">Nombre de la categoría</string>
     <string name="modify_categoria">Modificar categoría</string>
     <string name="addcategoria">Añadir categoría</string>
+    <string name="misc">Otros</string>
 </resources>
