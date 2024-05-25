@@ -21,8 +21,6 @@ import com.jmormar.opentasker.R;
 import com.jmormar.opentasker.activities.objectbuilders.NewCategoriaActivity;
 import com.jmormar.opentasker.activities.objectmodifiers.ModifyCategoriaActivity;
 import com.jmormar.opentasker.adapters.CategoriaAdapter;
-import com.jmormar.opentasker.adapters.CategoriaAdapter;
-import com.jmormar.opentasker.models.Categoria;
 import com.jmormar.opentasker.models.Categoria;
 import com.jmormar.opentasker.util.DBHelper;
 

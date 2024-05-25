@@ -1,9 +1,5 @@
 package com.jmormar.opentasker.models;
 
-import android.os.CountDownTimer;
-
-import java.time.Duration;
-
 import lombok.Data;
 
 /**

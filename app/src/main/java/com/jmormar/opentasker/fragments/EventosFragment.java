@@ -3,6 +3,10 @@ package com.jmormar.opentasker.fragments;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -12,17 +16,12 @@ import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.TextView;
-
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.jmormar.opentasker.R;
-import com.jmormar.opentasker.adapters.EventoAdapter;
-import com.jmormar.opentasker.models.Evento;
 import com.jmormar.opentasker.activities.objectbuilders.NewEventoActivity;
 import com.jmormar.opentasker.activities.objectmodifiers.ModifyEventosActivity;
+import com.jmormar.opentasker.adapters.EventoAdapter;
+import com.jmormar.opentasker.models.Evento;
 import com.jmormar.opentasker.util.DBHelper;
 
 import java.util.List;
