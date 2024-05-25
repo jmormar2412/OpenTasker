@@ -78,7 +78,6 @@
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_below="@id/et_nuevanota_text"
-        android:onClick="crearNota"
         android:layout_margin="10sp"
         android:text="@string/guardar" />
 

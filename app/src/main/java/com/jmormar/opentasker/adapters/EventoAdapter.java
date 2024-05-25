@@ -77,12 +77,19 @@ public class EventoAdapter extends RecyclerView.Adapter<EventoAdapter.EventoView
 
         void bind(Evento evento) {
             nombre.setText(evento.getNombre());
+
             SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd", new Locale("es_ES"));
             fecha.setText(evento.getFecha() != null ? dateFormatter.format(evento.getFecha()) : "");
+
             Tipo tp = helper.getTipo(evento.getIdTipo());
-            tipo.setText(tp.getNombre());
+            if (tp != null) tipo.setText(tp.getNombre());
+
             Categoria cat = helper.getCategoria(evento.getIdCategoria());
-            categoria.setText(cat.getNombre());
+            if(cat != null){
+                categoria.setText(cat.getNombre());
+                itemView.setBackgroundColor(cat.getColor());
+            }
+
             itemView.setVisibility(View.VISIBLE); // Make sure the itemView is visible
             itemView.setLayoutParams(new RecyclerView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
         }

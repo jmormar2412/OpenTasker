@@ -16,7 +16,7 @@ import java.util.List;
 import lombok.Setter;
 
 public class TipoAdapter extends RecyclerView.Adapter<TipoAdapter.TipoViewHolder> {
-    private List<Tipo> tipos;
+    private final List<Tipo> tipos;
     @Setter
     private OnTipoClickListener onTipoClickListener;
 

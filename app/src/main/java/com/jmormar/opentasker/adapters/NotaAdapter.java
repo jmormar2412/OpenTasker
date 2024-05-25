@@ -1,7 +1,6 @@
 package com.jmormar.opentasker.adapters;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.LayerDrawable;
 import android.view.LayoutInflater;
@@ -10,7 +9,6 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.jmormar.opentasker.R;
@@ -71,28 +69,20 @@ public class NotaAdapter extends RecyclerView.Adapter<NotaAdapter.NotaViewHolder
         void bind(Nota nota) {
             titulo.setText(nota.getTitulo() == null?"":nota.getTitulo());
             if(nota.getIdCategoria() == -1){
-                categoria.setText("");
+                categoria.setVisibility(View.GONE);
             } else{
+                categoria.setVisibility(View.VISIBLE);
                 Categoria cat = helper.getCategoria(nota.getIdCategoria());
-                categoria.setText(cat.getNombre());
+                if(cat != null) categoria.setText(cat.getNombre());
             }
             texto.setText(nota.getTexto()==null?"":nota.getTexto());
-            setBackgroundColor(darkenColor(nota.getColor()));
+            setBackgroundColor(nota.getColor());
         }
 
         public void setBackgroundColor(int color){
             LayerDrawable layerDrawable = (LayerDrawable) itemView.getBackground();
             GradientDrawable dynamicColorLayer = (GradientDrawable) layerDrawable.findDrawableByLayerId(R.id.dynamic_color_layer);
             dynamicColorLayer.setColor(color);
-        }
-
-        public static int darkenColor(int color) {
-            float factor = 0.55f; // Adjust this factor to control the darkness level
-            int alpha = Math.round(Color.alpha(color) * factor);
-            int red = Color.red(color);
-            int green = Color.green(color);
-            int blue = Color.blue(color);
-            return Color.argb(alpha, red, green, blue);
         }
     }
 

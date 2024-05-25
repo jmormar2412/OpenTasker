@@ -11,6 +11,7 @@ import androidx.core.view.WindowInsetsCompat;
 
 import com.jmormar.opentasker.R;
 import com.jmormar.opentasker.models.Categoria;
+import com.jmormar.opentasker.util.ColorManager;
 import com.jmormar.opentasker.util.DBHelper;
 
 import top.defaults.colorpicker.ColorWheelView;
@@ -20,6 +21,7 @@ public class ModifyCategoriaActivity extends AppCompatActivity {
     private EditText etNombre;
     private ColorWheelView colorWheelView;
     private Categoria categoria;
+    private boolean darkened;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,6 +37,11 @@ public class ModifyCategoriaActivity extends AppCompatActivity {
         setElements();
         loadData();
 
+
+        colorWheelView.subscribe((color, fromUser, shouldPropagate) ->{
+            if(shouldPropagate) darkened = false;
+        }) ;
+
         findViewById(R.id.bt_guardar).setOnClickListener(v -> actualizar());
     }
 
@@ -45,7 +52,9 @@ public class ModifyCategoriaActivity extends AppCompatActivity {
         }
 
         categoria.setNombre(etNombre.getText().toString());
-        categoria.setColor(colorWheelView.getColor());
+
+        if (darkened) categoria.setColor(colorWheelView.getColor());
+        else categoria.setColor(ColorManager.darkenColor(colorWheelView.getColor()));
 
         assert helper.actualizarCategoria(categoria) : "No se ha podido actualizar la categoria";
         finish();
@@ -59,6 +68,8 @@ public class ModifyCategoriaActivity extends AppCompatActivity {
 
         etNombre.setText(categoria.getNombre());
         colorWheelView.setColor(categoria.getColor(), false);
+
+        darkened = true;
     }
 
     private void setElements() {

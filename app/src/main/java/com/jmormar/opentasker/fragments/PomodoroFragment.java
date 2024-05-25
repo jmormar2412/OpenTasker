@@ -2,7 +2,6 @@ package com.jmormar.opentasker.fragments;
 
 import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.InputType;
@@ -16,16 +15,15 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.DividerItemDecoration;
-import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.jmormar.opentasker.R;
+import com.jmormar.opentasker.activities.TiemposActivity;
 import com.jmormar.opentasker.adapters.PomodoroAdapter;
 import com.jmormar.opentasker.models.Pomodoro;
-import com.jmormar.opentasker.activities.TiemposActivity;
 import com.jmormar.opentasker.util.DBHelper;
 
 import java.util.List;
@@ -99,7 +97,7 @@ public class PomodoroFragment extends Fragment implements PomodoroAdapter.OnPomo
             public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
                 int position = viewHolder.getAdapterPosition();
                 Pomodoro pomodoro = helper.getPomodoros().get(position);
-                helper.deletePomodoro(pomodoro.getIdPomodoro());
+                assert helper.deletePomodoro(pomodoro.getIdPomodoro()) : "Error al eliminar pomodoro";
                 cargarPomodoros();
             }
         };
