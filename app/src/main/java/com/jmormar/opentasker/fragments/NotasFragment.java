@@ -2,22 +2,24 @@ package com.jmormar.opentasker.fragments;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.jmormar.opentasker.R;
-import com.jmormar.opentasker.adapters.NotaAdapter;
-import com.jmormar.opentasker.models.Nota;
 import com.jmormar.opentasker.activities.objectbuilders.NewNotaActivity;
 import com.jmormar.opentasker.activities.objectmodifiers.ModifyNotasActivity;
+import com.jmormar.opentasker.adapters.NotaAdapter;
+import com.jmormar.opentasker.models.Nota;
 import com.jmormar.opentasker.util.DBHelper;
 
 import java.util.List;
@@ -94,6 +96,23 @@ public class NotasFragment extends Fragment implements NotaAdapter.OnNoteClickLi
         notaAdapter.setOnNoteClickListener(this);
 
         recyclerViewNotas.setAdapter(notaAdapter);
+        setLayoutManager(getResources().getConfiguration().orientation);
+    }
+
+    private void setLayoutManager(int orientation) {
+        int spanCount;
+        if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            spanCount = 4;
+        } else {
+            spanCount = 2;
+        }
+        recyclerViewNotas.setLayoutManager(new StaggeredGridLayoutManager(spanCount, StaggeredGridLayoutManager.VERTICAL));
+    }
+
+    @Override
+    public void onConfigurationChanged(@NonNull Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        setLayoutManager(newConfig.orientation);
     }
 
     @Override

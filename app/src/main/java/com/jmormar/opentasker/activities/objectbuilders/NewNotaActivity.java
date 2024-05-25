@@ -1,9 +1,6 @@
 package com.jmormar.opentasker.activities.objectbuilders;
 
-import android.content.Context;
-import android.content.res.Resources;
 import android.os.Bundle;
-import android.view.Gravity;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -13,27 +10,33 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.jmormar.opentasker.R;
-import com.jmormar.opentasker.adapters.NotaAdapter;
 import com.jmormar.opentasker.models.Categoria;
 import com.jmormar.opentasker.models.Nota;
+import com.jmormar.opentasker.util.ColorManager;
 import com.jmormar.opentasker.util.DBHelper;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import top.defaults.colorpicker.ColorPickerPopup;
+import top.defaults.colorpicker.ColorWheelView;
 
 public class NewNotaActivity extends AppCompatActivity {
 
     private DBHelper helper;
     private List<Integer> posicionesCategoria;
     private int color;
+
+    private Button btGuardar, btEscogerColor;
+    private EditText titulo, texto;
+    private Spinner spinnerCategoria;
+    private CheckBox checkBoxIncludeCategory, checkBoxInherit;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,29 +50,16 @@ public class NewNotaActivity extends AppCompatActivity {
         });
 
         helper = DBHelper.getInstance(this);
-        Button escogerColor = findViewById(R.id.bt_nuevanota_pickcolor);
 
-        escogerColor.setOnClickListener(v ->
-                new ColorPickerPopup.Builder(NewNotaActivity.this)
-                .showIndicator(false)
-                .showValue(false)
-                .enableBrightness(false)
-                .enableAlpha(false)
-                .okTitle("Escoger")
-                .cancelTitle("Cancelar")
-                .build()
-                .show(v, new ColorPickerPopup.ColorPickerObserver() {
-                    @Override
-                    public void onColorPicked(int color) {
-                        NewNotaActivity.this.color = color;
-                        NewNotaActivity.this.findViewById(R.id.bt_nuevanota_pickcolor).setBackgroundColor(NotaAdapter.NotaViewHolder.darkenColor(color));
-                    }
-                }));
+        setElements();
+        setListeners();
+        populateSpinner();
+    }
 
-        CheckBox checkBox = findViewById(R.id.cb_nuevanota_includecategory);
-        Spinner spinnerCategoria = findViewById(R.id.sp_nuevanota_categoria);
-        CheckBox checkBoxInherit = findViewById(R.id.cb_nuevanota_inheritcolor);
-        checkBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
+    private void setListeners() {
+        btEscogerColor.setOnClickListener(v ->  showColorPicker());
+
+        checkBoxIncludeCategory.setOnCheckedChangeListener((buttonView, isChecked) -> {
             if(isChecked){
                 spinnerCategoria.setVisibility(View.VISIBLE);
                 checkBoxInherit.setVisibility(View.VISIBLE);
@@ -82,13 +72,43 @@ public class NewNotaActivity extends AppCompatActivity {
 
         checkBoxInherit.setOnCheckedChangeListener(((buttonView, isChecked) -> {
             if(isChecked) {
-                escogerColor.setVisibility(View.GONE);
+                btEscogerColor.setVisibility(View.GONE);
                 return;
             }
-            escogerColor.setVisibility(View.VISIBLE);
+            btEscogerColor.setVisibility(View.VISIBLE);
         }));
 
-        populateSpinner();
+        btGuardar.setOnClickListener(v -> crearNota());
+    }
+
+    private void showColorPicker() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Escoger color");
+
+        final ColorWheelView colorWheel = new ColorWheelView(this);
+        builder.setView(colorWheel);
+
+        builder.setPositiveButton("Escoger", (dialog, which) -> {
+            this.color = colorWheel.getColor();
+            this.btEscogerColor.setBackgroundColor(ColorManager.darkenColor(this.color));
+        });
+        builder.setNegativeButton("Cancelar", (dialog, which) -> {
+            dialog.cancel();
+        });
+
+        builder.show();
+    }
+
+    private void setElements() {
+        this.btGuardar = findViewById(R.id.bt_nuevanota_guardar);
+        this.spinnerCategoria = findViewById(R.id.sp_nuevanota_categoria);
+        this.titulo = findViewById(R.id.et_nuevanota_title);
+
+        this.texto = findViewById(R.id.et_nuevanota_text);
+        this.checkBoxInherit = findViewById(R.id.cb_nuevanota_inheritcolor);
+
+        this.checkBoxIncludeCategory = findViewById(R.id.cb_nuevanota_includecategory);
+        this.btEscogerColor = findViewById(R.id.bt_nuevanota_pickcolor);
     }
 
     private void populateSpinner(){
@@ -96,7 +116,6 @@ public class NewNotaActivity extends AppCompatActivity {
 
         Spinner scategorias = findViewById(R.id.sp_nuevanota_categoria);
 
-        //Para el de categorias
         ArrayList<Categoria> cats = new ArrayList<>(helper.getCategorias());
         ArrayList<String> categorias = new ArrayList<>();
 
@@ -111,19 +130,13 @@ public class NewNotaActivity extends AppCompatActivity {
         scategorias.setAdapter(adcategorias);
     }
 
-    public void crearNota(View view) {
+    public void crearNota() {
         if(helper==null) helper = DBHelper.getInstance(this);
-
-        Button button = findViewById(R.id.bt_nuevanota_guardar);
-        Spinner spinnerCategoria = findViewById(R.id.sp_nuevanota_categoria);
-        EditText titulo = findViewById(R.id.et_nuevanota_title);
-        EditText texto = findViewById(R.id.et_nuevanota_text);
-        CheckBox checkBoxInherit = findViewById(R.id.cb_nuevanota_inheritcolor);
 
         Nota nota = new Nota();
         nota.setTitulo(titulo.getText().toString());
         nota.setTexto(texto.getText().toString());
-        nota.setColor(this.color);
+        nota.setColor(ColorManager.darkenColor(this.color));
 
         if(spinnerCategoria.getVisibility() == View.VISIBLE){
             Integer idCategoria = posicionesCategoria.get(spinnerCategoria.getSelectedItemPosition());
@@ -143,21 +156,9 @@ public class NewNotaActivity extends AppCompatActivity {
             setResult(RESULT_OK);
             finish();
         } else{
-            button.setEnabled(true);
-            button.setClickable(true);
-            showError();
+            btGuardar.setEnabled(true);
+            btGuardar.setClickable(true);
+            Toast.makeText(this, "Error al insertar nota", Toast.LENGTH_SHORT).show();
         }
-    }
-
-    private void showError() {
-        String message;
-        Resources res = getResources();
-        int duration;
-        duration = Toast.LENGTH_LONG;
-        message=res.getString(R.string.error_bd);
-        Context context = this.getApplicationContext();
-        Toast toast = Toast.makeText(context, message, duration);
-        toast.setGravity(Gravity.CENTER, 0, 0);
-        toast.show();
     }
 }

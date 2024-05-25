@@ -1,15 +1,7 @@
 package com.jmormar.opentasker.activities.objectmodifiers;
 
-import android.content.Context;
 import android.content.Intent;
-import android.content.res.Resources;
-import android.graphics.Color;
 import android.os.Bundle;
-import android.text.SpannableString;
-import android.text.style.ForegroundColorSpan;
-import android.view.Gravity;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -19,28 +11,33 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
-import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.jmormar.opentasker.R;
-import com.jmormar.opentasker.adapters.NotaAdapter;
 import com.jmormar.opentasker.models.Categoria;
 import com.jmormar.opentasker.models.Nota;
+import com.jmormar.opentasker.util.ColorManager;
 import com.jmormar.opentasker.util.DBHelper;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import top.defaults.colorpicker.ColorPickerPopup;
+import top.defaults.colorpicker.ColorWheelView;
 
 public class ModifyNotasActivity extends AppCompatActivity {
-    private int idNota, color;
+    private int color;
+    private Nota nota;
     private DBHelper helper;
     private List<Integer> posicionesCategoria;
+
+    private EditText titulo, texto;
+    private CheckBox checkBox, checkBoxInherit;
+    private Spinner spinner;
+    private Button escogerColor, btBorrar, btGuardar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,35 +51,36 @@ public class ModifyNotasActivity extends AppCompatActivity {
         });
 
         helper = DBHelper.getInstance(this);
-        Button escogerColor = findViewById(R.id.bt_modifynota_pickcolor);
 
-        escogerColor.setOnClickListener(v ->
-                new ColorPickerPopup.Builder(ModifyNotasActivity.this)
-                        .showIndicator(false)
-                        .showValue(false)
-                        .enableBrightness(false)
-                        .enableAlpha(false)
-                        .okTitle("Escoger")
-                        .cancelTitle("Cancelar")
-                        .build()
-                        .show(v, new ColorPickerPopup.ColorPickerObserver() {
-                            @Override
-                            public void onColorPicked(int color) {
-                                ModifyNotasActivity.this.color = color;
-                                ModifyNotasActivity.this.findViewById(R.id.bt_modifynota_pickcolor).setBackgroundColor(NotaAdapter.NotaViewHolder.darkenColor(color));
-                            }
-                        }));
+        setElements();
+        setListeners();
+        populateSpinner();
+        loadData();
+    }
 
-        CheckBox checkBox = findViewById(R.id.cb_modifynota_includecategory);
-        Spinner spinnerCategoria = findViewById(R.id.sp_modifynota_categoria);
-        CheckBox checkBoxInherit = findViewById(R.id.cb_modifynota_inheritcolor);
+    private void setElements() {
+        this.titulo = findViewById(R.id.et_modifynota_title);
+        this.checkBox = findViewById(R.id.cb_modifynota_includecategory);
+        this.checkBoxInherit = findViewById(R.id.cb_modifynota_inheritcolor);
+
+        this.spinner = findViewById(R.id.sp_modifynota_categoria);
+        this.texto = findViewById(R.id.et_modifynota_text);
+        this.escogerColor = findViewById(R.id.bt_modifynota_pickcolor);
+
+        this.btBorrar = findViewById(R.id.bt_modifynota_delete);
+        this.btGuardar = findViewById(R.id.bt_modifynota_guardar);
+    }
+
+    private void setListeners() {
+        escogerColor.setOnClickListener(v ->  showColorPicker());
+
         checkBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
             if(isChecked){
-                spinnerCategoria.setVisibility(View.VISIBLE);
+                spinner.setVisibility(View.VISIBLE);
                 checkBoxInherit.setVisibility(View.VISIBLE);
                 return;
             }
-            spinnerCategoria.setVisibility(View.GONE);
+            spinner.setVisibility(View.GONE);
             checkBoxInherit.setChecked(false);
             checkBoxInherit.setVisibility(View.GONE);
         });
@@ -95,32 +93,27 @@ public class ModifyNotasActivity extends AppCompatActivity {
             escogerColor.setVisibility(View.VISIBLE);
         }));
 
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-
-        aceptar();
-        populateSpinner();
-        loadData();
+        btGuardar.setOnClickListener(v -> aceptar());
+        btBorrar.setOnClickListener(v -> borrarNota());
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_opciones_nota, menu);
-        MenuItem menuItem = menu.getItem(0);
-        assert menuItem.getTitle() != null : "No se ha recuperado el título de la opción";
-        SpannableString spannableString = new SpannableString(menuItem.getTitle().toString());
-        spannableString.setSpan(new ForegroundColorSpan(Color.WHITE), 0, spannableString.length(), 0);
-        menuItem.setTitle(spannableString);
-        return true;
-    }
+    private void showColorPicker() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Escoger color");
 
-    @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        if (item.getItemId() == R.id.menu_delete) {
-            borrarNota();
-            return true;
-        }
-        return false;
+        final ColorWheelView colorWheel = new ColorWheelView(this);
+        colorWheel.setColor(nota.getColor(), false);
+        builder.setView(colorWheel);
+
+        builder.setPositiveButton("Escoger", (dialog, which) -> {
+            this.color = ColorManager.darkenColor(colorWheel.getColor());
+            this.escogerColor.setBackgroundColor(this.color);
+        });
+        builder.setNegativeButton("Cancelar", (dialog, which) -> {
+            dialog.cancel();
+        });
+
+        builder.show();
     }
 
     private void loadData(){
@@ -130,27 +123,23 @@ public class ModifyNotasActivity extends AppCompatActivity {
 
         assert idNota != -1 : "No se ha recuperado el id de la nota";
 
-        Nota nota = helper.getNota(idNota);
-
-        this.idNota = nota.getIdNota();
-
-        EditText titulo = findViewById(R.id.et_modifynota_title);
-        CheckBox checkBox = findViewById(R.id.cb_modifynota_includecategory);
-        CheckBox checkBoxInherit = findViewById(R.id.cb_modifynota_inheritcolor);
-        Spinner spinner = findViewById(R.id.sp_modifynota_categoria);
-        EditText texto = findViewById(R.id.et_modifynota_text);
+        this.nota = helper.getNota(idNota);
+        this.color = nota.getColor();
 
         titulo.setText(nota.getTitulo());
         if(nota.getIdCategoria()!=-1){
             checkBox.setChecked(true);
             spinner.setVisibility(View.VISIBLE);
             spinner.setSelection(posicionesCategoria.indexOf(nota.getIdCategoria()));
-            if(nota.getColor() == helper.getCategoria(nota.getIdCategoria()).getColor()){
+            Categoria categoria = helper.getCategoria(nota.getIdCategoria());
+
+            if(categoria != null && nota.getColor() == categoria.getColor()){
                 checkBoxInherit.setChecked(true);
             }
         }
         texto.setText(nota.getTexto());
 
+        escogerColor.setBackgroundColor(ColorManager.darkenColor(nota.getColor()));
     }
 
     private void populateSpinner(){
@@ -173,56 +162,39 @@ public class ModifyNotasActivity extends AppCompatActivity {
     }
 
     private void aceptar() {
-        Spinner spinnerCategoria = findViewById(R.id.sp_modifynota_categoria);
-        Button button = findViewById(R.id.bt_modifynota_guardar);
-        EditText titulo = findViewById(R.id.et_modifynota_title);
-        EditText texto = findViewById(R.id.et_modifynota_text);
-        CheckBox checkBoxInherit = findViewById(R.id.cb_modifynota_inheritcolor);
+        if(titulo.getText().toString().isEmpty()){
+            titulo.setError("El título no puede estar vacío");
+            return;
+        }
 
-        button.setOnClickListener(v -> {
-            Nota nota = new Nota();
-            nota.setIdNota(idNota);
-            nota.setTitulo(titulo.getText().toString());
-            nota.setTexto(texto.getText().toString());
-            nota.setColor(this.color);
+        this.nota.setTitulo(titulo.getText().toString());
+        this.nota.setTexto(texto.getText().toString());
+        this.nota.setColor(this.color);
 
-            if(spinnerCategoria.getVisibility() == View.VISIBLE){
-                Integer idCategoria = posicionesCategoria.get(spinnerCategoria.getSelectedItemPosition());
-                nota.setIdCategoria(idCategoria);
-                if(checkBoxInherit.isChecked()){
-                    Categoria cat = helper.getCategoria(idCategoria);
-                    nota.setColor(cat.getColor());
-                }
-            } else{
-                nota.setIdCategoria(-1);
+        if(spinner.getVisibility() == View.VISIBLE){
+            Integer idCategoria = posicionesCategoria.get(spinner.getSelectedItemPosition());
+            nota.setIdCategoria(idCategoria);
+            if(checkBoxInherit.isChecked()){
+                Categoria cat = helper.getCategoria(idCategoria);
+                nota.setColor(cat.getColor());
             }
+        } else{
+            nota.setIdCategoria(-1);
+        }
 
-            boolean insertado;
-            insertado = helper.actualizarNota(nota);
-            if(insertado){
-                finish();
-            } else{
-                button.setEnabled(true);
-                button.setClickable(true);
-                showError();
-            }
-        });
+        boolean insertado;
+        insertado = helper.actualizarNota(nota);
+        if(insertado){
+            finish();
+        } else{
+            btGuardar.setEnabled(true);
+            btGuardar.setClickable(true);
+            Toast.makeText(this, "No se ha podido actualizar la nota", Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void borrarNota(){
-        helper.deleteNota(idNota);
+        assert helper.deleteNota(this.nota.getIdNota()) : "No se ha podido borrar la nota";
         finish();
-    }
-
-    private void showError() {
-        String message;
-        Resources res = getResources();
-        int duration;
-        duration = Toast.LENGTH_LONG;
-        message=res.getString(R.string.error_bd);
-        Context context = this.getApplicationContext();
-        Toast toast = Toast.makeText(context, message, duration);
-        toast.setGravity(Gravity.CENTER, 0, 0);
-        toast.show();
     }
 }

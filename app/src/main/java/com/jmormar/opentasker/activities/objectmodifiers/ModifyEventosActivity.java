@@ -2,16 +2,11 @@ package com.jmormar.opentasker.activities.objectmodifiers;
 
 import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
-import android.content.Context;
 import android.content.Intent;
-import android.content.res.Resources;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.Gravity;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
@@ -21,6 +16,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+
 import com.jmormar.opentasker.R;
 import com.jmormar.opentasker.models.Categoria;
 import com.jmormar.opentasker.models.Evento;
@@ -41,7 +37,9 @@ public class ModifyEventosActivity extends AppCompatActivity {
     private DBHelper helper;
     private List<Integer> posicionesCategoria, posicionesTipo;
     private DatePickerDialog datePickerFecha;
-    private EditText etFecha;
+    private EditText etFecha, nombre;
+    private Spinner spinnerCategoria, spinnerTipo;
+    private Button aceptar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,23 +76,33 @@ public class ModifyEventosActivity extends AppCompatActivity {
             }
         }
 
+        setElements();
         prepararFecha(fecha);
-        populateSpinners();
+        populateCategorias();
+        populateTipos();
         loadData();
     }
 
+    private void setElements() {
+        nombre = findViewById(R.id.et_modifyevento_nombre);
+        spinnerCategoria = findViewById(R.id.sp_modifyevento_categoria);
+        spinnerTipo = findViewById(R.id.sp_modifyevento_tipo);
+        etFecha = findViewById(R.id.et_modifyevento_fecha);
+        aceptar = findViewById(R.id.bt_modifyevento_aceptar);
+
+    }
+
     private void prepararFecha(Date fecha) {
-        if(etFecha==null) {
-            etFecha = findViewById(R.id.et_modifyevento_fecha);
-        }
         etFecha.setOnFocusChangeListener((v, hasFocus) -> {
             if(hasFocus) {
                 datePickerFecha.show();
             }
             v.clearFocus();
         });
+
         Calendar newCalendar = Calendar.getInstance();
         newCalendar.setTime(fecha);
+
         datePickerFecha = new DatePickerDialog(this, (view, year, monthOfYear, dayOfMonth) -> {
             Calendar newDate = Calendar.getInstance();
             newDate.set(year, monthOfYear, dayOfMonth);
@@ -104,24 +112,7 @@ public class ModifyEventosActivity extends AppCompatActivity {
                 newCalendar.get(Calendar.DAY_OF_MONTH));
     }
 
-    private void populateSpinners() {
-        posicionesCategoria = new ArrayList<>();
-
-        Spinner spinnerCategorias = findViewById(R.id.sp_modifyevento_categoria);
-
-        List<Categoria> categorias = helper.getCategorias();
-        ArrayList<String> categoriasStrings = new ArrayList<>();
-
-        categorias.forEach(e -> {
-            categoriasStrings.add(e.getNombre());
-            posicionesCategoria.add(e.getIdCategoria());
-        });
-
-        ArrayAdapter<String> adcategorias = new ArrayAdapter<>(this,android.R.layout.simple_spinner_item,
-                categoriasStrings);
-        adcategorias.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinnerCategorias.setAdapter(adcategorias);
-
+    private void populateTipos() {
         posicionesTipo = new ArrayList<>();
 
         Spinner spinnerTipos = findViewById(R.id.sp_modifyevento_tipo);
@@ -138,6 +129,25 @@ public class ModifyEventosActivity extends AppCompatActivity {
                 tiposStrings);
         adtipos.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerTipos.setAdapter(adtipos);
+    }
+
+    private void populateCategorias() {
+        posicionesCategoria = new ArrayList<>();
+
+        Spinner spinnerCategorias = findViewById(R.id.sp_modifyevento_categoria);
+
+        List<Categoria> categorias = helper.getCategorias();
+        ArrayList<String> categoriasStrings = new ArrayList<>();
+
+        categorias.forEach(e -> {
+            categoriasStrings.add(e.getNombre());
+            posicionesCategoria.add(e.getIdCategoria());
+        });
+
+        ArrayAdapter<String> adcategorias = new ArrayAdapter<>(this,android.R.layout.simple_spinner_item,
+                categoriasStrings);
+        adcategorias.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerCategorias.setAdapter(adcategorias);
     }
 
     private void loadData() {
@@ -157,26 +167,16 @@ public class ModifyEventosActivity extends AppCompatActivity {
         this.idEvento = evento.getIdEvento();
         this.idAgenda = evento.getIdAgenda();
 
-        EditText nombre = findViewById(R.id.et_modifyevento_nombre);
-        Spinner spinnerCategoria = findViewById(R.id.sp_modifyevento_categoria);
-        Spinner spinnerTipo = findViewById(R.id.sp_modifyevento_tipo);
-        EditText fecha = findViewById(R.id.et_modifyevento_fecha);
-
         int positionTipo = posicionesTipo.indexOf(evento.getIdTipo());
         int positionCategoria = posicionesTipo.indexOf(evento.getIdCategoria());
 
         nombre.setText(evento.getNombre());
         spinnerCategoria.setSelection(positionCategoria);
         spinnerTipo.setSelection(positionTipo);
-        fecha.setText(formatter.format(evento.getFecha()));
+        etFecha.setText(formatter.format(evento.getFecha()));
     }
 
     public void aceptar(View view) {
-        EditText nombre = findViewById(R.id.et_modifyevento_nombre);
-        Spinner spinnerCategoria = findViewById(R.id.sp_modifyevento_categoria);
-        Spinner spinnerTipo = findViewById(R.id.sp_modifyevento_tipo);
-        EditText fecha = findViewById(R.id.et_modifyevento_fecha);
-        Button aceptar = findViewById(R.id.bt_modifyevento_aceptar);
 
         SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy", new Locale("es_ES"));
 
@@ -185,8 +185,8 @@ public class ModifyEventosActivity extends AppCompatActivity {
             return;
         }
 
-        if(fecha.getText().toString().isEmpty()){
-            fecha.setError("No has rellenado este campo");
+        if(etFecha.getText().toString().isEmpty()){
+            etFecha.setError("No has rellenado este campo");
             return;
         }
 
@@ -199,7 +199,7 @@ public class ModifyEventosActivity extends AppCompatActivity {
         evento.setIdTipo(posicionesTipo.get(spinnerTipo.getSelectedItemPosition()));
         evento.setIdAgenda(idAgenda);
         try{
-            evento.setFecha(formatter.parse(fecha.getText().toString()));
+            evento.setFecha(formatter.parse(etFecha.getText().toString()));
         } catch (ParseException e) {
             System.err.println("No se ha reconocido la fecha -> aceptar() en ModifyEventos");
             return;
