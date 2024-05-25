@@ -5,6 +5,7 @@
 
     <PreferenceCategory app:title="@string/categorias">
         <Preference
+            app:icon="@drawable/baseline_assignment_24"
             app:key="managecategories"
             app:title="@string/gestionar_categorias"/>
 
@@ -12,6 +13,7 @@
 
     <PreferenceCategory app:title="@string/tipos">
         <Preference
+            app:icon="@drawable/baseline_notes_24"
             app:key="managetypes"
             app:title="@string/gestionar_tipos"/>
 
@@ -19,21 +21,25 @@
 
     <PreferenceCategory app:title="@string/agenda">
         <Preference
+            app:icon="@drawable/baseline_calendar_month_24"
             app:key="startdate"
             app:title="@string/fecha_inicio"
             android:inputType="text" />
 
         <Preference
+            app:icon="@drawable/baseline_calendar_month_24"
             app:key="endingdate"
             app:title="@string/fecha_final"
             android:inputType="text" />
 
         <ListPreference
+            app:icon="@drawable/baseline_today_24"
             app:key="beginningday"
             app:title="@string/dia_inicio"
             app:summary="Select your theme"/>
 
         <SeekBarPreference
+            app:icon="@drawable/baseline_calendar_view_week_24"
             app:key="weeklength"
             app:title="@string/duracion_semana"
             android:min="0"
@@ -41,6 +47,14 @@
             app:showSeekBarValue="true"
             app:seekBarIncrement="1" />
 
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        app:title="@string/misc" >
+            <MultiSelectListPreference
+                app:key="notificationfrequency"
+                app:title="Sync Options"
+                app:summary="Select data to sync"/>
 
     </PreferenceCategory>
 <!--    <CheckBoxPreference-->
