@@ -176,4 +176,30 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         editor.putBoolean(LLAVE_PRIMERA_INSERCION, true);
         editor.apply();
     }
+
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putInt("currentFragment", getCurrentFragmentId());
+    }
+
+    private int getCurrentFragmentId() {
+        Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.home_content);
+        if (currentFragment instanceof HomeFragment) return 1;
+        if (currentFragment instanceof HorarioFragment) return 2;
+        if (currentFragment instanceof PomodoroFragment) return 3;
+        if (currentFragment instanceof NotasFragment) return 4;
+        if (currentFragment instanceof EventosFragment) return 5;
+        if (currentFragment instanceof AjustesFragment) return 6;
+        return -1;
+    }
+
+    @Override
+    protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
+    super.onRestoreInstanceState(savedInstanceState);
+        int currentFragmentId = savedInstanceState.getInt("currentFragment", -1);
+        if (currentFragmentId != -1) {
+            mostrarFragmento(currentFragmentId);
+        }
+    }
 }
