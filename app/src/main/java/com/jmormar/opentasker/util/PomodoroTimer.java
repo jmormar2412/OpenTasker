@@ -10,13 +10,13 @@ import lombok.Getter;
 import lombok.Setter;
 
 public class PomodoroTimer {
-    private long totalTime; // Total time in milliseconds
+    private final long totalTime; // Total time in milliseconds
     private long remainingTime; // Remaining time in milliseconds
     private boolean isPaused;
-    private Handler handler;
+    private final Handler handler;
     private Runnable timerRunnable;
-    private RecyclerView.Adapter<?> adapter;
-    private int position;
+    private final RecyclerView.Adapter<?> adapter;
+    private final int position;
     @Getter
     private Tiempo tiempo;
     @Setter

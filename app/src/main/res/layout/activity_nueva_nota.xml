@@ -5,14 +5,14 @@
     android:padding="20sp"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".activities.objectbuilders.NewNotaActivity">
+    tools:context=".activities.builders.NewNotaActivity">
 
     <EditText
         android:id="@+id/et_nuevanota_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="@string/titulo"
-        android:autofillHints=""
+        android:autofillHints="text"
         android:inputType="text" />
 
     <CheckBox

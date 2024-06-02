@@ -1,4 +1,4 @@
-package com.jmormar.opentasker.activities.objectbuilders;
+package com.jmormar.opentasker.activities.builders;
 
 import android.os.Bundle;
 import android.view.View;
@@ -92,9 +92,7 @@ public class NewNotaActivity extends AppCompatActivity {
             this.color = colorWheel.getColor();
             this.btEscogerColor.setBackgroundColor(ColorManager.darkenColor(this.color));
         });
-        builder.setNegativeButton("Cancelar", (dialog, which) -> {
-            dialog.cancel();
-        });
+        builder.setNegativeButton("Cancelar", (dialog, which) -> dialog.cancel());
 
         builder.show();
     }

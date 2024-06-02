@@ -4,7 +4,8 @@
     android:layout_margin="10sp"
     android:layout_width="180sp"
     android:layout_height="wrap_content"
-    android:background="@drawable/border_background">
+    android:background="@drawable/border_background"
+    tools:ignore="HardcodedText">
 
     <TextView
         android:id="@+id/noli_titulo"
@@ -12,8 +13,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
-        android:text="Hacer esto"
-        tools:ignore="HardcodedText" />
+        android:text="Hacer esto" />
 
     <TextView
         android:id="@+id/noli_categoria"
@@ -23,8 +23,7 @@
         android:layout_alignParentEnd="true"
         android:layout_marginEnd="10sp"
         android:layout_below="@id/noli_titulo"
-        android:text="Mates"
-        tools:ignore="HardcodedText" />
+        android:text="Mates" />
 
     <TextView
         android:id="@+id/noli_texto"
@@ -36,8 +35,7 @@
         android:ellipsize="end"
         android:gravity="start"
         android:breakStrategy="balanced"
-        android:hyphenationFrequency="normal"
-        tools:ignore="HardcodedText" />
+        android:hyphenationFrequency="normal" />
 
 
 

@@ -22,7 +22,7 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.jmormar.opentasker.R;
-import com.jmormar.opentasker.activities.objectbuilders.NewTiempoActivity;
+import com.jmormar.opentasker.activities.builders.NewTiempoActivity;
 import com.jmormar.opentasker.adapters.TiemposAdapter;
 import com.jmormar.opentasker.models.Pomodoro;
 import com.jmormar.opentasker.models.Tiempo;
@@ -62,7 +62,6 @@ public class TiemposActivity extends AppCompatActivity implements PomodoroTimer.
         getPosition();
     }
 
-    @SuppressLint("NotifyDataSetChanged")
     @Override
     protected void onResume() {
         super.onResume();
@@ -97,9 +96,12 @@ public class TiemposActivity extends AppCompatActivity implements PomodoroTimer.
     }
 
     private void saveTiempos() {
-        tiempos.forEach(helper::actualizarTiempo);
+        tiempos.forEach(t -> {
+            assert helper.actualizarTiempo(t) : "No se pudo actualizar el tiempo";
+        });
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     private void setListeners() {
 
         this.ibAdd.setOnClickListener(v -> {
@@ -143,15 +145,15 @@ public class TiemposActivity extends AppCompatActivity implements PomodoroTimer.
             if(!tiempos.isEmpty()){
                 assert helper.deleteTiempo(tiempos.get(tiempos.size()-1).getIdTiempo()) : "No se pudo borrar el tiempo";
                 tiempos.remove(tiempos.size()-1);
-                updateAdapter();
+
+                assert rvTiempos.getAdapter() != null : "El adapter no puede ser nulo";
+                rvTiempos.getAdapter().notifyDataSetChanged();
             } else{
                 Toast.makeText(this, "No hay tiempos para borrar", Toast.LENGTH_SHORT).show();
             }
         });
 
-        this.cbLooping.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            looping = isChecked;
-        });
+        this.cbLooping.setOnCheckedChangeListener((buttonView, isChecked) -> looping = isChecked);
 
     }
 

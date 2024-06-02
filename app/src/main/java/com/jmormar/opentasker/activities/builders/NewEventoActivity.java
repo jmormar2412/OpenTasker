@@ -1,4 +1,4 @@
-package com.jmormar.opentasker.activities.objectbuilders;
+package com.jmormar.opentasker.activities.builders;
 
 import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
@@ -99,24 +99,13 @@ public class NewEventoActivity extends AppCompatActivity {
         posicionesCategoria = new ArrayList<>();
         posicionesTipos = new ArrayList<>();
 
-        Spinner stipos = findViewById(R.id.sp_nuevoevento_tipo);
+        populateTipos();
+        populateCategorias();
+    }
+
+    private void populateCategorias() {
         Spinner scategorias = findViewById(R.id.sp_nuevoevento_categoria);
 
-        //Para el de tipos
-        ArrayList<Tipo> tipos = new ArrayList<>(helper.getTipos());
-        ArrayList<String> tiposStrings = new ArrayList<>();
-
-        tipos.forEach(tip -> {
-            tiposStrings.add(tip.getNombre());
-            posicionesTipos.add(tip.getIdTipo());
-        });
-
-        ArrayAdapter<String> adapterTipos = new ArrayAdapter<>(this,android.R.layout.simple_spinner_item,
-                tiposStrings);
-        adapterTipos.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        stipos.setAdapter(adapterTipos);
-
-        //Para el de categorias
         ArrayList<Categoria> categorias = new ArrayList<>(helper.getCategorias());
         ArrayList<String> categoriasStrings = new ArrayList<>();
 
@@ -129,6 +118,23 @@ public class NewEventoActivity extends AppCompatActivity {
                 categoriasStrings);
         adcategorias.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         scategorias.setAdapter(adcategorias);
+    }
+
+    private void populateTipos(){
+        Spinner stipos = findViewById(R.id.sp_nuevoevento_tipo);
+
+        ArrayList<Tipo> tipos = new ArrayList<>(helper.getTipos());
+        ArrayList<String> tiposStrings = new ArrayList<>();
+
+        tipos.forEach(tip -> {
+            tiposStrings.add(tip.getNombre());
+            posicionesTipos.add(tip.getIdTipo());
+        });
+
+        ArrayAdapter<String> adapterTipos = new ArrayAdapter<>(this,android.R.layout.simple_spinner_item,
+                tiposStrings);
+        adapterTipos.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        stipos.setAdapter(adapterTipos);
     }
 
     @Override

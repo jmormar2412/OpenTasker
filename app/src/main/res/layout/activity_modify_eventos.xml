@@ -1,16 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".activities.objectmodifiers.ModifyEventosActivity">
-
-  <ScrollView
-      android:layout_width="match_parent"
-      android:layout_height="match_parent">
+    tools:context=".activities.modifiers.ModifyEventosActivity">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -41,6 +37,8 @@
           android:layout_height="wrap_content"
           android:layout_below="@+id/tv_modifyevento_nombre"
           android:layout_margin="10sp"
+          android:autofillHints="text"
+          android:inputType="text"
           android:textSize="20sp"
           android:hint="@string/escriba_aqui" />
 
@@ -91,6 +89,8 @@
           android:id="@+id/et_modifyevento_fecha"
           android:layout_width="180dp"
           android:layout_height="wrap_content"
+          android:autofillHints="text"
+          android:inputType="text"
           android:textSize="20sp"
           android:hint="@string/date_format"
           android:textAlignment="center"
@@ -109,7 +109,4 @@
           android:onClick="aceptar"/>
 
     </RelativeLayout>
-
-  </ScrollView>
-
-  </LinearLayout>
+</ScrollView>

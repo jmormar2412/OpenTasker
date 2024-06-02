@@ -4,7 +4,8 @@
     android:layout_width="100sp"
     android:layout_height="100sp"
     android:gravity="center"
-    android:background="@drawable/border_background">
+    android:background="@drawable/border_background"
+    tools:ignore="HardcodedText">
 
     <TextView
         android:id="@+id/tv_timer"
@@ -12,7 +13,6 @@
         android:layout_height="wrap_content"
         android:text="00:00"
         android:textAlignment="center"
-        android:textSize="30sp"
-        tools:ignore="HardcodedText"/>
+        android:textSize="30sp"/>
 
 </RelativeLayout>

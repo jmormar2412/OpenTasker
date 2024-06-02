@@ -4,7 +4,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".activities.objectbuilders.NewEventoActivity">
+    tools:context=".activities.builders.NewEventoActivity">
 
     <ScrollView
         android:layout_width="match_parent"
@@ -39,6 +39,8 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/tv_nuevoevento_nombre"
                 android:layout_margin="10sp"
+                android:autofillHints="text"
+                android:inputType="text"
                 android:textSize="20sp"
                 android:hint="@string/escriba_aqui" />
 
@@ -89,6 +91,8 @@
                 android:id="@+id/et_nuevoevento_fecha"
                 android:layout_width="180dp"
                 android:layout_height="wrap_content"
+                android:autofillHints="text"
+                android:inputType="text"
                 android:textSize="20sp"
                 android:hint="@string/date_format"
                 android:textAlignment="center"

@@ -43,11 +43,10 @@ public class TiemposAdapter extends RecyclerView.Adapter<TiemposAdapter.TiemposV
     }
 
     public static class TiemposViewHolder extends RecyclerView.ViewHolder{
-        int darkRed = Color.argb(100, 255, 0, 0);
-        int darkGreen = Color.argb(100, 0, 255, 0);
-        TextView tvTimer;
-        boolean colored;
-        View itemView;
+        final int darkRed = Color.argb(100, 255, 0, 0);
+        final int darkGreen = Color.argb(100, 0, 255, 0);
+        final TextView tvTimer;
+        final View itemView;
 
         public TiemposViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -59,7 +58,6 @@ public class TiemposAdapter extends RecyclerView.Adapter<TiemposAdapter.TiemposV
         public void bind(Tiempo tiempo){
             tvTimer.setText(((int) Math.floor((double) tiempo.getUpdatedSeconds() / 60)) + ":" + String.format("%02d", tiempo.getUpdatedSeconds() % 60));
             setBackgroundColor(tiempo.isRest()? darkGreen : darkRed);
-            colored = true;
         }
 
         public void setBackgroundColor(int color){

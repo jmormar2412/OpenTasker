@@ -42,14 +42,14 @@ public class TipoAdapter extends RecyclerView.Adapter<TipoAdapter.TipoViewHolder
     }
 
     public class TipoViewHolder extends RecyclerView.ViewHolder {
-        TextView nombre;
+        final TextView nombre;
 
         TipoViewHolder(@NonNull View itemView) {
             super(itemView);
             this.nombre = itemView.findViewById(R.id.tv_nombre);
 
             itemView.setOnClickListener(v -> {
-                int position = getAdapterPosition();
+                int position = getBindingAdapterPosition();
                 if(position!=RecyclerView.NO_POSITION && onTipoClickListener != null) onTipoClickListener.onTipoClick(position);
             });
         }

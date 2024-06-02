@@ -4,7 +4,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".activities.objectbuilders.NewTiempoActivity">
+    tools:context=".activities.builders.NewTiempoActivity">
 
     <LinearLayout
         android:id="@+id/ll_tiempo"
@@ -13,25 +13,25 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="50sp"
         android:gravity="center">
+
         <NumberPicker
             android:id="@+id/selector_minutos"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text=":"
             android:textSize="30sp"
-            tools:ignore="HardcodedText"
-            />
+            tools:ignore="HardcodedText" />
+
         <NumberPicker
             android:id="@+id/selector_segundos"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
+
     </LinearLayout>
-
-
-
 
     <com.google.android.material.switchmaterial.SwitchMaterial
         android:id="@+id/sw_descanso"

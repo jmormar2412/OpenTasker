@@ -16,8 +16,8 @@ import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.jmormar.opentasker.R;
-import com.jmormar.opentasker.activities.objectbuilders.NewNotaActivity;
-import com.jmormar.opentasker.activities.objectmodifiers.ModifyNotasActivity;
+import com.jmormar.opentasker.activities.builders.NewNotaActivity;
+import com.jmormar.opentasker.activities.modifiers.ModifyNotasActivity;
 import com.jmormar.opentasker.adapters.NotaAdapter;
 import com.jmormar.opentasker.models.Nota;
 import com.jmormar.opentasker.util.DBHelper;

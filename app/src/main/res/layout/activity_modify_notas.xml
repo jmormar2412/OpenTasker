@@ -4,7 +4,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".activities.objectmodifiers.ModifyNotasActivity"
+    tools:context=".activities.modifiers.ModifyNotasActivity"
     android:orientation="vertical">
 
     <RelativeLayout
@@ -63,6 +63,7 @@
             android:id="@+id/et_modifynota_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:autofillHints="text"
             android:minHeight="390sp"
             android:layout_below="@id/invisibleass"
             android:gravity="start|top"
