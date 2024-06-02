@@ -6,11 +6,21 @@
 
     <TextView
         android:id="@+id/poli_nombre"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Donde irá el título del pomodoro"
         android:textSize="20sp"
         android:layout_margin="12sp"
         tools:ignore="HardcodedText" />
+
+    <ImageView
+        android:id="@+id/iv_edit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:contentDescription="@string/editar"
+        android:src="@drawable/baseline_edit_24"
+        android:layout_margin="12sp"
+        android:padding="2sp"
+        android:layout_alignParentEnd="true" />
 
 </RelativeLayout>

@@ -25,6 +25,7 @@ import com.jmormar.opentasker.activities.TiemposActivity;
 import com.jmormar.opentasker.adapters.PomodoroAdapter;
 import com.jmormar.opentasker.models.Pomodoro;
 import com.jmormar.opentasker.util.DBHelper;
+import com.jmormar.opentasker.util.SwipeGesture;
 
 import java.util.List;
 
@@ -87,22 +88,15 @@ public class PomodoroFragment extends Fragment implements PomodoroAdapter.OnPomo
     }
 
     private void addSwipingFunctionality() {
-        ItemTouchHelper.SimpleCallback swipeCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.RIGHT) {
-            @Override
-            public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
-                return false;
-            }
-
+        new ItemTouchHelper(new SwipeGesture(0, ItemTouchHelper.LEFT, this.context) {
             @Override
             public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
-                int position = viewHolder.getAdapterPosition();
+                int position = viewHolder.getBindingAdapterPosition();
                 Pomodoro pomodoro = helper.getPomodoros().get(position);
                 assert helper.deletePomodoro(pomodoro.getIdPomodoro()) : "Error al eliminar pomodoro";
                 cargarPomodoros();
             }
-        };
-
-        new ItemTouchHelper(swipeCallback).attachToRecyclerView(recyclerViewPomodoros);
+        }).attachToRecyclerView(recyclerViewPomodoros);
     }
 
     private void createBuilder() {
@@ -119,6 +113,33 @@ public class PomodoroFragment extends Fragment implements PomodoroAdapter.OnPomo
                 return;
             }
             newPomodoro(input.getText().toString());
+        });
+        builder.setNegativeButton("Cancelar", (dialog, which) ->{
+            dialog.cancel();
+            createBuilder();
+        } );
+    }
+
+    private void createEditBuilder(int idPomodoro) {
+        this.builder = new AlertDialog.Builder(this.context);
+        builder.setTitle("Nombre del pomodoro");
+
+        Pomodoro pomodoro = helper.getPomodoro(idPomodoro);
+
+        final EditText input = new EditText(this.context);
+        input.setInputType(InputType.TYPE_CLASS_TEXT);
+        input.setText(pomodoro.getNombre());
+        builder.setView(input);
+
+        builder.setPositiveButton("OK", (dialog, which) ->{
+            if(input.getText().toString().isEmpty()){
+                input.setError("Campo requerido");
+                return;
+            }
+            pomodoro.setNombre(input.getText().toString());
+            assert helper.actualizarPomodoro(pomodoro) : "Error al actualizar pomodoro";
+            assert recyclerViewPomodoros.getAdapter() != null : "El adapter no existe";
+            cargarPomodoros();
         });
         builder.setNegativeButton("Cancelar", (dialog, which) ->{
             dialog.cancel();
@@ -168,5 +189,12 @@ public class PomodoroFragment extends Fragment implements PomodoroAdapter.OnPomo
         Intent myIntent = new Intent(this.context, TiemposActivity.class);
         myIntent.putExtra("idPomodoro", idPomodoro);
         startActivity(myIntent);
+    }
+
+    @Override
+    public void onPomodoroEdit(int position) {
+        int idPomodoro = helper.getPomodoros().get(position).getIdPomodoro();
+        createEditBuilder(idPomodoro);
+        builder.show();
     }
 }

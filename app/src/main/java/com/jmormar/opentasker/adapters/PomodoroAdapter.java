@@ -3,6 +3,7 @@ package com.jmormar.opentasker.adapters;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -46,15 +47,21 @@ public class PomodoroAdapter extends RecyclerView.Adapter<PomodoroAdapter.Pomodo
     }
 
     public class PomodoroViewHolder extends RecyclerView.ViewHolder {
-        TextView nombre;
+        final TextView nombre;
+        final ImageView editar;
 
         PomodoroViewHolder(@NonNull View itemView) {
             super(itemView);
             nombre = itemView.findViewById(R.id.poli_nombre);
+            editar = itemView.findViewById(R.id.iv_edit);
 
             itemView.setOnClickListener(v -> {
-                int position = getAdapterPosition();
+                int position = getBindingAdapterPosition();
                 if(position!=RecyclerView.NO_POSITION && mListener!=null) mListener.onPomodoroClick(position);
+            });
+            editar.setOnClickListener(v -> {
+                int position = getBindingAdapterPosition();
+                if(position!=RecyclerView.NO_POSITION && mListener!=null) mListener.onPomodoroEdit(position);
             });
         }
 
@@ -65,6 +72,7 @@ public class PomodoroAdapter extends RecyclerView.Adapter<PomodoroAdapter.Pomodo
 
     public interface OnPomodoroClickListener {
         void onPomodoroClick(int position);
+        void onPomodoroEdit(int position);
     }
 
 }
