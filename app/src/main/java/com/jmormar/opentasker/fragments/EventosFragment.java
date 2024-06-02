@@ -87,12 +87,12 @@ public class EventosFragment extends Fragment implements EventoAdapter.OnEventoC
                 Evento evento = eventos.get(position);
                 switch (direction) {
                     case ItemTouchHelper.LEFT:
-                        helper.deleteEvento(evento.getIdEvento());
+                        assert helper.deleteEvento(evento.getIdEvento()) : "No se pudo borrar el evento";
                         cargarEventos();
                         break;
                     case ItemTouchHelper.RIGHT:
                         evento.setHecho(!evento.isHecho());
-                        helper.actualizarEvento(evento);
+                        assert helper.actualizarEvento(evento) : "No se pudo actualizar el evento";
                         cargarEventos();
                         break;
                 }
@@ -106,12 +106,12 @@ public class EventosFragment extends Fragment implements EventoAdapter.OnEventoC
                 Evento evento = eventosHechos.get(position);
                 switch (direction) {
                     case ItemTouchHelper.LEFT:
-                        helper.deleteEvento(evento.getIdEvento());
+                        assert helper.deleteEvento(evento.getIdEvento()) : "No se pudo borrar el evento";
                         cargarEventos();
                         break;
                     case ItemTouchHelper.RIGHT:
                         evento.setHecho(!evento.isHecho());
-                        helper.actualizarEvento(evento);
+                        assert helper.actualizarEvento(evento) : "No se pudo actualizar el evento";
                         cargarEventos();
                         break;
                 }
