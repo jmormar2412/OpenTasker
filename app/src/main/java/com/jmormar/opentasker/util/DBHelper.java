@@ -19,7 +19,7 @@ import com.jmormar.opentasker.models.Tipo;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.Duration;
-import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -141,7 +141,6 @@ public class DBHelper extends SQLiteOpenHelper {
             """;
     private static final String SQL_DELETE_HORARIO = "DROP TABLE IF EXISTS Horario";
 
-    //Sólo se ejecutará una sola vez porque no vas a crear 19 horarios, TODO: implementar el reset con su activity
     public boolean insertarHorario(Horario horario) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
@@ -170,10 +169,13 @@ public class DBHelper extends SQLiteOpenHelper {
             """
             CREATE TABLE Hora (
                  idHora INTEGER PRIMARY KEY,
-                 fechayTiempoInicio TEXT,
+                 tiempoInicio TEXT,
                  totalTiempo TEXT,
+                 diaSemana INTEGER,
                  idHorario INTEGER,
-                 FOREIGN KEY(idHorario) REFERENCES Horario(idHorario)
+                 idCategoria Integer,
+                 FOREIGN KEY(idHorario) REFERENCES Horario(idHorario),
+                 FOREIGN KEY(idCategoria) REFERENCES Categoria(idCategoria)
             );
             """;
     private static final String SQL_DELETE_HORA = "DROP TABLE IF EXISTS Hora";
@@ -182,17 +184,20 @@ public class DBHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
-        values.put("fechayTiempoInicio", hora.getFechayTiempoInicio().toString());
+        values.put("tiempoInicio", hora.getTiempoInicio().toString());
         values.put("totalTiempo", hora.getTotalTiempo().toString());
+        values.put("diaSemana", hora.getDiaSemana());
         values.put("idHorario", hora.getIdHorario());
+        values.put("idCategoria", hora.getIdCategoria());
 
         return db.insert("Hora", null, values) > 0;
     }
 
     public List<Hora> getHoras() {
+        Hora.resetList();
         SQLiteDatabase db = this.getReadableDatabase();
 
-        String[] projection = {"idHora", "fechayTiempoInicio", "totalTiempo", "idHorario"};
+        String[] projection = {"idHora", "tiempoInicio", "totalTiempo", "diaSemana", "idHorario", "idCategoria"};
         Cursor c = db.query("Hora", projection, null, null, null, null, null);
 
         List<Hora> list = new ArrayList<>();
@@ -200,9 +205,11 @@ public class DBHelper extends SQLiteOpenHelper {
         while (c.moveToNext()) {
             Hora hr = new Hora();
             hr.setIdHora(c.getInt(c.getColumnIndexOrThrow("idHora")));
-            hr.setFechayTiempoInicio(LocalDateTime.parse(c.getString(c.getColumnIndexOrThrow("fechayTiempoInicio"))));
+            hr.setTiempoInicio(LocalTime.parse(c.getString(c.getColumnIndexOrThrow("tiempoInicio"))));
             hr.setTotalTiempo(Duration.parse(c.getString(c.getColumnIndexOrThrow("totalTiempo"))));
+            hr.setDiaSemana(c.getInt(c.getColumnIndexOrThrow("diaSemana")));
             hr.setIdHorario(c.getInt(c.getColumnIndexOrThrow("idHorario")));
+            hr.setIdCategoria(c.getInt(c.getColumnIndexOrThrow("idCategoria")));
             list.add(hr);
         }
         c.close();
@@ -221,9 +228,11 @@ public class DBHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
-        values.put("fechayTiempoInicio", hora.getFechayTiempoInicio().toString());
+        values.put("tiempoInicio", hora.getTiempoInicio().toString());
         values.put("totalTiempo", hora.getTotalTiempo().toString());
+        values.put("diaSemana", hora.getDiaSemana());
         values.put("idHorario", hora.getIdHorario());
+        values.put("idCategoria", hora.getIdCategoria());
 
         String selection = "idHora = ?";
 
@@ -235,7 +244,7 @@ public class DBHelper extends SQLiteOpenHelper {
     public Hora getHora(int idHora) {
         SQLiteDatabase db = this.getReadableDatabase();
 
-        String[] projection = {"idHora", "fechayTiempoInicio", "totalTiempo", "idHorario"};
+        String[] projection = {"idHora", "tiempoInicio", "totalTiempo", "diaSemana", "idHorario", "idCategoria"};
         String[] selectionArgs = {String.valueOf(idHora)};
         String selection = "idHora = ?";
 
@@ -247,9 +256,11 @@ public class DBHelper extends SQLiteOpenHelper {
         while (c.moveToNext()) {
             Hora hr = new Hora();
             hr.setIdHora(c.getInt(c.getColumnIndexOrThrow("idHora")));
-            hr.setFechayTiempoInicio(LocalDateTime.parse(c.getString(c.getColumnIndexOrThrow("fechayTiempoInicio"))));
+            hr.setTiempoInicio(LocalTime.parse(c.getString(c.getColumnIndexOrThrow("tiempoInicio"))));
             hr.setTotalTiempo(Duration.parse(c.getString(c.getColumnIndexOrThrow("totalTiempo"))));
+            hr.setDiaSemana(c.getInt(c.getColumnIndexOrThrow("diaSemana")));
             hr.setIdHorario(c.getInt(c.getColumnIndexOrThrow("idHorario")));
+            hr.setIdCategoria(c.getInt(c.getColumnIndexOrThrow("idCategoria")));
             lista.add(hr);
         }
         c.close();
@@ -258,6 +269,32 @@ public class DBHelper extends SQLiteOpenHelper {
 
     }
 
+    public List<Hora> getHorasByDayAndHorario(int diaSemana) {
+        List<Hora> horas = new ArrayList<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        String[] projection = {"idHora", "tiempoInicio", "totalTiempo", "diaSemana", "idHorario", "idCategoria"};
+        String selection = "diaSemana = ?";
+        String[] selectionArgs = {String.valueOf(diaSemana)};
+        Cursor c = db.query("Hora", projection, selection, selectionArgs, null, null, null);
+
+        if (c.moveToFirst()) {
+            do {
+                Hora hora = new Hora();
+                hora.setIdHora(c.getInt(c.getColumnIndexOrThrow("idHora")));
+                hora.setTiempoInicio(LocalTime.parse(c.getString(c.getColumnIndexOrThrow("tiempoInicio"))));
+                hora.setTotalTiempo(Duration.parse(c.getString(c.getColumnIndexOrThrow("totalTiempo"))));
+                hora.setDiaSemana(c.getInt(c.getColumnIndexOrThrow("diaSemana")));
+                hora.setIdHorario(c.getInt(c.getColumnIndexOrThrow("idHorario")));
+                hora.setIdCategoria(c.getInt(c.getColumnIndexOrThrow("idCategoria")));
+                horas.add(hora);
+            } while (c.moveToNext());
+        }
+        c.close();
+        return horas;
+    }
+
+
     //CATEGORÍA
 
     private static final String SQL_CREATE_CATEGORIA =
@@ -265,6 +302,7 @@ public class DBHelper extends SQLiteOpenHelper {
             CREATE TABLE Categoria (
                 idCategoria INTEGER PRIMARY KEY,
                 nombre TEXT,
+                acronimo TEXT,
                 color INTEGER,
                 idAgenda INTEGER,
                 FOREIGN KEY(idAgenda) REFERENCES Agenda(idAgenda)
@@ -277,6 +315,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
         ContentValues values = new ContentValues();
         values.put("nombre", catg.getNombre());
+        values.put("acronimo", catg.getAcronimo());
         values.put("color", catg.getColor());
         values.put("idAgenda", catg.getIdAgenda());
 
@@ -286,7 +325,7 @@ public class DBHelper extends SQLiteOpenHelper {
     public List<Categoria> getCategorias() {
         SQLiteDatabase db = this.getReadableDatabase();
 
-        String[] projection = {"idCategoria", "nombre", "color", "idAgenda"};
+        String[] projection = {"idCategoria", "nombre", "acronimo", "color", "idAgenda"};
         Cursor c = db.query("Categoria", projection, null, null, null, null, null);
 
         List<Categoria> list = new ArrayList<>();
@@ -295,6 +334,7 @@ public class DBHelper extends SQLiteOpenHelper {
             Categoria cat = new Categoria();
             cat.setIdCategoria(c.getInt(c.getColumnIndexOrThrow("idCategoria")));
             cat.setNombre((c.getString(c.getColumnIndexOrThrow("nombre"))));
+            cat.setAcronimo(c.getString(c.getColumnIndexOrThrow("acronimo")));
             cat.setColor(c.getInt(c.getColumnIndexOrThrow("color")));
             cat.setIdAgenda(c.getInt(c.getColumnIndexOrThrow("idAgenda")));
             list.add(cat);
@@ -316,6 +356,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
         ContentValues values = new ContentValues();
         values.put("nombre", catg.getNombre());
+        values.put("acronimo", catg.getAcronimo());
         values.put("color", catg.getColor());
 
         String selection = "idCategoria = ?";
@@ -328,7 +369,7 @@ public class DBHelper extends SQLiteOpenHelper {
     public Categoria getCategoria(int idCategoria) {
         SQLiteDatabase db = this.getReadableDatabase();
 
-        String[] projection = {"idCategoria", "nombre", "color", "idAgenda"};
+        String[] projection = {"idCategoria", "nombre", "acronimo", "color", "idAgenda"};
         String[] selectionArgs = {String.valueOf(idCategoria)};
         String selection = "idCategoria = ?";
 
@@ -339,6 +380,7 @@ public class DBHelper extends SQLiteOpenHelper {
             Categoria cat = new Categoria();
             cat.setIdCategoria(c.getInt(c.getColumnIndexOrThrow("idCategoria")));
             cat.setNombre((c.getString(c.getColumnIndexOrThrow("nombre"))));
+            cat.setAcronimo(c.getString(c.getColumnIndexOrThrow("acronimo")));
             cat.setColor(c.getInt(c.getColumnIndexOrThrow("color")));
             cat.setIdAgenda(c.getInt(c.getColumnIndexOrThrow("idAgenda")));
             lista.add(cat);
@@ -862,7 +904,7 @@ public class DBHelper extends SQLiteOpenHelper {
     public int getPosition(int idPomodoro) {
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor c = null;
-        int position = -1; // Default value indicating no position found
+        int position = 0;
 
         try {
             String[] projection = {"position"};
