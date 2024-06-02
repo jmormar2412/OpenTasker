@@ -2,7 +2,6 @@ package com.jmormar.opentasker.fragments;
 
 import static com.jmormar.opentasker.util.Constants.NOMBRE_PREFERENCIAS;
 
-import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -83,7 +82,8 @@ public class AjustesFragment extends PreferenceFragmentCompat {
 
         SeekBarPreference numDias = findPreference("weeklength");
         assert numDias != null : "No se ha encontrado el SeekBarPreference numDias";
-        numDias.setValue(agenda.getWeekLength());
+        this.weekLength = agenda.getWeekLength();
+        numDias.setValue(this.weekLength);
         numDias.setOnPreferenceChangeListener((preference, newValue) -> {
             this.weekLength = (int) newValue;
             return true;
@@ -91,6 +91,7 @@ public class AjustesFragment extends PreferenceFragmentCompat {
 
         Preference startDate = findPreference("startdate");
         assert startDate != null : "No se ha encontrado el EditTextPreference startDate";
+        startDate.setSummary(formatter.format(agenda.getFechaInicio()));
         startDate.setOnPreferenceClickListener(preference -> {
             launchBuilder(1);
             return true;
@@ -98,6 +99,7 @@ public class AjustesFragment extends PreferenceFragmentCompat {
 
         Preference endingDate = findPreference("endingdate");
         assert endingDate != null : "No se ha encontrado el EditTextPreference endingDate";
+        endingDate.setSummary(formatter.format(agenda.getFechaFinal()));
         endingDate.setOnPreferenceClickListener(preference -> {
             launchBuilder(2);
             return true;
@@ -107,7 +109,9 @@ public class AjustesFragment extends PreferenceFragmentCompat {
         assert beginningday != null : "No se ha encontrado el ListPreference beginningday";
         beginningday.setEntries(R.array.dias_semana);
         beginningday.setEntryValues(R.array.dias_semana_values);
-        beginningday.setSummary(getResources().getStringArray(R.array.dias_semana)[agenda.getBeginningDay()]);
+        this.beginningDay = agenda.getBeginningDay();
+        beginningday.setSummary(getResources().getStringArray(R.array.dias_semana)[this.beginningDay]);
+
 
         beginningday.setOnPreferenceChangeListener((preference, newValue) -> {
             String selectedValue = newValue.toString();
@@ -116,6 +120,7 @@ public class AjustesFragment extends PreferenceFragmentCompat {
             if (index >= 0) {
                 preference.setSummary(entries[index]);
             }
+            this.beginningDay = index;
             return true;
         });
 
@@ -142,7 +147,7 @@ public class AjustesFragment extends PreferenceFragmentCompat {
         datePickerFecha = new DatePickerDialog(this.context, (view, year, monthOfYear, dayOfMonth) -> {
             Calendar newDate = Calendar.getInstance();
             newDate.set(year, monthOfYear, dayOfMonth);
-            @SuppressLint("SimpleDateFormat") SimpleDateFormat dateFormatter = new SimpleDateFormat("dd/MM/yyyy");
+            SimpleDateFormat dateFormatter = new SimpleDateFormat("dd/MM/yyyy", new Locale("es", "ES"));
             etFecha.setText(dateFormatter.format(newDate.getTime()));
         },newCalendar.get(Calendar.YEAR), newCalendar.get(Calendar.MONTH),
                 newCalendar.get(Calendar.DAY_OF_MONTH));
@@ -202,6 +207,7 @@ public class AjustesFragment extends PreferenceFragmentCompat {
         SharedPreferences prefs = this.context.getSharedPreferences(NOMBRE_PREFERENCIAS, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
         agenda.setWeekLength((byte) this.weekLength);
+        agenda.setBeginningDay((byte) this.beginningDay);
         assert helper.actualizarAgenda(agenda) : "No se ha podido actualizar la agenda";
         editor.apply();
     }
