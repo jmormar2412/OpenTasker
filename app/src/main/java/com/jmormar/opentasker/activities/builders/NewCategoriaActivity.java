@@ -1,4 +1,4 @@
-package com.jmormar.opentasker.activities.objectbuilders;
+package com.jmormar.opentasker.activities.builders;
 
 import android.os.Bundle;
 import android.widget.EditText;
@@ -17,7 +17,7 @@ import com.jmormar.opentasker.util.DBHelper;
 import top.defaults.colorpicker.ColorWheelView;
 
 public class NewCategoriaActivity extends AppCompatActivity {
-    private EditText etNombre;
+    private EditText etNombre, etAcronimo;
     private ColorWheelView colorWheelView;
     private DBHelper helper;
 
@@ -34,6 +34,7 @@ public class NewCategoriaActivity extends AppCompatActivity {
 
         this.etNombre = findViewById(R.id.et_nombre_categoria);
         this.colorWheelView = findViewById(R.id.color_wheel);
+        this.etAcronimo = findViewById(R.id.et_acronimo_categoria);
         this.helper = DBHelper.getInstance(this);
 
 
@@ -44,6 +45,12 @@ public class NewCategoriaActivity extends AppCompatActivity {
         String nombre = this.etNombre.getText().toString();
         if (nombre.isEmpty()) {
             this.etNombre.setError("El nombre es obligatorio");
+            return;
+        }
+
+        String acronimo = this.etAcronimo.getText().toString();
+        if (acronimo.isEmpty()) {
+            this.etNombre.setError("El acronimo es obligatorio");
             return;
         }
 

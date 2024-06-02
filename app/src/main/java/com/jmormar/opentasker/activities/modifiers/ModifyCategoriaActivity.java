@@ -1,4 +1,4 @@
-package com.jmormar.opentasker.activities.objectmodifiers;
+package com.jmormar.opentasker.activities.modifiers;
 
 import android.os.Bundle;
 import android.widget.EditText;
@@ -18,7 +18,7 @@ import top.defaults.colorpicker.ColorWheelView;
 
 public class ModifyCategoriaActivity extends AppCompatActivity {
     private DBHelper helper;
-    private EditText etNombre;
+    private EditText etNombre, etAcronimo;
     private ColorWheelView colorWheelView;
     private Categoria categoria;
     private boolean darkened;
@@ -51,7 +51,13 @@ public class ModifyCategoriaActivity extends AppCompatActivity {
             return;
         }
 
+        if (etAcronimo.getText().toString().isEmpty()) {
+            etAcronimo.setError("El acronimo no puede estar vacio");
+            return;
+        }
+
         categoria.setNombre(etNombre.getText().toString());
+        categoria.setAcronimo(etAcronimo.getText().toString());
 
         if (darkened) categoria.setColor(colorWheelView.getColor());
         else categoria.setColor(ColorManager.darkenColor(colorWheelView.getColor()));
@@ -67,6 +73,7 @@ public class ModifyCategoriaActivity extends AppCompatActivity {
         this.categoria = helper.getCategoria(idCategoria);
 
         etNombre.setText(categoria.getNombre());
+        etAcronimo.setText(categoria.getAcronimo());
         colorWheelView.setColor(categoria.getColor(), false);
 
         darkened = true;
@@ -77,5 +84,7 @@ public class ModifyCategoriaActivity extends AppCompatActivity {
 
         this.etNombre = findViewById(R.id.et_nombre_categoria);
         this.colorWheelView = findViewById(R.id.color_wheel);
+
+        this.etAcronimo = findViewById(R.id.et_acronimo_categoria);
     }
 }

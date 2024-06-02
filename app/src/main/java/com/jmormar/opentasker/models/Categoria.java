@@ -10,6 +10,7 @@ import lombok.Data;
 public class Categoria {
     private int idCategoria;
     private String nombre;
+    private String acronimo;
     private int color;
     private int idAgenda;
 }

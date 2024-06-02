@@ -4,7 +4,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".activities.objectbuilders.NewCategoriaActivity">
+    tools:context=".activities.builders.NewCategoriaActivity">
 
     <TextView
         android:id="@+id/titulo"
@@ -23,11 +23,19 @@
         android:layout_below="@id/titulo"
         android:hint="@string/nombre_categoria" />
 
+    <EditText
+        android:id="@+id/et_acronimo_categoria"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:layout_below="@id/et_nombre_categoria"
+        android:hint="@string/acronimo_categoria" />
+
     <top.defaults.colorpicker.ColorWheelView
         android:id="@+id/color_wheel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/et_nombre_categoria" />
+        android:layout_below="@id/et_acronimo_categoria" />
 
     <Button
         android:id="@+id/bt_guardar"
