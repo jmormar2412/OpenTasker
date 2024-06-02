@@ -7,7 +7,9 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Pair;
+import android.view.Gravity;
 import android.view.MenuItem;
+import android.widget.ImageView;
 
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
@@ -17,6 +19,8 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import com.google.android.material.navigation.NavigationView;
 import com.jmormar.opentasker.fragments.AjustesFragment;
@@ -27,6 +31,7 @@ import com.jmormar.opentasker.fragments.NotasFragment;
 import com.jmormar.opentasker.fragments.PomodoroFragment;
 import com.jmormar.opentasker.models.Agenda;
 import com.jmormar.opentasker.models.Categoria;
+import com.jmormar.opentasker.models.Horario;
 import com.jmormar.opentasker.models.Tipo;
 import com.jmormar.opentasker.util.DBHelper;
 
@@ -41,7 +46,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private DrawerLayout drawerLayout;
     private DBHelper helper;
     private Map<Integer, Pair<String, Fragment>> fragmentMap;
-
+    private ImageView toolbarAdd;
+    private Toolbar toolbar;
     private final OnBackPressedCallback onBackPressedCallback=new OnBackPressedCallback(true) {
         @Override
         public void handleOnBackPressed(){atras();}
@@ -56,7 +62,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         getOnBackPressedDispatcher().addCallback(this, onBackPressedCallback);
 
-        Toolbar toolbar=findViewById(R.id.toolbar);
+        this.toolbar=findViewById(R.id.toolbar);
         setSupportActionBar(findViewById(R.id.toolbar));
 
         drawerLayout = findViewById(R.id.drawer_layout);
@@ -77,6 +83,34 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         if(!comprobarPrimerasInserciones()){
             realizarPrimerasInserciones();
             confirmarPrimerasInserciones();
+        }
+
+        getSupportFragmentManager().addOnBackStackChangedListener(this::handleFragmentChange);
+
+        handleFragmentChange();
+    }
+
+    private void handleFragmentChange() {
+        Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.home_content);
+        if (currentFragment instanceof HorarioFragment) {
+            if (toolbarAdd == null) {
+                toolbarAdd = new ImageView(this);
+                toolbarAdd.setImageResource(R.drawable.ic_add_white);
+                toolbarAdd.setContentDescription(getString(R.string.add_hora));
+                toolbarAdd.setPadding(16, 16, 16, 16);
+                toolbarAdd.setOnClickListener(v -> ((HorarioFragment) currentFragment).addNewHora());
+                Toolbar.LayoutParams params = new Toolbar.LayoutParams(
+                        Toolbar.LayoutParams.WRAP_CONTENT,
+                        Toolbar.LayoutParams.WRAP_CONTENT,
+                        Gravity.END
+                );
+                toolbar.addView(toolbarAdd, params);
+            }
+        } else {
+            if (toolbarAdd != null) {
+                toolbar.removeView(toolbarAdd);
+                toolbarAdd = null;
+            }
         }
     }
 
@@ -121,10 +155,23 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         Pair<String, Fragment> fragmentPair = fragmentMap.get(fragmento);
 
         if (fragmentPair != null) {
-            getSupportFragmentManager()
-                    .beginTransaction()
-                    .replace(R.id.home_content, fragmentPair.second)
-                    .commit();
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+            Fragment currentFragment = fragmentManager.findFragmentById(R.id.home_content);
+
+            // Check if the fragment is already added
+            if (currentFragment != null && currentFragment.getClass().equals(fragmentPair.second.getClass())) {
+                // Do nothing if the fragment is already added
+                return;
+            }
+
+            // Replace the fragment
+            fragmentTransaction.replace(R.id.home_content, fragmentPair.second);
+
+            // Use a specific tag for each fragment transaction
+            fragmentTransaction.addToBackStack(fragmentPair.first);
+
+            fragmentTransaction.commit();
             setTitle(fragmentPair.first);
         }
     }
@@ -153,6 +200,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         assert helper.insertarAgenda(agendaPrimaria) : "No se ha podido insertar la agenda";
         int idAgenda = helper.getAgenda().getIdAgenda();
 
+        Horario horario = new Horario();
+        horario.setIdAgenda(idAgenda);
+
         Tipo examen = new Tipo();
         examen.setNombre("Examen");
 
@@ -162,11 +212,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         Categoria mates = new Categoria();
         mates.setIdAgenda(idAgenda);
         mates.setNombre("Matemáticas");
+        mates.setAcronimo("Mates");
 
 
         assert helper.insertarTipo(examen) : "No se ha podido insertar el tipo examen";
         assert helper.insertarTipo(tarea) : "No se ha podido insertar el tipo tarea";
-
+        assert helper.insertarHorario(horario) : "No se ha podido insertar el horario";
         assert helper.insertarCategoria(mates) : "No se ha podido insertar la categoría matemáticas";
     }
 
