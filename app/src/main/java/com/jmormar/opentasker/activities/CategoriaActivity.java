@@ -18,11 +18,12 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.jmormar.opentasker.R;
-import com.jmormar.opentasker.activities.objectbuilders.NewCategoriaActivity;
-import com.jmormar.opentasker.activities.objectmodifiers.ModifyCategoriaActivity;
+import com.jmormar.opentasker.activities.builders.NewCategoriaActivity;
+import com.jmormar.opentasker.activities.modifiers.ModifyCategoriaActivity;
 import com.jmormar.opentasker.adapters.CategoriaAdapter;
 import com.jmormar.opentasker.models.Categoria;
 import com.jmormar.opentasker.util.DBHelper;
+import com.jmormar.opentasker.util.SwipeGesture;
 
 import java.util.List;
 
@@ -76,21 +77,14 @@ public class CategoriaActivity extends AppCompatActivity implements CategoriaAda
     }
 
     private void setSliding(RecyclerView rvCategorias) {
-        ItemTouchHelper.SimpleCallback swipeCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.RIGHT) {
-            @Override
-            public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
-                return false;
-            }
-
+        new ItemTouchHelper(new SwipeGesture(0, ItemTouchHelper.LEFT, this) {
             @Override
             public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
-                Categoria categoria = categorias.get(viewHolder.getAdapterPosition());
+                Categoria categoria = categorias.get(viewHolder.getBindingAdapterPosition());
                 assert helper.deleteCategoria(categoria.getIdCategoria()) : "No se pudo eliminar la categoria";
                 cargarCategorias();
             }
-        };
-
-        new ItemTouchHelper(swipeCallback).attachToRecyclerView(rvCategorias);
+        }).attachToRecyclerView(rvCategorias);
     }
 
     @Override

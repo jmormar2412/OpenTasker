@@ -18,11 +18,12 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.jmormar.opentasker.R;
-import com.jmormar.opentasker.activities.objectbuilders.NewEventoActivity;
-import com.jmormar.opentasker.activities.objectmodifiers.ModifyEventosActivity;
+import com.jmormar.opentasker.activities.builders.NewEventoActivity;
+import com.jmormar.opentasker.activities.modifiers.ModifyEventosActivity;
 import com.jmormar.opentasker.adapters.EventoAdapter;
 import com.jmormar.opentasker.models.Evento;
 import com.jmormar.opentasker.util.DBHelper;
+import com.jmormar.opentasker.util.SwipeGesture;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -37,7 +38,6 @@ public class EventosFragment extends Fragment implements EventoAdapter.OnEventoC
     private static final String ARG_PARAM1 = "param1", ARG_PARAM2 = "param2";
     private Context context;
     private RecyclerView recyclerViewEventos, recyclerViewEventosCompletados;
-    private EventoAdapter eventoAdapter, eventoAdapterCompletados;
     private List<Evento> eventos, eventosHechos;
     private DBHelper helper;
     private TextView tvEventosNoData, tvCompletedNoData;
@@ -80,39 +80,29 @@ public class EventosFragment extends Fragment implements EventoAdapter.OnEventoC
         tvCompletedNoData.setVisibility(View.VISIBLE);
         tvEventosNoData.setVisibility(View.VISIBLE);
 
-        ItemTouchHelper.SimpleCallback swipeCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
-            @Override
-            public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
-                return false;
-            }
-
+        SwipeGesture callbackNoHechos = new SwipeGesture(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT, this.context) {
             @Override
             public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
-                int position = viewHolder.getAdapterPosition();
+                int position = viewHolder.getBindingAdapterPosition();
                 Evento evento = eventos.get(position);
                 switch (direction) {
                     case ItemTouchHelper.LEFT:
-                        assert helper.deleteEvento(evento.getIdEvento()) : "No se pudo eliminar el evento -> EventosFragment onSwiped";
+                        helper.deleteEvento(evento.getIdEvento());
                         cargarEventos();
                         break;
                     case ItemTouchHelper.RIGHT:
                         evento.setHecho(!evento.isHecho());
-                        assert helper.actualizarEvento(evento) : "No se pudo actualizar el evento -> EventosFragment onSwiped";
+                        helper.actualizarEvento(evento);
                         cargarEventos();
                         break;
                 }
             }
         };
 
-        ItemTouchHelper.SimpleCallback swipeCallbackHechos = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
-            @Override
-            public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
-                return false;
-            }
-
+        SwipeGesture callbackHechos = new SwipeGesture(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT, this.context) {
             @Override
             public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
-                int position = viewHolder.getAdapterPosition();
+                int position = viewHolder.getBindingAdapterPosition();
                 Evento evento = eventosHechos.get(position);
                 switch (direction) {
                     case ItemTouchHelper.LEFT:
@@ -128,8 +118,8 @@ public class EventosFragment extends Fragment implements EventoAdapter.OnEventoC
             }
         };
 
-        new ItemTouchHelper(swipeCallback).attachToRecyclerView(recyclerViewEventos);
-        new ItemTouchHelper(swipeCallbackHechos).attachToRecyclerView(recyclerViewEventosCompletados);
+        new ItemTouchHelper(callbackNoHechos).attachToRecyclerView(recyclerViewEventos);
+        new ItemTouchHelper(callbackHechos).attachToRecyclerView(recyclerViewEventosCompletados);
 
         addListenerToButton(rootView);
 
@@ -165,10 +155,10 @@ public class EventosFragment extends Fragment implements EventoAdapter.OnEventoC
             this.tvCompletedNoData.setVisibility(View.VISIBLE);
         }
 
-        eventoAdapter = new EventoAdapter(this.context, eventos, "");
+        EventoAdapter eventoAdapter = new EventoAdapter(this.context, eventos, "");
         eventoAdapter.setOnEventoClickListener(this);
 
-        eventoAdapterCompletados = new EventoAdapter(this.context, eventosHechos, "hechos");
+        EventoAdapter eventoAdapterCompletados = new EventoAdapter(this.context, eventosHechos, "hechos");
         eventoAdapterCompletados.setOnEventoClickListener(this);
 
         recyclerViewEventos.setAdapter(eventoAdapter);

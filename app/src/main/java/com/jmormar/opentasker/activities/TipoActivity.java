@@ -24,6 +24,7 @@ import com.jmormar.opentasker.R;
 import com.jmormar.opentasker.adapters.TipoAdapter;
 import com.jmormar.opentasker.models.Tipo;
 import com.jmormar.opentasker.util.DBHelper;
+import com.jmormar.opentasker.util.SwipeGesture;
 
 import java.util.List;
 
@@ -87,21 +88,14 @@ public class TipoActivity extends AppCompatActivity implements TipoAdapter.OnTip
     }
 
     private void setSliding(RecyclerView rvTipos) {
-        ItemTouchHelper.SimpleCallback swipeCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.RIGHT) {
-            @Override
-            public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
-                return false;
-            }
-
+        new ItemTouchHelper(new SwipeGesture(0, ItemTouchHelper.LEFT, this) {
             @Override
             public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
-                Tipo tipo = tipos.get(viewHolder.getAdapterPosition());
+                Tipo tipo = tipos.get(viewHolder.getBindingAdapterPosition());
                 assert helper.deleteTipo(tipo.getIdTipo());
                 cargarTipos();
             }
-        };
-
-        new ItemTouchHelper(swipeCallback).attachToRecyclerView(rvTipos);
+        }).attachToRecyclerView(rvTipos);
     }
 
     private void cargarTipos() {
@@ -153,9 +147,7 @@ public class TipoActivity extends AppCompatActivity implements TipoAdapter.OnTip
             assert rvTipos.getAdapter() != null : "El adapter no puede ser nulo";
             rvTipos.getAdapter().notifyItemChanged(position);
         });
-        modifyBuilder.setNegativeButton("Cancelar", (dialog, which) ->{
-            dialog.cancel();
-        } );
+        modifyBuilder.setNegativeButton("Cancelar", (dialog, which) -> dialog.cancel());
 
         modifyBuilder.create().show();
     }

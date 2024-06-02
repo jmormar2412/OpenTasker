@@ -21,15 +21,16 @@ import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.jmormar.opentasker.R;
-import com.jmormar.opentasker.activities.objectbuilders.NewEventoActivity;
-import com.jmormar.opentasker.activities.objectbuilders.NewNotaActivity;
-import com.jmormar.opentasker.activities.objectmodifiers.ModifyEventosActivity;
-import com.jmormar.opentasker.activities.objectmodifiers.ModifyNotasActivity;
+import com.jmormar.opentasker.activities.builders.NewEventoActivity;
+import com.jmormar.opentasker.activities.builders.NewNotaActivity;
+import com.jmormar.opentasker.activities.modifiers.ModifyEventosActivity;
+import com.jmormar.opentasker.activities.modifiers.ModifyNotasActivity;
 import com.jmormar.opentasker.adapters.EventoAdapter;
 import com.jmormar.opentasker.adapters.NotaAdapter;
 import com.jmormar.opentasker.models.Evento;
 import com.jmormar.opentasker.models.Nota;
 import com.jmormar.opentasker.util.DBHelper;
+import com.jmormar.opentasker.util.SwipeGesture;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -81,15 +82,10 @@ public class HomeFragment extends Fragment implements NotaAdapter.OnNoteClickLis
         this.tvEventosNoData = rootView.findViewById(R.id.tv_main_eventos_nodata);
         this.tvNotasNoData = rootView.findViewById(R.id.tv_main_notas_nodata);
 
-        ItemTouchHelper.SimpleCallback swipeCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
-            @Override
-            public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
-                return false;
-            }
-
+        new ItemTouchHelper(new SwipeGesture(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT, this.context) {
             @Override
             public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
-                int position = viewHolder.getAdapterPosition();
+                int position = viewHolder.getBindingAdapterPosition();
                 Evento evento = eventos.get(position);
                 switch (direction) {
                     case ItemTouchHelper.LEFT:
@@ -103,10 +99,8 @@ public class HomeFragment extends Fragment implements NotaAdapter.OnNoteClickLis
                         break;
                 }
             }
-        };
+        }).attachToRecyclerView(recyclerViewEventos);
 
-
-        new ItemTouchHelper(swipeCallback).attachToRecyclerView(recyclerViewEventos);
 
         recyclerViewNotas.setLayoutManager(new GridLayoutManager(this.context, 2));
 

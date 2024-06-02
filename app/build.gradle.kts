@@ -37,6 +37,7 @@ dependencies {
     implementation(libs.constraintlayout)
     implementation(libs.colorpicker)
     implementation(libs.preference)
+    implementation(libs.recyclerview.swipedecorator)
     testImplementation(libs.junit)
     testImplementation(libs.mockito.core)
     androidTestImplementation(libs.ext.junit)
