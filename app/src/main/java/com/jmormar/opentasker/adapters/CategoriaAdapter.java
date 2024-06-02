@@ -16,7 +16,7 @@ import java.util.List;
 import lombok.Setter;
 
 public class CategoriaAdapter extends RecyclerView.Adapter<CategoriaAdapter.CategoriaViewHolder>{
-    private List<Categoria> categorias;
+    private final List<Categoria> categorias;
     @Setter
     private OnCategoriaClickListener onCategoriaClickListener;
 
@@ -43,8 +43,8 @@ public class CategoriaAdapter extends RecyclerView.Adapter<CategoriaAdapter.Cate
     }
 
     public class CategoriaViewHolder extends RecyclerView.ViewHolder{
-        private TextView nombre;
-        private View vColor;
+        private final TextView nombre;
+        private final View vColor;
 
         public CategoriaViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -52,7 +52,7 @@ public class CategoriaAdapter extends RecyclerView.Adapter<CategoriaAdapter.Cate
             this.vColor = itemView.findViewById(R.id.v_color);
 
             itemView.setOnClickListener(v -> {
-                int position = getAdapterPosition();
+                int position = getBindingAdapterPosition();
                 if(position != RecyclerView.NO_POSITION && onCategoriaClickListener != null) onCategoriaClickListener.onCategoriaClick(position);
             });
         }

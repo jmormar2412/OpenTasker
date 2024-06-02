@@ -57,10 +57,10 @@ public class EventoAdapter extends RecyclerView.Adapter<EventoAdapter.EventoView
 
 
     public class EventoViewHolder extends RecyclerView.ViewHolder {
-        TextView nombre;
-        TextView fecha;
-        TextView tipo;
-        TextView categoria;
+        final TextView nombre;
+        final TextView fecha;
+        final TextView tipo;
+        final TextView categoria;
 
         EventoViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -70,7 +70,7 @@ public class EventoAdapter extends RecyclerView.Adapter<EventoAdapter.EventoView
             categoria = itemView.findViewById(R.id.evli_categoria);
 
             itemView.setOnClickListener(v -> {
-                int position = getAdapterPosition();
+                int position = getBindingAdapterPosition();
                 if(position!=RecyclerView.NO_POSITION && mListener!=null) mListener.onEventoClick(position, identificadorAdapter);
             });
         }
