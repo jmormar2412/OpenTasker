@@ -57,6 +57,15 @@
     <string name="modify_categoria">Modify category</string>
     <string name="addcategoria">Add category</string>
     <string name="misc">Misc</string>
+    <string name="add_hora">Add time period</string>
+    <string name="nueva_hora">New period</string>
+    <string name="dia_de_la_semana">Day of the week</string>
+    <string name="hora_inicial">Time of beginning</string>
+    <string name="hora_final">Ending time</string>
+    <string name="acronimo_categoria">Acronym of the category</string>
+    <string name="modificar_hora">Modify period</string>
+    <string name="borrar">Delete</string>
+    <string name="editar">Edit</string>
 
     <string-array name="dias_semana">
         <item>Lunes</item>

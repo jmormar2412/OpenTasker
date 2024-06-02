@@ -13,7 +13,13 @@
         android:theme="@style/Theme.OpenTasker"
         tools:targetApi="31">
         <activity
-            android:name=".activities.objectmodifiers.ModifyCategoriaActivity"
+            android:name=".activities.modifiers.ModifyHoraActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activities.builders.NewHoraActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activities.modifiers.ModifyCategoriaActivity"
             android:exported="false" />
         <activity
             android:name=".activities.TipoActivity"
@@ -22,25 +28,25 @@
             android:name=".activities.CategoriaActivity"
             android:exported="false" />
         <activity
-            android:name=".activities.objectbuilders.NewTiempoActivity"
+            android:name=".activities.builders.NewTiempoActivity"
             android:exported="false" />
         <activity
             android:name=".activities.TiemposActivity"
             android:exported="false" />
         <activity
-            android:name=".activities.objectmodifiers.ModifyEventosActivity"
+            android:name=".activities.modifiers.ModifyEventosActivity"
             android:exported="false" />
         <activity
-            android:name=".activities.objectmodifiers.ModifyNotasActivity"
+            android:name=".activities.modifiers.ModifyNotasActivity"
             android:exported="false" />
         <activity
-            android:name=".activities.objectbuilders.NewCategoriaActivity"
+            android:name=".activities.builders.NewCategoriaActivity"
             android:exported="false" />
         <activity
-            android:name=".activities.objectbuilders.NewEventoActivity"
+            android:name=".activities.builders.NewEventoActivity"
             android:exported="false" />
         <activity
-            android:name=".activities.objectbuilders.NewNotaActivity"
+            android:name=".activities.builders.NewNotaActivity"
             android:exported="false" />
         <activity
             android:name=".MainActivity"

@@ -46,7 +46,7 @@
     <string name="gestionar_tipos">Gestionar tipos</string>
     <string name="fecha_inicio">Fecha de inicio</string>
     <string name="fecha_final">Fecha final</string>
-    <string name="dia_inicio">Dia inicial</string>
+    <string name="dia_inicio">Día inicial</string>
     <string name="duracion_semana">Duración de la semana</string>
     <string name="addtipo">Añadir tipo</string>
     <string name="nueva_categoria">Nueva categoría</string>
@@ -54,4 +54,13 @@
     <string name="modify_categoria">Modificar categoría</string>
     <string name="addcategoria">Añadir categoría</string>
     <string name="misc">Otros</string>
+    <string name="add_hora">Añadir hora</string>
+    <string name="nueva_hora">Nueva hora</string>
+    <string name="dia_de_la_semana">Día de la semana</string>
+    <string name="hora_inicial">Tiempo de inicio</string>
+    <string name="hora_final">Tiempo de fin</string>
+    <string name="acronimo_categoria">Acrónimo de la categoría</string>
+    <string name="modificar_hora">Modificar hora</string>
+    <string name="borrar">Borrar</string>
+    <string name="editar">Editar</string>
 </resources>
