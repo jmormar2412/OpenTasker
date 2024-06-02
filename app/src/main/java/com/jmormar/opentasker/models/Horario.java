@@ -1,7 +1,5 @@
 package com.jmormar.opentasker.models;
 
-import java.util.ArrayList;
-
 import lombok.Data;
 
 /**
@@ -12,6 +10,5 @@ import lombok.Data;
 public class Horario {
     //Decidir la forma de almacenar las horas, si directamente aquí o en arrays de días (me estoy muriendo ahora mismo)
     private int idHorario;
-    private ArrayList<Hora> horas;
     private int idAgenda;
 }
