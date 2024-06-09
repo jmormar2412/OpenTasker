@@ -52,9 +52,14 @@
     <PreferenceCategory
         app:title="@string/misc" >
             <MultiSelectListPreference
+                app:icon="@drawable/baseline_notifications_24"
                 app:key="notificationfrequency"
-                app:title="Sync Options"
-                app:summary="Select data to sync"/>
+                app:title="@string/frecuencia_notificaciones"/>
+
+            <ListPreference
+                app:icon="@drawable/baseline_language_24"
+                app:key="language"
+                app:title="@string/idioma"/>
 
     </PreferenceCategory>
 <!--    <CheckBoxPreference-->

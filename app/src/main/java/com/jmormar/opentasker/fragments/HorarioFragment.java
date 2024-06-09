@@ -3,7 +3,6 @@ package com.jmormar.opentasker.fragments;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,11 +23,6 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link HorarioFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class HorarioFragment extends Fragment implements HoraAdapter.OnHoraClickListener {
     private static final String ARG_PARAM1 = "param1",ARG_PARAM2 = "param2";
     private final RecyclerView[] recyclerViews = new RecyclerView[7];
@@ -83,7 +77,6 @@ public class HorarioFragment extends Fragment implements HoraAdapter.OnHoraClick
             recyclerView.setLayoutManager(new LinearLayoutManager(context));
         }
 
-        // Load your data here
         loadHoras();
         setAdapters();
 
@@ -97,7 +90,6 @@ public class HorarioFragment extends Fragment implements HoraAdapter.OnHoraClick
         rvTimeDisplay.setVisibility(View.VISIBLE);
         rvTimeDisplay.suppressLayout(true);
 
-        // Create the adapters with the adjusted indices
         for (int i = 0; i < adapters.length; i++) {
             int adjustedIndex = adjustDayOfWeek(i, preferredStartingDay);
             String dayName = getResources().getStringArray(R.array.dias_semana)[adjustedIndex];
@@ -107,7 +99,6 @@ public class HorarioFragment extends Fragment implements HoraAdapter.OnHoraClick
             recyclerViews[i].suppressLayout(true);
         }
 
-        // Show or hide RecyclerViews based on week length
         int weekLength = helper.getAgenda().getWeekLength();
         for (int i = 0; i < recyclerViews.length; i++) {
             if (i < weekLength) {
@@ -147,7 +138,6 @@ public class HorarioFragment extends Fragment implements HoraAdapter.OnHoraClick
         if(startTime == null || endTime == null){
             segmentoHorarioAdapter = new SegmentoHorarioAdapter(LocalTime.of(8, 0), LocalTime.of(15, 0));
         } else{
-            Log.d("endTime", endTime.toString());
             segmentoHorarioAdapter = new SegmentoHorarioAdapter(startTime, endTime);
         }
     }
