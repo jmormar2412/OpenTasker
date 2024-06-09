@@ -1,95 +1,83 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".activities.modifiers.ModifyNotasActivity"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:padding="10sp">
 
-    <RelativeLayout
-        android:layout_height="match_parent"
+    <EditText
+        android:id="@+id/et_modifynota_title"
         android:layout_width="match_parent"
-        android:padding="20sp">
+        android:layout_height="wrap_content"
+        android:hint="@string/titulo"
+        android:importantForAutofill="no"
+        android:inputType="text" />
+
+    <CheckBox
+        android:id="@+id/cb_modifynota_includecategory"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/incluir_categoria"
+        android:layout_below="@id/et_modifynota_title"/>
+
+    <Spinner
+        android:id="@+id/sp_modifynota_categoria"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_toEndOf="@id/cb_modifynota_includecategory"
+        android:layout_below="@id/et_modifynota_title"
+        android:padding="13sp"
+        android:visibility="gone"/>
+
+    <CheckBox
+        android:id="@+id/cb_modifynota_inheritcolor"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/heredar_color"
+        android:layout_below="@id/cb_modifynota_includecategory"
+        android:visibility="gone"
+        />
+
+    <Button
+        android:id="@+id/bt_modifynota_pickcolor"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/cb_modifynota_includecategory"
+        android:layout_alignParentEnd="true"
+        android:textColor="@color/white"
+        android:text="@string/escoger_color"/>
+
+    <TextView
+        android:id="@+id/invisibleass"
+        android:layout_width="wrap_content"
+        android:layout_height="49sp"
+        android:layout_below="@id/cb_modifynota_includecategory" />
+
+    <EditText
+        android:id="@+id/et_modifynota_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:autofillHints="text"
+        android:minHeight="390sp"
+        android:layout_below="@id/invisibleass"
+        android:gravity="start|top"
+        android:hint="@string/escriba_aqui"
+        android:inputType="textMultiLine"
+        android:scrollbars="vertical"
+        android:scrollbarStyle="insideInset"
+        android:scrollbarSize="4sp"/>
 
 
-        <EditText
-            android:id="@+id/et_modifynota_title"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="@string/titulo" />
+    <Button
+        android:id="@+id/bt_modifynota_guardar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/et_modifynota_text"
+        android:layout_margin="10sp"
+        android:text="@string/guardar" />
 
-        <CheckBox
-            android:id="@+id/cb_modifynota_includecategory"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/incluir_categoria"
-            android:layout_below="@id/et_modifynota_title"/>
-
-        <Spinner
-            android:id="@+id/sp_modifynota_categoria"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_toEndOf="@id/cb_modifynota_includecategory"
-            android:layout_below="@id/et_modifynota_title"
-            android:padding="13sp"
-            android:visibility="gone"/>
-
-        <CheckBox
-            android:id="@+id/cb_modifynota_inheritcolor"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/heredar_color"
-            android:layout_below="@id/cb_modifynota_includecategory"
-            android:visibility="gone"
-            />
-
-        <Button
-            android:id="@+id/bt_modifynota_pickcolor"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/cb_modifynota_includecategory"
-            android:layout_alignParentEnd="true"
-            android:textColor="@color/white"
-            android:text="@string/escoger_color"/>
-
-        <TextView
-            android:id="@+id/invisibleass"
-            android:layout_width="wrap_content"
-            android:layout_height="49sp"
-            android:layout_below="@id/cb_modifynota_includecategory" />
-
-        <EditText
-            android:id="@+id/et_modifynota_text"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:autofillHints="text"
-            android:minHeight="390sp"
-            android:layout_below="@id/invisibleass"
-            android:gravity="start|top"
-            android:hint="@string/escriba_aqui"
-            android:inputType="textMultiLine"
-            android:scrollbars="vertical"
-            android:scrollbarStyle="insideInset"
-            android:scrollbarSize="4sp"/>
-
-
-        <Button
-            android:id="@+id/bt_modifynota_guardar"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_below="@id/et_modifynota_text"
-            android:layout_margin="10sp"
-            android:text="@string/guardar" />
-
-        <Button
-            android:id="@+id/bt_modifynota_delete"
-            android:text="@string/borrar_nota"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/et_modifynota_text"
-            android:layout_margin="10sp" />
-
-    </RelativeLayout>
-</LinearLayout>
+</RelativeLayout>

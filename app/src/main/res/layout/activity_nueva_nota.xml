@@ -36,6 +36,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/cb_nuevanota_includecategory"
+        android:textColor="@color/white"
         android:layout_alignParentEnd="true"
         android:text="@string/escoger_color"/>
 

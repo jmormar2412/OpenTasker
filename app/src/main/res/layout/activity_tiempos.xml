@@ -23,7 +23,6 @@
         android:padding="10sp"/>
 
         <RelativeLayout
-            android:id="@+id/rl_botones"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="20sp"
@@ -40,6 +39,7 @@
                 android:id="@+id/ib_delete"
                 android:layout_width="50sp"
                 android:layout_height="50sp"
+                android:contentDescription="@string/start_pause"
                 android:src="@drawable/baseline_backspace_24"
                 android:layout_above="@id/ib_reset"
                 android:layout_toEndOf="@id/ib_startpause"/>
