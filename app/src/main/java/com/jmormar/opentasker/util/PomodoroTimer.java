@@ -10,8 +10,8 @@ import lombok.Getter;
 import lombok.Setter;
 
 public class PomodoroTimer {
-    private final long totalTime; // Total time in milliseconds
-    private long remainingTime; // Remaining time in milliseconds
+    private final long totalTime;
+    private long remainingTime;
     private boolean isPaused;
     private final Handler handler;
     private Runnable timerRunnable;
@@ -38,10 +38,10 @@ public class PomodoroTimer {
             @Override
             public void run() {
                 if (!isPaused) {
-                    remainingTime -= 1000; // Decrease remaining time by 1 second
+                    remainingTime -= 1000;
                     tiempo.setUpdatedSeconds(getRemainingTime());
                     updateRecyclerView();
-                    handler.postDelayed(this, 1000); // Schedule the next tick after 1 second
+                    handler.postDelayed(this, 1000);
                     if(remainingTime <= 0) {
                         if (timerCallback != null) {
                             timerCallback.onTimerFinished(tiempo.isRest());
@@ -55,7 +55,7 @@ public class PomodoroTimer {
 
     public void start() {
         isPaused = false;
-        handler.postDelayed(timerRunnable, 1000); // Start the timer with a delay of 1 second
+        handler.postDelayed(timerRunnable, 1000);
     }
 
     public void pause() {
@@ -70,7 +70,6 @@ public class PomodoroTimer {
     }
 
     private void updateRecyclerView() {
-        // Update the UI using the RecyclerView adapter
         if (adapter != null) {
             adapter.notifyItemChanged(position);
         }

@@ -61,7 +61,7 @@ public class SegmentoHorarioAdapter extends RecyclerView.Adapter<SegmentoHorario
         void bind(Hora hora) {
             ViewGroup.LayoutParams layoutParams = horaTextView.getLayoutParams();
             int durationInMinutes = (int) hora.getTotalTiempo().toMinutes();
-            layoutParams.height = durationInMinutes * HOUR_HEIGHT; // Adjust the multiplier as needed
+            layoutParams.height = durationInMinutes * HOUR_HEIGHT;
             horaTextView.setLayoutParams(layoutParams);
 
             if(!hora.isGap()){

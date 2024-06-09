@@ -24,7 +24,6 @@ public class Hora {
     private int idCategoria;
     private boolean gap;
     public static LocalTime horaMinima, horaMaxima;
-    // Method to enable or disable updating horaMinima and horaMaxima
     @Setter
     private boolean updateMinMax = true;
     private static List<Hora> allHoras = new ArrayList<>();
@@ -55,7 +54,7 @@ public class Hora {
                 .orElse(null);
 
         horaMaxima = allHoras.stream()
-                .filter(h -> h.getTiempoInicio() != null && h.getTotalTiempo() != null)  // Filter out null values
+                .filter(h -> h.getTiempoInicio() != null && h.getTotalTiempo() != null)
                 .map(h -> h.getTiempoInicio().plus(h.getTotalTiempo()))
                 .max(LocalTime::compareTo)
                 .orElse(null);

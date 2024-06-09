@@ -47,14 +47,11 @@ public class DBHelper extends SQLiteOpenHelper {
         return me;
     }
 
-    // Aquí van todas las cosas (prepárate para las 2 millones de líneas)
 
-    // AGENDA
     private static final String SQL_CREATE_AGENDA =
             """
             CREATE TABLE Agenda (
                 idAgenda INTEGER PRIMARY KEY,
-                nombre TEXT NOT NULL,
                 fechaInicio TEXT,
                 fechaFinal TEXT ,
                 beginningDay INTEGER,
@@ -69,37 +66,31 @@ public class DBHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
-        values.put("nombre", agenda.getNombre());
         values.put("fechaInicio", dateFormatter.format(agenda.getFechaInicio()));
         values.put("fechaFinal", dateFormatter.format(agenda.getFechaFinal()));
         values.put("beginningDay", agenda.getBeginningDay());
         values.put("weekLength", agenda.getWeekLength());
 
-        //Como esto de error me va a entrar puto sida
         return db.insert("Agenda", null, values) > 0;
     }
 
     public Agenda getAgenda() {
         SQLiteDatabase db = this.getReadableDatabase();
-        //No me toques los huevos ya no puedo hacer nada tio
 
-        String[] projection = {"idAgenda", "nombre", "fechaInicio", "fechaFinal", "beginningDay", "weekLength"};
+        String[] projection = {"idAgenda", "fechaInicio", "fechaFinal", "beginningDay", "weekLength"};
         Cursor c = db.query("Agenda", projection, null, null, null, null, null);
 
         Agenda ad = null;
 
-        //Como nada más se va a ejecutar una sóla vez, no hará falta almacenar las agendas en una lista.
         while (c.moveToNext()) {
             ad = new Agenda();
             ad.setIdAgenda(c.getInt(c.getColumnIndexOrThrow("idAgenda")));
-            ad.setNombre(c.getString(c.getColumnIndexOrThrow("nombre")));
             try {
                 ad.setFechaInicio(dateFormatter.parse(c.getString(c.getColumnIndexOrThrow("fechaInicio"))));
                 ad.setFechaFinal(dateFormatter.parse(c.getString(c.getColumnIndexOrThrow("fechaFinal"))));
             } catch (ParseException p) {
                 System.err.println("Error en la lectura de la fecha -> getAgenda()");
             }
-            //Horror (conversión de int a byte)
             ad.setBeginningDay((byte) c.getInt(c.getColumnIndexOrThrow("beginningDay")));
             ad.setWeekLength((byte) c.getInt(c.getColumnIndexOrThrow("weekLength")));
         }
@@ -108,13 +99,11 @@ public class DBHelper extends SQLiteOpenHelper {
         return ad;
     }
 
-    //No hará falta eliminar agenda porque si la eliminas se van todos al carajo
 
     public boolean actualizarAgenda(Agenda agenda) {
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
-        values.put("nombre", agenda.getNombre());
         values.put("fechaInicio", dateFormatter.format(agenda.getFechaInicio()));
         values.put("fechaFinal", dateFormatter.format(agenda.getFechaFinal()));
         values.put("beginningDay", agenda.getBeginningDay());
@@ -124,11 +113,9 @@ public class DBHelper extends SQLiteOpenHelper {
 
         String[] selectionArgs = {String.valueOf(agenda.getIdAgenda())};
 
-        //Ea, con dos huevos. No me des error por favor.
         return db.update("Agenda", values, selection, selectionArgs) > 0;
     }
 
-    //HORACIO Y HORAS (son dependientes)
 
     private static final String SQL_CREATE_HORARIO =
             """
@@ -146,7 +133,6 @@ public class DBHelper extends SQLiteOpenHelper {
         ContentValues values = new ContentValues();
         values.put("idAgenda", horario.getIdAgenda());
 
-        //Como esto de error me va a entrar puto sida
         return db.insert("Horario", null, values) > 0;
     }
 
@@ -164,7 +150,6 @@ public class DBHelper extends SQLiteOpenHelper {
         return horario;
     }
 
-    //No hace falta getHorario porque como las horas no van a tener nada más que 1 horario se hace desde el getHoras()
     private static final String SQL_CREATE_HORA =
             """
             CREATE TABLE Hora (
@@ -251,8 +236,6 @@ public class DBHelper extends SQLiteOpenHelper {
         Cursor c = db.query("Hora", projection, selection, selectionArgs, null, null, null);
         List<Hora> lista = new ArrayList<>();
 
-        //Mucho cuidado aquí:
-        //Si no hay fecha ni duración (nulos) se va a la mierda!!!!!!!!
         while (c.moveToNext()) {
             Hora hr = new Hora();
             hr.setIdHora(c.getInt(c.getColumnIndexOrThrow("idHora")));
@@ -295,7 +278,6 @@ public class DBHelper extends SQLiteOpenHelper {
     }
 
 
-    //CATEGORÍA
 
     private static final String SQL_CREATE_CATEGORIA =
             """
@@ -392,7 +374,6 @@ public class DBHelper extends SQLiteOpenHelper {
         return null;
     }
 
-    //EVENTO
 
     private static final String SQL_CREATE_EVENTO =
             """
@@ -433,7 +414,6 @@ public class DBHelper extends SQLiteOpenHelper {
 
         List<Evento> list = new ArrayList<>();
 
-        //Mucho cuidado aquí que como no exista la fecha se va a la mierda
         while (c.moveToNext()) {
             Evento evt = new Evento();
             evt.setIdEvento(c.getInt(c.getColumnIndexOrThrow("idEvento")));
@@ -489,7 +469,6 @@ public class DBHelper extends SQLiteOpenHelper {
         Cursor c = db.query("Evento", projection, selection, selectionArgs, null, null, null);
         List<Evento> lista = new ArrayList<>();
 
-        //Mucho cuidado aquí que como no exista la fecha se va a la mierda
         while (c.moveToNext()) {
             Evento evt = new Evento();
             evt.setIdEvento(c.getInt(c.getColumnIndexOrThrow("idEvento")));
@@ -512,7 +491,6 @@ public class DBHelper extends SQLiteOpenHelper {
         return null;
     }
 
-    //NOTA
 
     private static final String SQL_CREATE_NOTA =
             """
@@ -547,7 +525,6 @@ public class DBHelper extends SQLiteOpenHelper {
 
         List<Nota> list = new ArrayList<>();
 
-        //Asegurarse de que la categoría existe, vaya a ser que se vaya a la mierda todas las cosas
         while (c.moveToNext()) {
             Nota nota = new Nota();
             nota.setIdNota(c.getInt(c.getColumnIndexOrThrow("idNota")));
@@ -595,7 +572,6 @@ public class DBHelper extends SQLiteOpenHelper {
         Cursor c = db.query("Nota", projection, selection, selectionArgs, null, null, null);
         List<Nota> lista = new ArrayList<>();
 
-        //Asegurarse de que la categoría existe, vaya a ser que se vaya a la mierda todas las cosas
         while (c.moveToNext()) {
             Nota nota = new Nota();
             nota.setIdNota(c.getInt(c.getColumnIndexOrThrow("idNota")));
@@ -612,7 +588,6 @@ public class DBHelper extends SQLiteOpenHelper {
         return null;
     }
 
-    // POMODORO
 
     private static final String SQL_CREATE_POMODORO =
             """
@@ -694,7 +669,6 @@ public class DBHelper extends SQLiteOpenHelper {
         return null;
     }
 
-    // TIPO
 
     private static final String SQL_CREATE_TIPO =
             """
@@ -784,7 +758,6 @@ public class DBHelper extends SQLiteOpenHelper {
         return null;
     }
 
-    //TIEMPO
 
     private static final String SQL_CREATE_TIEMPO =
             """
@@ -858,7 +831,6 @@ public class DBHelper extends SQLiteOpenHelper {
         return db.update("Tiempo", values, selection, selectionArgs) > 0;
     }
 
-    //POSITION
 
     private static final String SQL_CREATE_POSITION =
             """
@@ -877,19 +849,16 @@ public class DBHelper extends SQLiteOpenHelper {
         boolean result;
 
         try {
-            // Check if a row with the same idPomodoro value exists
             String[] selectionArgs = {String.valueOf(idPomodoro)};
             cursor = db.query("Position", null, "idPomodoro = ?", selectionArgs, null, null, null);
 
             ContentValues values = new ContentValues();
             values.put("position", position);
 
-            // If a row with the same idPomodoro value exists, update it
             if (cursor.moveToFirst()) {
                 result = db.update("Position", values, "idPomodoro = ?", selectionArgs) > 0;
             } else {
-                // Otherwise, insert the new row
-                values.put("idPomodoro", idPomodoro);  // Correcting the insertion column
+                values.put("idPomodoro", idPomodoro);
                 result = db.insert("Position", null, values) > 0;
             }
         } finally {
@@ -927,7 +896,6 @@ public class DBHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        //Ejecutar todos los create
         db.execSQL(SQL_CREATE_AGENDA);
         db.execSQL(SQL_CREATE_EVENTO);
         db.execSQL(SQL_CREATE_NOTA);

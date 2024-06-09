@@ -8,7 +8,6 @@ import lombok.Data;
  */
 @Data
 public class Horario {
-    //Decidir la forma de almacenar las horas, si directamente aquí o en arrays de días (me estoy muriendo ahora mismo)
     private int idHorario;
     private int idAgenda;
 }

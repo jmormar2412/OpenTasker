@@ -11,5 +11,4 @@ import lombok.Data;
 public class Pomodoro {
     private int idPomodoro;
     private String nombre;
-    // No se necesita lista de tiempos porque se guardarán todos los tiempos de un pomodoro bajo el mismo id de pomodoro.
 }

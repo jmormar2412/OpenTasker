@@ -14,9 +14,5 @@ public class Nota {
     private String titulo;
     private String texto;
     private int color;
-    //Almacenar categoría de la nota.
     private int idCategoria;
-    //Almacenar color de la nota.
-
-    // Dar opción para heredar color de la categoría. Se hará con un setter en una clase externa
 }

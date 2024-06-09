@@ -90,7 +90,7 @@ public class EventoAdapter extends RecyclerView.Adapter<EventoAdapter.EventoView
                 itemView.setBackgroundColor(cat.getColor());
             }
 
-            itemView.setVisibility(View.VISIBLE); // Make sure the itemView is visible
+            itemView.setVisibility(View.VISIBLE);
             itemView.setLayoutParams(new RecyclerView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
         }
     }

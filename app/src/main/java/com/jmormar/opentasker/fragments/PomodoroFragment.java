@@ -66,7 +66,6 @@ public class PomodoroFragment extends Fragment implements PomodoroAdapter.OnPomo
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         this.context = requireContext();
         this.helper = DBHelper.getInstance(this.context);
         View rootView = inflater.inflate(R.layout.fragment_pomodoro, container, false);
@@ -93,7 +92,7 @@ public class PomodoroFragment extends Fragment implements PomodoroAdapter.OnPomo
             public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
                 int position = viewHolder.getBindingAdapterPosition();
                 Pomodoro pomodoro = helper.getPomodoros().get(position);
-                assert helper.deletePomodoro(pomodoro.getIdPomodoro()) : "Error al eliminar pomodoro";
+                assert helper.deletePomodoro(pomodoro.getIdPomodoro()) : getString(R.string.error_borrando) + getString(R.string.pomodoro_minuscula);
                 cargarPomodoros();
             }
         }).attachToRecyclerView(recyclerViewPomodoros);
@@ -101,20 +100,20 @@ public class PomodoroFragment extends Fragment implements PomodoroAdapter.OnPomo
 
     private void createBuilder() {
         this.builder = new AlertDialog.Builder(this.context);
-        builder.setTitle("Nombre del pomodoro");
+        builder.setTitle(getString(R.string.nombre_pomodoro));
 
         final EditText input = new EditText(this.context);
         input.setInputType(InputType.TYPE_CLASS_TEXT);
         builder.setView(input);
 
-        builder.setPositiveButton("OK", (dialog, which) ->{
+        builder.setPositiveButton(getString(R.string.aceptar), (dialog, which) ->{
             if(input.getText().toString().isEmpty()){
-                input.setError("Campo requerido");
+                input.setError(getString(R.string.nombre_es_obligatorio));
                 return;
             }
             newPomodoro(input.getText().toString());
         });
-        builder.setNegativeButton("Cancelar", (dialog, which) ->{
+        builder.setNegativeButton(getString(R.string.cancelar), (dialog, which) ->{
             dialog.cancel();
             createBuilder();
         } );
@@ -122,7 +121,7 @@ public class PomodoroFragment extends Fragment implements PomodoroAdapter.OnPomo
 
     private void createEditBuilder(int idPomodoro) {
         this.builder = new AlertDialog.Builder(this.context);
-        builder.setTitle("Nombre del pomodoro");
+        builder.setTitle(getString(R.string.nombre_pomodoro));
 
         Pomodoro pomodoro = helper.getPomodoro(idPomodoro);
 
@@ -131,17 +130,17 @@ public class PomodoroFragment extends Fragment implements PomodoroAdapter.OnPomo
         input.setText(pomodoro.getNombre());
         builder.setView(input);
 
-        builder.setPositiveButton("OK", (dialog, which) ->{
+        builder.setPositiveButton(getString(R.string.aceptar), (dialog, which) ->{
             if(input.getText().toString().isEmpty()){
-                input.setError("Campo requerido");
+                input.setError(getString(R.string.nombre_es_obligatorio));
                 return;
             }
             pomodoro.setNombre(input.getText().toString());
-            assert helper.actualizarPomodoro(pomodoro) : "Error al actualizar pomodoro";
-            assert recyclerViewPomodoros.getAdapter() != null : "El adapter no existe";
+            assert helper.actualizarPomodoro(pomodoro) : getString(R.string.error_guardando) + getString(R.string.pomodoro_minuscula);
+            assert recyclerViewPomodoros.getAdapter() != null : getString(R.string.adapter_no_nulo);
             cargarPomodoros();
         });
-        builder.setNegativeButton("Cancelar", (dialog, which) ->{
+        builder.setNegativeButton(getString(R.string.cancelar), (dialog, which) ->{
             dialog.cancel();
             createBuilder();
         } );

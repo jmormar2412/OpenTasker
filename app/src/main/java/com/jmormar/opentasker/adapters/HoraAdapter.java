@@ -77,7 +77,7 @@ public class HoraAdapter extends RecyclerView.Adapter<HoraAdapter.HoraViewHolder
         void bind(Hora hora) {
             ViewGroup.LayoutParams layoutParams = horaTextView.getLayoutParams();
             int durationInMinutes = (int) hora.getTotalTiempo().toMinutes();
-            layoutParams.height = durationInMinutes * HOUR_HEIGHT; // Adjust the multiplier as needed
+            layoutParams.height = durationInMinutes * HOUR_HEIGHT;
             horaTextView.setLayoutParams(layoutParams);
 
             if (hora.isGap()) {
@@ -95,7 +95,7 @@ public class HoraAdapter extends RecyclerView.Adapter<HoraAdapter.HoraViewHolder
             }
         }
 
-        public void setBackgroundColor(int color){
+        void setBackgroundColor(int color){
             LayerDrawable layerDrawable = (LayerDrawable) itemView.getBackground();
             GradientDrawable dynamicColorLayer = (GradientDrawable) layerDrawable.findDrawableByLayerId(R.id.dynamic_color_layer);
             dynamicColorLayer.setColor(color);
@@ -106,7 +106,6 @@ public class HoraAdapter extends RecyclerView.Adapter<HoraAdapter.HoraViewHolder
         List<Hora> adjustedHoras = new ArrayList<>();
 
         if (originalHoras.isEmpty()) {
-            // If there are no original Horas, just return the day name Hora
             Hora dayNameHora = new Hora();
             dayNameHora.setTotalTiempo(Duration.ofHours(1));
             dayNameHora.setIdCategoria(-1);
@@ -114,13 +113,11 @@ public class HoraAdapter extends RecyclerView.Adapter<HoraAdapter.HoraViewHolder
             return adjustedHoras;
         }
 
-        // Add the day name Hora
         Hora dayNameHora = new Hora();
         dayNameHora.setTotalTiempo(Duration.ofHours(1));
         dayNameHora.setIdCategoria(-1);
         adjustedHoras.add(dayNameHora);
 
-        // Add a gap between the day name Hora and the first original Hora
         Hora firstHora = originalHoras.get(0);
         LocalTime minimumTime = Hora.horaMinima;
 
@@ -129,11 +126,10 @@ public class HoraAdapter extends RecyclerView.Adapter<HoraAdapter.HoraViewHolder
             Hora gapHora = new Hora();
             gapHora.setTiempoInicio(minimumTime);
             gapHora.setTotalTiempo(gapDuration);
-            gapHora.setGap(true); // Flag to indicate this is a gap
+            gapHora.setGap(true);
             adjustedHoras.add(gapHora);
         }
 
-        // Add original Horas and insert gaps where necessary
         for (int i = 0; i < originalHoras.size(); i++) {
             Hora currentHora = originalHoras.get(i);
             adjustedHoras.add(currentHora);
@@ -148,7 +144,7 @@ public class HoraAdapter extends RecyclerView.Adapter<HoraAdapter.HoraViewHolder
                     Hora gapHora = new Hora();
                     gapHora.setTiempoInicio(currentEndTime);
                     gapHora.setTotalTiempo(gapDuration);
-                    gapHora.setGap(true); // Flag to indicate this is a gap
+                    gapHora.setGap(true);
                     adjustedHoras.add(gapHora);
                 }
             }
