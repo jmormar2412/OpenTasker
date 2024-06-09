@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <TextView
+        android:id="@+id/tv_titulo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:paddingBottom="8dp" />
+
+    <TextView
+        android:id="@+id/tv_categoria"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textStyle="bold"
+        android:paddingBottom="8dp" />
+
+    <TextView
+        android:id="@+id/tv_texto"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="450sp"
+        android:textSize="16sp" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ImageButton
+            android:id="@+id/bt_borrar"
+            android:layout_width="50sp"
+            android:layout_height="50sp"
+            android:contentDescription="@string/borrar_nota"
+            android:src="@drawable/baseline_delete_30"/>
+
+        <ImageButton
+            android:id="@+id/bt_editar"
+            android:layout_width="50sp"
+            android:layout_height="50sp"
+            android:layout_alignParentEnd="true"
+            android:contentDescription="@string/editar"
+            android:src="@drawable/baseline_edit_24" />
+
+    </RelativeLayout>
+
+
+
+</LinearLayout>

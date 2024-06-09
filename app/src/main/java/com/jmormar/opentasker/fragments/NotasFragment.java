@@ -11,13 +11,13 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.jmormar.opentasker.R;
 import com.jmormar.opentasker.activities.builders.NewNotaActivity;
-import com.jmormar.opentasker.activities.modifiers.ModifyNotasActivity;
 import com.jmormar.opentasker.adapters.NotaAdapter;
 import com.jmormar.opentasker.models.Nota;
 import com.jmormar.opentasker.util.DBHelper;
@@ -29,7 +29,7 @@ import java.util.List;
  * Use the {@link NotasFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class NotasFragment extends Fragment implements NotaAdapter.OnNoteClickListener {
+public class NotasFragment extends Fragment implements NotaAdapter.OnNoteClickListener, NotaDialogFragment.CargarNotasListener {
     private static final String ARG_PARAM1 = "param1", ARG_PARAM2 = "param2";
     private Context context;
     private DBHelper helper;
@@ -117,14 +117,20 @@ public class NotasFragment extends Fragment implements NotaAdapter.OnNoteClickLi
 
     @Override
     public void onNoteClick(int position) {
-        Intent myIntent = new Intent(this.context, ModifyNotasActivity.class);
-        int idNota = notas.get(position).getIdNota();
-        myIntent.putExtra("idNota", idNota);
-        startActivity(myIntent);
+        Nota nota = notas.get(position);
+
+        NotaDialogFragment previewDialog = NotaDialogFragment.newInstance(nota);
+        previewDialog.setListener(this);
+        previewDialog.show(((FragmentActivity) this.context).getSupportFragmentManager(), "Vista previa de Nota");
     }
 
     public void irNuevaNota() {
         Intent myIntent = new Intent(this.context, NewNotaActivity.class);
         startActivity(myIntent);
+    }
+
+    @Override
+    public void updateNotas() {
+        onResume();
     }
 }
