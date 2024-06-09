@@ -9,6 +9,7 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
@@ -51,24 +52,32 @@ public class ModifyHoraActivity extends AppCompatActivity {
         });
 
         this.idHora = getIntent().getIntExtra("idHora", -1);
-        assert idHora != -1 : "idHora no encontrado";
+        assert idHora != -1 : getString(R.string.error_obteniendo_id);
 
         setElements();
         populateSpinners();
         prepareTimePicker();
         loadData();
         btGuardar.setOnClickListener(v -> guardar());
-        btBorrar.setOnClickListener(v -> borrar());
+        btBorrar.setOnClickListener(v -> {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle(getString(R.string.borrar) + getString(R.string.hora))
+                    .setMessage(getString(R.string.estas_seguro_de_borrar_fem) + getString(R.string.hora))
+                    .setPositiveButton(getString(R.string.si), (dialog, which) -> borrar())
+                    .setNegativeButton(R.string.no, null)
+                    .create()
+                    .show();
+        });
     }
 
     private void borrar() {
-        assert helper.deleteHora(idHora) : "Error al borrar hora";
+        assert helper.deleteHora(idHora) : getString(R.string.error_borrando) + getString(R.string.hora);
         finish();
     }
 
     private void loadData() {
         Hora hora = helper.getHora(idHora);
-        assert hora != null : "Hora no encontrada";
+        assert hora != null : getString(R.string.error_obteniendo) + getString(R.string.hora);
 
         spDias.setSelection(hora.getDiaSemana());
         etHoraInicio.setText(hora.getTiempoInicio().format(DateTimeFormatter.ofPattern("HH:mm")));
@@ -143,12 +152,12 @@ public class ModifyHoraActivity extends AppCompatActivity {
         LocalTime horaInicio, horaFinal;
 
         if(etHoraInicio.getText().toString().isEmpty()){
-            Toast.makeText(this, "Debe ingresar una hora de inicio", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getString(R.string.debe_ingresar_hora_inicio), Toast.LENGTH_SHORT).show();
             etHoraInicio.setError("");
             return;
         }
         if(etHoraFin.getText().toString().isEmpty()){
-            Toast.makeText(this, "Debe ingresar una hora de fin", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getString(R.string.debe_ingresar_hora_fin), Toast.LENGTH_SHORT).show();
             etHoraFin.setError("");
             return;
         }
@@ -157,18 +166,18 @@ public class ModifyHoraActivity extends AppCompatActivity {
         horaFinal = LocalTime.parse(etHoraFin.getText().toString());
 
         if(horaInicio.isAfter(LocalTime.of(22, 59))){
-            Toast.makeText(this, "La hora de inicio debe ser menor a las 11:00", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getString(R.string.la_hora_debe_ser_menor_a_las_11_00), Toast.LENGTH_SHORT).show();
             etHoraInicio.setError("");
             return;
         }
         if(horaFinal.isAfter(LocalTime.of(22, 59))){
-            Toast.makeText(this, "La hora de fin debe ser menor a las 11:00", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getString(R.string.la_hora_debe_ser_menor_a_las_11_00), Toast.LENGTH_SHORT).show();
             etHoraFin.setError("");
             return;
         }
 
         if(horaInicio.isAfter(horaFinal)){
-            Toast.makeText(this, "La hora de inicio debe ser menor a la hora de fin", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getString(R.string.inicio_nomayorque_fin), Toast.LENGTH_SHORT).show();
             etHoraFin.setError("");
             return;
         }
@@ -180,15 +189,16 @@ public class ModifyHoraActivity extends AppCompatActivity {
 
         List<Hora> horasEnElDia = helper.getHorasByDayAndHorario(diaSeleccionado);
 
-        // Check for overlap with existing Horas
         for (Hora hora : horasEnElDia) {
+            if(hora.getIdHora() == this.idHora) continue;
+
             if (horaInicio.isAfter(hora.getTiempoInicio()) && horaInicio.isBefore(hora.getTiempoInicio().plus(hora.getTotalTiempo()))) {
-                Toast.makeText(this, "La hora de inicio se superpone con otra Hora existente", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, getString(R.string.inicio_superpone_hora), Toast.LENGTH_SHORT).show();
                 etHoraInicio.setError("");
                 return;
             }
             if (horaFinal.isAfter(hora.getTiempoInicio()) && horaFinal.isBefore(hora.getTiempoInicio().plus(hora.getTotalTiempo()))) {
-                Toast.makeText(this, "La hora de fin se superpone con otra Hora existente", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, getString(R.string.fin_superpone_hora), Toast.LENGTH_SHORT).show();
                 etHoraFin.setError("");
                 return;
             }
@@ -202,7 +212,7 @@ public class ModifyHoraActivity extends AppCompatActivity {
         hora.setDiaSemana(diaSeleccionado);
         hora.setIdHorario(idHorario);
 
-        assert helper.actualizarHora(hora) : "Error al insertar hora";
+        assert helper.actualizarHora(hora) : getString(R.string.error_guardando) + getString(R.string.hora);
         finish();
     }
 

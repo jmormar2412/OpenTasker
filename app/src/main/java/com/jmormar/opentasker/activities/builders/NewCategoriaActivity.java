@@ -32,34 +32,39 @@ public class NewCategoriaActivity extends AppCompatActivity {
             return insets;
         });
 
-        this.etNombre = findViewById(R.id.et_nombre_categoria);
-        this.colorWheelView = findViewById(R.id.color_wheel);
-        this.etAcronimo = findViewById(R.id.et_acronimo_categoria);
-        this.helper = DBHelper.getInstance(this);
+        setElements();
 
 
         findViewById(R.id.bt_guardar).setOnClickListener((v) -> guardar());
     }
 
+    private void setElements() {
+        this.etNombre = findViewById(R.id.et_nombre_categoria);
+        this.colorWheelView = findViewById(R.id.color_wheel);
+        this.etAcronimo = findViewById(R.id.et_acronimo_categoria);
+        this.helper = DBHelper.getInstance(this);
+    }
+
     private void guardar() {
         String nombre = this.etNombre.getText().toString();
         if (nombre.isEmpty()) {
-            this.etNombre.setError("El nombre es obligatorio");
+            this.etNombre.setError(getString(R.string.nombre_es_obligatorio));
             return;
         }
 
         String acronimo = this.etAcronimo.getText().toString();
         if (acronimo.isEmpty()) {
-            this.etNombre.setError("El acronimo es obligatorio");
+            this.etNombre.setError(getString(R.string.acronimo_es_obligatorio));
             return;
         }
 
         Categoria categoria = new Categoria();
         categoria.setNombre(nombre);
+        categoria.setAcronimo(acronimo);
         categoria.setColor(ColorManager.darkenColor(colorWheelView.getColor()));
         categoria.setIdAgenda(helper.getAgenda().getIdAgenda());
 
-        assert helper.insertarCategoria(categoria) : "Error al insertar la categoria";
+        assert helper.insertarCategoria(categoria) : getString(R.string.error_guardando) + getString(R.string.categoria_minuscula);
         finish();
     }
 }

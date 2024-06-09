@@ -81,7 +81,7 @@ public class CategoriaActivity extends AppCompatActivity implements CategoriaAda
             @Override
             public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
                 Categoria categoria = categorias.get(viewHolder.getBindingAdapterPosition());
-                assert helper.deleteCategoria(categoria.getIdCategoria()) : "No se pudo eliminar la categoria";
+                assert helper.deleteCategoria(categoria.getIdCategoria()) : getString(R.string.error_borrando) + getString(R.string.categoria);
                 cargarCategorias();
             }
         }).attachToRecyclerView(rvCategorias);

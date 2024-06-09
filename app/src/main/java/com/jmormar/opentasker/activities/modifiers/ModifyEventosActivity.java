@@ -2,6 +2,8 @@ package com.jmormar.opentasker.activities.modifiers;
 
 import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
+import android.appwidget.AppWidgetManager;
+import android.content.ComponentName;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -22,6 +24,8 @@ import com.jmormar.opentasker.models.Categoria;
 import com.jmormar.opentasker.models.Evento;
 import com.jmormar.opentasker.models.Tipo;
 import com.jmormar.opentasker.util.DBHelper;
+import com.jmormar.opentasker.util.Scheduler;
+import com.jmormar.opentasker.widgets.WidgetEventos;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -54,33 +58,11 @@ public class ModifyEventosActivity extends AppCompatActivity {
 
         if(helper==null) helper = DBHelper.getInstance(this);
 
-        String fechaString;
-        if(savedInstanceState!=null){
-            fechaString = savedInstanceState.getString("sfecha","");
-        }
-        else{
-            fechaString = "";
-        }
-
-        @SuppressLint("SimpleDateFormat") SimpleDateFormat dateFormatter = new SimpleDateFormat("dd/MM/yyyy");
-        Date fecha;
-        if(fechaString.isEmpty()){
-            fecha=new Date();
-        }
-        else {
-            try {
-                fecha = dateFormatter.parse(fechaString);
-            } catch (ParseException e) {
-                System.err.println("Error al leer la fecha: NuevoEvento -> onCreate()");
-                fecha = new Date();
-            }
-        }
-
         setElements();
-        prepararFecha(fecha);
         populateCategorias();
         populateTipos();
         loadData();
+        prepararFecha();
     }
 
     private void setElements() {
@@ -92,7 +74,15 @@ public class ModifyEventosActivity extends AppCompatActivity {
 
     }
 
-    private void prepararFecha(Date fecha) {
+    private void prepararFecha() {
+        @SuppressLint("SimpleDateFormat") SimpleDateFormat dateFormatter = new SimpleDateFormat("dd/MM/yyyy");
+        Date fecha;
+        try {
+            fecha = dateFormatter.parse(etFecha.getText().toString());
+        } catch (ParseException e) {
+            throw new RuntimeException(e);
+        }
+
         etFecha.setOnFocusChangeListener((v, hasFocus) -> {
             if(hasFocus) {
                 datePickerFecha.show();
@@ -106,7 +96,7 @@ public class ModifyEventosActivity extends AppCompatActivity {
         datePickerFecha = new DatePickerDialog(this, (view, year, monthOfYear, dayOfMonth) -> {
             Calendar newDate = Calendar.getInstance();
             newDate.set(year, monthOfYear, dayOfMonth);
-            @SuppressLint("SimpleDateFormat") SimpleDateFormat dateFormatter = new SimpleDateFormat("dd/MM/yyyy");
+
             etFecha.setText(dateFormatter.format(newDate.getTime()));
         },newCalendar.get(Calendar.YEAR), newCalendar.get(Calendar.MONTH),
                 newCalendar.get(Calendar.DAY_OF_MONTH));
@@ -154,12 +144,13 @@ public class ModifyEventosActivity extends AppCompatActivity {
         Intent intent = getIntent();
         int id = intent.getIntExtra("id", -1);
 
-        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy", new Locale("es_ES"));
-
         if(id == -1){
             System.err.println("No se ha recuperado el id -> loadData() en ModifyEventos");
+            finish();
             return;
         }
+
+        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy", new Locale("es_ES"));
 
         if(helper == null) helper = DBHelper.getInstance(this);
         Evento evento = helper.getEvento(id);
@@ -208,6 +199,15 @@ public class ModifyEventosActivity extends AppCompatActivity {
         boolean insertado;
         insertado = helper.actualizarEvento(evento);
         if(insertado){
+            Scheduler scheduler = new Scheduler(this);
+            scheduler.clearAllNotifications(evento);
+            scheduler.scheduleEventNotifications(evento);
+
+            AppWidgetManager manager = AppWidgetManager.getInstance(this);
+            ComponentName name = new ComponentName(this, WidgetEventos.class);
+            int[] ids = manager.getAppWidgetIds(name);
+            manager.notifyAppWidgetViewDataChanged(ids, R.id.lv_eventos);
+
             finish();
         } else{
             aceptar.setEnabled(true);

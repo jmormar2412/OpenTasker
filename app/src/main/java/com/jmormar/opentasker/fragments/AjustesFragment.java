@@ -18,6 +18,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.preference.ListPreference;
+import androidx.preference.MultiSelectListPreference;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
 import androidx.preference.SeekBarPreference;
@@ -26,20 +27,26 @@ import com.jmormar.opentasker.R;
 import com.jmormar.opentasker.activities.CategoriaActivity;
 import com.jmormar.opentasker.activities.TipoActivity;
 import com.jmormar.opentasker.models.Agenda;
+import com.jmormar.opentasker.models.Evento;
 import com.jmormar.opentasker.util.DBHelper;
+import com.jmormar.opentasker.util.Scheduler;
+import com.yariksoffice.lingver.Lingver;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use {@link AjustesFragment#AjustesFragment()} to create
- * an instance of this fragment.
- */
+import lombok.Setter;
+
+
 public class AjustesFragment extends PreferenceFragmentCompat {
+    private SharedPreferences sharedPreferences;
     private Context context;
     private AlertDialog.Builder builder;
     private DBHelper helper;
@@ -47,6 +54,11 @@ public class AjustesFragment extends PreferenceFragmentCompat {
     private DatePickerDialog datePickerFecha;
     private SimpleDateFormat formatter;
     private int weekLength, beginningDay;
+    private Set<String> notificationFrequencies;
+    private Scheduler scheduler;
+    private boolean notificationFrequencyChanged;
+    @Setter
+    private RemoteRecreate remoteRecreate;
 
     public AjustesFragment() {}
 
@@ -56,16 +68,19 @@ public class AjustesFragment extends PreferenceFragmentCompat {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public void onCreatePreferences(@Nullable Bundle savedInstanceState, @Nullable String rootKey) {
         this.context = requireContext();
         this.helper = DBHelper.getInstance(this.context);
         this.agenda = helper.getAgenda();
-        this.formatter = new SimpleDateFormat("dd/MM/yyyy", new Locale("es_ES"));
+        this.formatter = new SimpleDateFormat("dd/MM/yyyy", new Locale("es"));
+        this.sharedPreferences = context.getSharedPreferences(NOMBRE_PREFERENCIAS, Context.MODE_PRIVATE);
+        this.scheduler = new Scheduler(context);
 
         setPreferencesFromResource(R.xml.pantalla_ajustes, rootKey);
 
         Preference categoriaPreference = findPreference("managecategories");
-        assert categoriaPreference != null : "No se ha encontrado el Preference categoriaPreference";
+        assert categoriaPreference != null : getString(R.string.preference_no_encontrado) + " categoriaPreference";
         categoriaPreference.setOnPreferenceClickListener(preference -> {
             Intent myIntent = new Intent(this.context, CategoriaActivity.class);
             startActivity(myIntent);
@@ -73,7 +88,7 @@ public class AjustesFragment extends PreferenceFragmentCompat {
         });
 
         Preference tipoPreference = findPreference("managetypes");
-        assert tipoPreference != null : "No se ha encontrado el Preference tipoPreference";
+        assert tipoPreference != null : getString(R.string.preference_no_encontrado) + " tipoPreference";
         tipoPreference.setOnPreferenceClickListener(preference -> {
             Intent myIntent = new Intent(this.context, TipoActivity.class);
             startActivity(myIntent);
@@ -81,7 +96,7 @@ public class AjustesFragment extends PreferenceFragmentCompat {
         });
 
         SeekBarPreference numDias = findPreference("weeklength");
-        assert numDias != null : "No se ha encontrado el SeekBarPreference numDias";
+        assert numDias != null : getString(R.string.preference_no_encontrado) + " numDias";
         this.weekLength = agenda.getWeekLength();
         numDias.setValue(this.weekLength);
         numDias.setOnPreferenceChangeListener((preference, newValue) -> {
@@ -90,23 +105,23 @@ public class AjustesFragment extends PreferenceFragmentCompat {
         });
 
         Preference startDate = findPreference("startdate");
-        assert startDate != null : "No se ha encontrado el EditTextPreference startDate";
+        assert startDate != null : getString(R.string.preference_no_encontrado) + " startDate";
         startDate.setSummary(formatter.format(agenda.getFechaInicio()));
         startDate.setOnPreferenceClickListener(preference -> {
-            launchBuilder(1);
+            launchBuilder(1, preference);
             return true;
         });
 
         Preference endingDate = findPreference("endingdate");
-        assert endingDate != null : "No se ha encontrado el EditTextPreference endingDate";
+        assert endingDate != null : getString(R.string.preference_no_encontrado) + " endingDate";
         endingDate.setSummary(formatter.format(agenda.getFechaFinal()));
         endingDate.setOnPreferenceClickListener(preference -> {
-            launchBuilder(2);
+            launchBuilder(2, preference);
             return true;
         });
 
         ListPreference beginningday = findPreference("beginningday");
-        assert beginningday != null : "No se ha encontrado el ListPreference beginningday";
+        assert beginningday != null : getString(R.string.preference_no_encontrado) + " beginningday";
         beginningday.setEntries(R.array.dias_semana);
         beginningday.setEntryValues(R.array.dias_semana_values);
         this.beginningDay = agenda.getBeginningDay();
@@ -131,6 +146,40 @@ public class AjustesFragment extends PreferenceFragmentCompat {
                 beginningday.setSummary(beginningday.getEntries()[index]);
             }
         }
+
+        MultiSelectListPreference notificaciones = findPreference("notificationfrequency");
+        assert notificaciones != null : getString(R.string.preference_no_encontrado) + " notificaciones";
+        notificaciones.setEntries(R.array.frecuencia_notifs);
+        notificaciones.setEntryValues(R.array.frecuencia_notifs_values);
+
+        notificationFrequencies = new HashSet<>(sharedPreferences.getStringSet("notificationfrequency", new HashSet<>()));
+        notificaciones.setValues(notificationFrequencies);
+        notificaciones.setSummary(Arrays.toString(notificationFrequencies.toArray()).replaceAll("[\\[\\]]", ""));
+
+        notificaciones.setOnPreferenceChangeListener((preference, newValue) -> {
+            notificationFrequencies = (Set<String>) newValue;
+            notificaciones.setSummary(Arrays.toString(notificationFrequencies.toArray()).replaceAll("[\\[\\]]", ""));
+            if(!notificationFrequencyChanged) notificationFrequencyChanged = true;
+            return true;
+        });
+
+        ListPreference languagelocale = findPreference("language");
+        assert languagelocale != null : getString(R.string.preference_no_encontrado) + " language";
+        languagelocale.setEntries(R.array.lenguajes);
+        languagelocale.setEntryValues(R.array.lenguajes_values);
+
+        languagelocale.setValue(sharedPreferences.getString("language", "es"));
+
+        languagelocale.setOnPreferenceChangeListener((preference, newValue) -> {
+            String selectedValue = newValue.toString();
+            Lingver.getInstance().setLocale(this.context, selectedValue);
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            editor.putString("language", selectedValue);
+            editor.apply();
+            remoteRecreate.doRecreate();
+            return true;
+        });
+
     }
 
     private void prepararFecha(EditText etFecha, Date fecha){
@@ -147,15 +196,14 @@ public class AjustesFragment extends PreferenceFragmentCompat {
         datePickerFecha = new DatePickerDialog(this.context, (view, year, monthOfYear, dayOfMonth) -> {
             Calendar newDate = Calendar.getInstance();
             newDate.set(year, monthOfYear, dayOfMonth);
-            SimpleDateFormat dateFormatter = new SimpleDateFormat("dd/MM/yyyy", new Locale("es", "ES"));
-            etFecha.setText(dateFormatter.format(newDate.getTime()));
+            etFecha.setText(formatter.format(newDate.getTime()));
         },newCalendar.get(Calendar.YEAR), newCalendar.get(Calendar.MONTH),
                 newCalendar.get(Calendar.DAY_OF_MONTH));
     }
 
-    private void launchBuilder(int preferenceNumber) {
+    private void launchBuilder(int preferenceNumber, Preference preference) {
         this.builder = new AlertDialog.Builder(this.context);
-        builder.setTitle("Fecha");
+        builder.setTitle(getString(R.string.fecha));
 
         final EditText input = new EditText(this.context);
         input.setInputType(InputType.TYPE_CLASS_TEXT);
@@ -173,9 +221,9 @@ public class AjustesFragment extends PreferenceFragmentCompat {
 
         builder.setView(input);
 
-        builder.setPositiveButton("OK", (dialog, which) ->{
+        builder.setPositiveButton(getString(R.string.aceptar), (dialog, which) ->{
             if(input.getText().toString().isEmpty()){
-                input.setError("Campo requerido");
+                input.setError(getString(R.string.fecha_es_obligatoria));
                 return;
             }
             try {
@@ -186,8 +234,9 @@ public class AjustesFragment extends PreferenceFragmentCompat {
             } catch (ParseException e) {
                 System.err.println("Error al leer la fecha -> launchBuilder(): "+e.getMessage());
             }
+            preference.setSummary(input.getText());
         });
-        builder.setNegativeButton("Cancelar", (dialog, which) ->{
+        builder.setNegativeButton(getString(R.string.cancelar), (dialog, which) ->{
             dialog.cancel();
             builder = null;
         } );
@@ -204,11 +253,25 @@ public class AjustesFragment extends PreferenceFragmentCompat {
     @Override
     public void onStop() {
         super.onStop();
-        SharedPreferences prefs = this.context.getSharedPreferences(NOMBRE_PREFERENCIAS, Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = prefs.edit();
+        SharedPreferences.Editor editor = this.sharedPreferences.edit();
+        editor.putStringSet("notificationfrequency", notificationFrequencies);
+        editor.apply();
+
+        if(notificationFrequencyChanged){
+            List<Evento> eventos = helper.getEventos();
+            eventos.forEach(e -> {
+                scheduler.clearAllNotifications(e);
+                scheduler.scheduleEventNotifications(e);
+            });
+        }
+
         agenda.setWeekLength((byte) this.weekLength);
         agenda.setBeginningDay((byte) this.beginningDay);
-        assert helper.actualizarAgenda(agenda) : "No se ha podido actualizar la agenda";
-        editor.apply();
+        assert helper.actualizarAgenda(agenda) : getString(R.string.error_guardando) + getString(R.string.agenda_minuscula);
     }
+
+    public interface RemoteRecreate{
+        void doRecreate();
+    }
+
 }

@@ -83,16 +83,16 @@ public class NewNotaActivity extends AppCompatActivity {
 
     private void showColorPicker() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Escoger color");
+        builder.setTitle(getString(R.string.escoger_color));
 
         final ColorWheelView colorWheel = new ColorWheelView(this);
         builder.setView(colorWheel);
 
-        builder.setPositiveButton("Escoger", (dialog, which) -> {
+        builder.setPositiveButton(getString(R.string.escoger_color), (dialog, which) -> {
             this.color = colorWheel.getColor();
             this.btEscogerColor.setBackgroundColor(ColorManager.darkenColor(this.color));
         });
-        builder.setNegativeButton("Cancelar", (dialog, which) -> dialog.cancel());
+        builder.setNegativeButton(getString(R.string.cancelar), (dialog, which) -> dialog.cancel());
 
         builder.show();
     }
@@ -156,7 +156,7 @@ public class NewNotaActivity extends AppCompatActivity {
         } else{
             btGuardar.setEnabled(true);
             btGuardar.setClickable(true);
-            Toast.makeText(this, "Error al insertar nota", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getString(R.string.error_insertando) + getString(R.string.nota), Toast.LENGTH_SHORT).show();
         }
     }
 }

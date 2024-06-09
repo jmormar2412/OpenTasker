@@ -2,6 +2,8 @@ package com.jmormar.opentasker.activities.builders;
 
 import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
+import android.appwidget.AppWidgetManager;
+import android.content.ComponentName;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -22,6 +24,8 @@ import com.jmormar.opentasker.models.Categoria;
 import com.jmormar.opentasker.models.Evento;
 import com.jmormar.opentasker.models.Tipo;
 import com.jmormar.opentasker.util.DBHelper;
+import com.jmormar.opentasker.util.Scheduler;
+import com.jmormar.opentasker.widgets.WidgetEventos;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -89,7 +93,7 @@ public class NewEventoActivity extends AppCompatActivity {
         datePickerFecha = new DatePickerDialog(this, (view, year, monthOfYear, dayOfMonth) -> {
             Calendar newDate = Calendar.getInstance();
             newDate.set(year, monthOfYear, dayOfMonth);
-            @SuppressLint("SimpleDateFormat") SimpleDateFormat dateFormatter = new SimpleDateFormat("dd/MM/yyyy");
+            SimpleDateFormat dateFormatter = new SimpleDateFormat("dd/MM/yyyy", new Locale("es"));
             etFecha.setText(dateFormatter.format(newDate.getTime()));
         },newCalendar.get(Calendar.YEAR), newCalendar.get(Calendar.MONTH),
                 newCalendar.get(Calendar.DAY_OF_MONTH));
@@ -156,12 +160,12 @@ public class NewEventoActivity extends AppCompatActivity {
         Spinner sCategoria = findViewById(R.id.sp_nuevoevento_categoria);
 
         if(etNombre.getText().toString().isEmpty()){
-            etNombre.setError("No has rellenado este campo");
+            etNombre.setError(getString(R.string.nombre_es_obligatorio));
             return;
         }
 
         if(etFecha.getText().toString().isEmpty()){
-            etFecha.setError("No has rellenado este campo");
+            etFecha.setError(getString(R.string.fecha_es_obligatoria));
             return;
         }
 
@@ -184,7 +188,6 @@ public class NewEventoActivity extends AppCompatActivity {
             Evento evento = new Evento();
             evento.setNombre(nombre);
             evento.setFecha(fecha);
-            //Gracias profe eres el salvador de las vidas en Vietnam :)
             evento.setIdTipo(posicionesTipos.get(sTipo.getSelectedItemPosition()));
             evento.setIdCategoria(posicionesCategoria.get(sCategoria.getSelectedItemPosition()));
             evento.setIdAgenda(helper.getAgenda().getIdAgenda());
@@ -193,11 +196,20 @@ public class NewEventoActivity extends AppCompatActivity {
             insertado = helper.insertarEvento(evento);
             if(insertado){
                 setResult(RESULT_OK);
+
+                Scheduler scheduler = new Scheduler(this);
+                scheduler.scheduleEventNotifications(evento);
+
+                AppWidgetManager manager = AppWidgetManager.getInstance(this);
+                ComponentName name = new ComponentName(this, WidgetEventos.class);
+                int[] ids = manager.getAppWidgetIds(name);
+                manager.notifyAppWidgetViewDataChanged(ids, R.id.lv_eventos);
+
                 finish();
             } else{
                 btAceptar.setEnabled(true);
                 btAceptar.setClickable(true);
-                Toast.makeText(this, "Error al insertar el evento", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, getString(R.string.error_guardando) + getString(R.string.evento), Toast.LENGTH_SHORT).show();
             }
         }
     }

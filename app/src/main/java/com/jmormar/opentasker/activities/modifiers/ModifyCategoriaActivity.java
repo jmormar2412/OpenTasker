@@ -47,12 +47,12 @@ public class ModifyCategoriaActivity extends AppCompatActivity {
 
     private void actualizar() {
         if (etNombre.getText().toString().isEmpty()) {
-            etNombre.setError("El nombre no puede estar vacio");
+            etNombre.setError(getString(R.string.nombre_es_obligatorio));
             return;
         }
 
         if (etAcronimo.getText().toString().isEmpty()) {
-            etAcronimo.setError("El acronimo no puede estar vacio");
+            etAcronimo.setError(getString(R.string.acronimo_es_obligatorio));
             return;
         }
 
@@ -62,13 +62,13 @@ public class ModifyCategoriaActivity extends AppCompatActivity {
         if (darkened) categoria.setColor(colorWheelView.getColor());
         else categoria.setColor(ColorManager.darkenColor(colorWheelView.getColor()));
 
-        assert helper.actualizarCategoria(categoria) : "No se ha podido actualizar la categoria";
+        assert helper.actualizarCategoria(categoria) : getString(R.string.error_guardando) + getString(R.string.categoria_minuscula);
         finish();
     }
 
     private void loadData() {
         int idCategoria = getIntent().getIntExtra("idCategoria", -1);
-        assert idCategoria != -1 : "No se ha recibido el id de la categoria";
+        assert idCategoria != -1 : getString(R.string.error_obteniendo_id);
 
         this.categoria = helper.getCategoria(idCategoria);
 

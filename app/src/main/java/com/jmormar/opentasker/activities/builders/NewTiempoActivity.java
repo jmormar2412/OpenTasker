@@ -60,7 +60,7 @@ public class NewTiempoActivity extends AppCompatActivity {
         boolean descanso = switchDescanso.isChecked();
 
         if(pickerMinutos.getValue() == 0 && pickerSegundos.getValue() == 0){
-            Toast.makeText(this, "Selecciona al menos un tiempo", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getString(R.string.selecciona_algo_tiempo), Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -76,7 +76,7 @@ public class NewTiempoActivity extends AppCompatActivity {
             setResult(RESULT_OK, resultIntent);
             finish();
         } else{
-            Toast.makeText(this, "Error al insertar el tiempo", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getString(R.string.error_insertando) + getString(R.string.tiempo), Toast.LENGTH_SHORT).show();
         }
     }
 }

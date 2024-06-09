@@ -61,20 +61,20 @@ public class TipoActivity extends AppCompatActivity implements TipoAdapter.OnTip
 
     private void createAddBuilder() {
         this.addBuilder = new AlertDialog.Builder(this);
-        addBuilder.setTitle("Nombre del tipo");
+        addBuilder.setTitle(getString(R.string.nombre_tipo));
 
         final EditText input = new EditText(this);
         input.setInputType(InputType.TYPE_CLASS_TEXT);
         addBuilder.setView(input);
 
-        addBuilder.setPositiveButton("OK", (dialog, which) ->{
+        addBuilder.setPositiveButton(getString(R.string.aceptar), (dialog, which) ->{
             if(input.getText().toString().isEmpty()){
-                input.setError("Campo requerido");
+                input.setError(getString(R.string.nombre_es_obligatorio));
                 return;
             }
             newTipo(input.getText().toString());
         });
-        addBuilder.setNegativeButton("Cancelar", (dialog, which) ->{
+        addBuilder.setNegativeButton(getString(R.string.cancelar), (dialog, which) ->{
             dialog.cancel();
             createAddBuilder();
         } );
@@ -83,7 +83,7 @@ public class TipoActivity extends AppCompatActivity implements TipoAdapter.OnTip
     private void newTipo(String nombre) {
         Tipo tipo = new Tipo();
         tipo.setNombre(nombre);
-        assert helper.insertarTipo(tipo) : "Error al insertar tipo -> newTipo";
+        assert helper.insertarTipo(tipo) : getString(R.string.error_insertando) + getString(R.string.tipo_minuscula);
         cargarTipos();
     }
 
@@ -124,18 +124,18 @@ public class TipoActivity extends AppCompatActivity implements TipoAdapter.OnTip
 
     private void launchModifyBuilder(Tipo tipo, int position) {
         AlertDialog.Builder modifyBuilder = new AlertDialog.Builder(this);
-        modifyBuilder.setTitle("Nombre del tipo");
+        modifyBuilder.setTitle(getString(R.string.nombre_tipo));
 
         final EditText input = new EditText(this);
         input.setInputType(InputType.TYPE_CLASS_TEXT);
         input.setText(tipo.getNombre());
         modifyBuilder.setView(input);
 
-        modifyBuilder.setPositiveButton("Actualizar", (dialog, which) ->{
+        modifyBuilder.setPositiveButton(getString(R.string.guardar), (dialog, which) ->{
             String inputText = input.getText().toString();
 
             if(inputText.isEmpty()){
-                input.setError("Campo requerido");
+                input.setError(getString(R.string.nombre_es_obligatorio));
                 return;
             }
 
@@ -143,11 +143,11 @@ public class TipoActivity extends AppCompatActivity implements TipoAdapter.OnTip
 
             tipo.setNombre(inputText);
 
-            assert helper.actualizarTipo(tipo) : "No se ha podido actualizar el tipo";
-            assert rvTipos.getAdapter() != null : "El adapter no puede ser nulo";
+            assert helper.actualizarTipo(tipo) : getString(R.string.error_guardando) + getString(R.string.tipo_minuscula);
+            assert rvTipos.getAdapter() != null : getString(R.string.adapter_no_nulo);
             rvTipos.getAdapter().notifyItemChanged(position);
         });
-        modifyBuilder.setNegativeButton("Cancelar", (dialog, which) -> dialog.cancel());
+        modifyBuilder.setNegativeButton(getString(R.string.cancelar), (dialog, which) -> dialog.cancel());
 
         modifyBuilder.create().show();
     }

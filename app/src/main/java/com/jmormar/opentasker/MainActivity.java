@@ -4,6 +4,7 @@ import static com.jmormar.opentasker.util.Constants.LLAVE_PRIMERA_INSERCION;
 import static com.jmormar.opentasker.util.Constants.NOMBRE_PREFERENCIAS;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Pair;
@@ -29,22 +30,14 @@ import com.jmormar.opentasker.fragments.HomeFragment;
 import com.jmormar.opentasker.fragments.HorarioFragment;
 import com.jmormar.opentasker.fragments.NotasFragment;
 import com.jmormar.opentasker.fragments.PomodoroFragment;
-import com.jmormar.opentasker.models.Agenda;
-import com.jmormar.opentasker.models.Categoria;
-import com.jmormar.opentasker.models.Horario;
-import com.jmormar.opentasker.models.Tipo;
-import com.jmormar.opentasker.util.DBHelper;
+import com.jmormar.opentasker.onboarding.LogoScreenActivity;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.HashMap;
-import java.util.Locale;
 import java.util.Map;
 
-public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener{
+public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, AjustesFragment.RemoteRecreate {
 
     private DrawerLayout drawerLayout;
-    private DBHelper helper;
     private Map<Integer, Pair<String, Fragment>> fragmentMap;
     private ImageView toolbarAdd;
     private Toolbar toolbar;
@@ -57,8 +50,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        if(!comprobarPrimerasInserciones()){
+            Intent intent = new Intent(this, LogoScreenActivity.class);
+            startActivity(intent);
+            confirmarPrimerasInserciones();
+            finish();
+        }
+
         fillFragmentoMap();
-        helper = DBHelper.getInstance(this);
 
         getOnBackPressedDispatcher().addCallback(this, onBackPressedCallback);
 
@@ -79,11 +79,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         MenuItem menuItem=navigationView.getMenu().getItem(0);
         onNavigationItemSelected(menuItem);
         menuItem.setChecked(true);
-
-        if(!comprobarPrimerasInserciones()){
-            realizarPrimerasInserciones();
-            confirmarPrimerasInserciones();
-        }
 
         getSupportFragmentManager().addOnBackStackChangedListener(this::handleFragmentChange);
 
@@ -111,6 +106,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 toolbar.removeView(toolbarAdd);
                 toolbarAdd = null;
             }
+        }
+
+        if (currentFragment instanceof AjustesFragment) {
+            ((AjustesFragment) currentFragment).setRemoteRecreate(this);
         }
     }
 
@@ -159,16 +158,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
             Fragment currentFragment = fragmentManager.findFragmentById(R.id.home_content);
 
-            // Check if the fragment is already added
-            if (currentFragment != null && currentFragment.getClass().equals(fragmentPair.second.getClass())) {
-                // Do nothing if the fragment is already added
-                return;
-            }
+            if (currentFragment != null && currentFragment.getClass().equals(fragmentPair.second.getClass())) return;
 
-            // Replace the fragment
             fragmentTransaction.replace(R.id.home_content, fragmentPair.second);
 
-            // Use a specific tag for each fragment transaction
             fragmentTransaction.addToBackStack(fragmentPair.first);
 
             fragmentTransaction.commit();
@@ -176,49 +169,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
     }
 
-    //Comprobar primeras inserciones
     private boolean comprobarPrimerasInserciones(){
         SharedPreferences prefs = getSharedPreferences(NOMBRE_PREFERENCIAS, Context.MODE_PRIVATE);
         return prefs.getBoolean(LLAVE_PRIMERA_INSERCION, false);
-    }
-
-    private void realizarPrimerasInserciones(){
-        if(helper == null) helper = DBHelper.getInstance(this);
-        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", new Locale("es_ES"));
-
-        Agenda agendaPrimaria = new Agenda();
-        agendaPrimaria.setNombre("Agenda Primaria");
-        agendaPrimaria.setWeekLength((byte) 5);
-        agendaPrimaria.setBeginningDay((byte) 0);
-        try {
-            agendaPrimaria.setFechaInicio(dateFormat.parse("15/09/2001"));
-            agendaPrimaria.setFechaFinal(dateFormat.parse("25/06/2002"));
-        } catch (ParseException e) {
-            System.err.println("No se ha podido leer la fecha -> realizarPrimerasInserciones()");
-        }
-
-        assert helper.insertarAgenda(agendaPrimaria) : "No se ha podido insertar la agenda";
-        int idAgenda = helper.getAgenda().getIdAgenda();
-
-        Horario horario = new Horario();
-        horario.setIdAgenda(idAgenda);
-
-        Tipo examen = new Tipo();
-        examen.setNombre("Examen");
-
-        Tipo tarea = new Tipo();
-        tarea.setNombre("Tarea");
-
-        Categoria mates = new Categoria();
-        mates.setIdAgenda(idAgenda);
-        mates.setNombre("Matemáticas");
-        mates.setAcronimo("Mates");
-
-
-        assert helper.insertarTipo(examen) : "No se ha podido insertar el tipo examen";
-        assert helper.insertarTipo(tarea) : "No se ha podido insertar el tipo tarea";
-        assert helper.insertarHorario(horario) : "No se ha podido insertar el horario";
-        assert helper.insertarCategoria(mates) : "No se ha podido insertar la categoría matemáticas";
     }
 
     private void confirmarPrimerasInserciones() {
@@ -252,5 +205,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         if (currentFragmentId != -1) {
             mostrarFragmento(currentFragmentId);
         }
+    }
+
+    @Override
+    public void doRecreate() {
+        recreate();
     }
 }

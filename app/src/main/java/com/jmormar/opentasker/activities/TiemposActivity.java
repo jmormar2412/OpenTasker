@@ -89,7 +89,7 @@ public class TiemposActivity extends AppCompatActivity implements PomodoroTimer.
 
     private void wrapUp(){
         int idPomodoro = this.pomodoro.getIdPomodoro();
-        assert helper.actualizarOrInsertPosition(idPomodoro, position) : "No se pudo actualizar/insertar la posición";
+        assert helper.actualizarOrInsertPosition(idPomodoro, position) : getString(R.string.error_posicion);
         if(timer != null) pauseTimer();
         saveTiempos();
         finish();
@@ -97,7 +97,7 @@ public class TiemposActivity extends AppCompatActivity implements PomodoroTimer.
 
     private void saveTiempos() {
         tiempos.forEach(t -> {
-            assert helper.actualizarTiempo(t) : "No se pudo actualizar el tiempo";
+            assert helper.actualizarTiempo(t) : getString(R.string.error_guardando) + getString(R.string.tiempo);
         });
     }
 
@@ -106,7 +106,7 @@ public class TiemposActivity extends AppCompatActivity implements PomodoroTimer.
 
         this.ibAdd.setOnClickListener(v -> {
             if(running){
-                Toast.makeText(this, "Pausa el pomodoro para editarlo", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, getString(R.string.pausa_para_editar), Toast.LENGTH_SHORT).show();
                 return;
             }
             Intent myIntent = new Intent(this, NewTiempoActivity.class);
@@ -125,7 +125,7 @@ public class TiemposActivity extends AppCompatActivity implements PomodoroTimer.
                     this.ibStartPause.setImageResource(R.drawable.baseline_pause_circle_24);
                     startTimerWithTiempo(tiempos.get(position));
                 }
-                else Toast.makeText(this, "Añade primero algún tiempo", Toast.LENGTH_SHORT).show();
+                else Toast.makeText(this, getString(R.string.add_algun_tiempo), Toast.LENGTH_SHORT).show();
             } else{
                 this.ibStartPause.setImageResource(R.drawable.baseline_play_circle_24);
                 pauseTimer();
@@ -136,20 +136,20 @@ public class TiemposActivity extends AppCompatActivity implements PomodoroTimer.
 
         this.ibDelete.setOnClickListener(v -> {
             if(running){
-                Toast.makeText(this, "Resetea el pomodoro para borrar tiempos", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, getString(R.string.reset_para_borrar), Toast.LENGTH_SHORT).show();
                 return;
             }
 
             if(position >= tiempos.size()) position = 0;
 
             if(!tiempos.isEmpty()){
-                assert helper.deleteTiempo(tiempos.get(tiempos.size()-1).getIdTiempo()) : "No se pudo borrar el tiempo";
+                assert helper.deleteTiempo(tiempos.get(tiempos.size()-1).getIdTiempo()) : getString(R.string.error_borrando) + getString(R.string.tiempo);
                 tiempos.remove(tiempos.size()-1);
 
-                assert rvTiempos.getAdapter() != null : "El adapter no puede ser nulo";
+                assert rvTiempos.getAdapter() != null : getString(R.string.adapter_no_nulo);
                 rvTiempos.getAdapter().notifyDataSetChanged();
             } else{
-                Toast.makeText(this, "No hay tiempos para borrar", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, getString(R.string.no_tiempos), Toast.LENGTH_SHORT).show();
             }
         });
 

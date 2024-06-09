@@ -37,7 +37,7 @@ public class ModifyNotasActivity extends AppCompatActivity {
     private EditText titulo, texto;
     private CheckBox checkBox, checkBoxInherit;
     private Spinner spinner;
-    private Button escogerColor, btBorrar, btGuardar;
+    private Button escogerColor, btGuardar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,7 +67,6 @@ public class ModifyNotasActivity extends AppCompatActivity {
         this.texto = findViewById(R.id.et_modifynota_text);
         this.escogerColor = findViewById(R.id.bt_modifynota_pickcolor);
 
-        this.btBorrar = findViewById(R.id.bt_modifynota_delete);
         this.btGuardar = findViewById(R.id.bt_modifynota_guardar);
     }
 
@@ -94,22 +93,21 @@ public class ModifyNotasActivity extends AppCompatActivity {
         }));
 
         btGuardar.setOnClickListener(v -> aceptar());
-        btBorrar.setOnClickListener(v -> borrarNota());
     }
 
     private void showColorPicker() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Escoger color");
+        builder.setTitle(getString(R.string.escoger_color));
 
         final ColorWheelView colorWheel = new ColorWheelView(this);
         colorWheel.setColor(nota.getColor(), false);
         builder.setView(colorWheel);
 
-        builder.setPositiveButton("Escoger", (dialog, which) -> {
+        builder.setPositiveButton(getString(R.string.escoger_color), (dialog, which) -> {
             this.color = ColorManager.darkenColor(colorWheel.getColor());
             this.escogerColor.setBackgroundColor(this.color);
         });
-        builder.setNegativeButton("Cancelar", (dialog, which) -> dialog.cancel());
+        builder.setNegativeButton(getString(R.string.cancelar), (dialog, which) -> dialog.cancel());
 
         builder.show();
     }
@@ -119,7 +117,7 @@ public class ModifyNotasActivity extends AppCompatActivity {
         Intent intent = getIntent();
         int idNota = intent.getIntExtra("idNota", -1);
 
-        assert idNota != -1 : "No se ha recuperado el id de la nota";
+        assert idNota != -1 : getString(R.string.error_obteniendo_id);
 
         this.nota = helper.getNota(idNota);
         this.color = nota.getColor();
@@ -161,7 +159,7 @@ public class ModifyNotasActivity extends AppCompatActivity {
 
     private void aceptar() {
         if(titulo.getText().toString().isEmpty()){
-            titulo.setError("El título no puede estar vacío");
+            titulo.setError(getString(R.string.titulo_es_obligatorio));
             return;
         }
 
@@ -187,12 +185,7 @@ public class ModifyNotasActivity extends AppCompatActivity {
         } else{
             btGuardar.setEnabled(true);
             btGuardar.setClickable(true);
-            Toast.makeText(this, "No se ha podido actualizar la nota", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getString(R.string.error_guardando) + getString(R.string.nota), Toast.LENGTH_SHORT).show();
         }
-    }
-
-    private void borrarNota(){
-        assert helper.deleteNota(this.nota.getIdNota()) : "No se ha podido borrar la nota";
-        finish();
     }
 }
