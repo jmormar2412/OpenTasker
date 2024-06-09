@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".onboarding.DatosAgendaActivity">
+
+    <TextView
+        android:id="@+id/tv_datos_agenda"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/datos_agenda"
+        android:textSize="30sp"
+        android:textAlignment="center"
+        android:layout_marginBottom="20sp"/>
+
+    <TextView
+        android:id="@+id/tv_fecha_inicio"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/fecha_inicio"
+        android:layout_below="@id/tv_datos_agenda"
+        android:textSize="20sp"
+        android:layout_margin="20sp" />
+
+    <EditText
+        android:id="@+id/et_fecha_inicial"
+        android:layout_width="180dp"
+        android:layout_height="wrap_content"
+        android:autofillHints="text"
+        android:inputType="text"
+        android:textSize="20sp"
+        android:hint="@string/date_format"
+        android:textAlignment="center"
+        android:layout_margin="10sp"
+        android:layout_alignParentEnd="true"
+        android:layout_below="@id/tv_datos_agenda"/>
+
+
+    <TextView
+        android:id="@+id/tv_fecha_final"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/fecha_final"
+        android:layout_below="@id/tv_fecha_inicio"
+        android:textSize="20sp"
+        android:layout_margin="25sp" />
+
+    <EditText
+        android:id="@+id/et_fecha_final"
+        android:layout_width="180dp"
+        android:layout_height="wrap_content"
+        android:autofillHints="text"
+        android:inputType="text"
+        android:textSize="20sp"
+        android:hint="@string/date_format"
+        android:textAlignment="center"
+        android:layout_margin="10sp"
+        android:layout_alignParentEnd="true"
+        android:layout_below="@id/et_fecha_inicial"/>
+
+    <TextView
+        android:id="@+id/tv_dia_inicial"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/dia_inicio"
+        android:layout_below="@id/tv_fecha_final"
+        android:textSize="20sp"
+        android:layout_margin="20sp" />
+
+    <Spinner
+        android:id="@+id/sp_dia_inicial"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tv_dia_inicial"
+        android:layout_marginEnd="20sp"
+        android:layout_marginStart="20sp" />
+
+    <TextView
+        android:id="@+id/tv_duracion_semana"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/duracion_semana"
+        android:layout_below="@id/sp_dia_inicial"
+        android:textSize="20sp"
+        android:layout_margin="20sp" />
+
+    <TextView
+        android:id="@+id/tv_valor_sb"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="5"
+        android:layout_below="@id/sp_dia_inicial"
+        android:textSize="20sp"
+        android:layout_margin="20sp"
+        android:layout_alignParentEnd="true"
+        tools:ignore="HardcodedText"/>
+
+    <SeekBar
+        android:id="@+id/sb_duracion_semana"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tv_duracion_semana"
+        android:layout_marginEnd="20sp"
+        android:layout_marginStart="20sp"
+        android:max="7"
+        android:progress="5" />
+
+    <Button
+        android:id="@+id/bt_next"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="30sp"
+        android:text="@string/siguiente" />
+
+</RelativeLayout>
