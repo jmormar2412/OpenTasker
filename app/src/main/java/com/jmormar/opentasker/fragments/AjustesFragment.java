@@ -16,7 +16,7 @@ import android.widget.EditText;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
-import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
 import androidx.preference.ListPreference;
 import androidx.preference.MultiSelectListPreference;
 import androidx.preference.Preference;
@@ -43,6 +43,7 @@ import java.util.Locale;
 import java.util.Set;
 
 import lombok.Setter;
+import timber.log.Timber;
 
 
 public class AjustesFragment extends PreferenceFragmentCompat {
@@ -59,8 +60,6 @@ public class AjustesFragment extends PreferenceFragmentCompat {
     private boolean notificationFrequencyChanged;
     @Setter
     private RemoteRecreate remoteRecreate;
-
-    public AjustesFragment() {}
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -180,6 +179,15 @@ public class AjustesFragment extends PreferenceFragmentCompat {
             return true;
         });
 
+        Preference aboutPreference = findPreference("about");
+        assert aboutPreference != null : getString(R.string.preference_no_encontrado) + " aboutPreference";
+        aboutPreference.setOnPreferenceClickListener(preference -> {
+            NotaDialogFragment dialogFragment = new NotaDialogFragment();
+            dialogFragment.setShowAbout(true);
+            dialogFragment.show(((FragmentActivity) this.context).getSupportFragmentManager(), "Acerca de la aplicación");
+            return true;
+        });
+
     }
 
     private void prepararFecha(EditText etFecha, Date fecha){
@@ -267,7 +275,9 @@ public class AjustesFragment extends PreferenceFragmentCompat {
 
         agenda.setWeekLength((byte) this.weekLength);
         agenda.setBeginningDay((byte) this.beginningDay);
-        assert helper.actualizarAgenda(agenda) : getString(R.string.error_guardando) + getString(R.string.agenda_minuscula);
+        assert helper.actualizarAgenda(agenda) : getString(R.string.error_modificando) + getString(R.string.agenda_minuscula);
+
+        Timber.i("%s%s", getString(R.string.exito_modificando), getString(R.string.agenda_minuscula));
     }
 
     public interface RemoteRecreate{

@@ -3,6 +3,7 @@ package com.jmormar.opentasker.fragments;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.LayerDrawable;
@@ -27,11 +28,13 @@ import com.jmormar.opentasker.models.Nota;
 import com.jmormar.opentasker.util.DBHelper;
 
 import lombok.Setter;
+import timber.log.Timber;
 
 @Setter
 public class NotaDialogFragment extends DialogFragment {
     private static Nota nota;
     private CargarNotasListener listener;
+    private boolean showAbout;
 
     public static NotaDialogFragment newInstance(Nota displayNota) {
         NotaDialogFragment fragment = new NotaDialogFragment();
@@ -53,11 +56,24 @@ public class NotaDialogFragment extends DialogFragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_nota_dialog, container, false);
-        Context context = requireContext();
-        DBHelper helper = DBHelper.getInstance(context);
 
         TextView tvTitulo = view.findViewById(R.id.tv_titulo), tvTexto = view.findViewById(R.id.tv_texto), tvCategoria = view.findViewById(R.id.tv_categoria);
         ImageButton btBorrar = view.findViewById(R.id.bt_borrar), btEditar = view.findViewById(R.id.bt_editar);
+
+        if(showAbout){
+            tvTitulo.setText(getString(R.string.about_app));
+            tvTexto.setText(getString(R.string.about_text));
+            btBorrar.setVisibility(View.GONE);
+            btEditar.setVisibility(View.GONE);
+            setDialogBackgroundColor(Color.GRAY);
+            return view;
+        }
+
+        Context context = requireContext();
+        DBHelper helper = DBHelper.getInstance(context);
+
+        btBorrar.setVisibility(View.VISIBLE);
+        btEditar.setVisibility(View.VISIBLE);
 
         if (nota != null) {
             tvTitulo.setText(nota.getTitulo());
@@ -95,6 +111,7 @@ public class NotaDialogFragment extends DialogFragment {
 
     private void borrarNota(DBHelper helper) {
         assert helper.deleteNota(nota.getIdNota());
+        Timber.i("%s%s", getString(R.string.exito_borrando), getString(R.string.nota));
         listener.updateNotas();
         dismiss();
     }

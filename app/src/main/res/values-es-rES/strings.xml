@@ -81,7 +81,7 @@
     <string name="inicio_nomayorque_fin">El tiempo de inicio no debe ser posterior al del final</string>
     <string name="inicio_superpone_hora">El tiempo de inicio superpone a otra hora</string>
     <string name="fin_superpone_hora">El tiempo de final superpone a otra hora</string>
-    <string name="error_guardando">Error al guardar</string>
+    <string name="error_modificando">Error al modificar</string>
     <string name="estas_seguro_de_borrar_fem">Estás seguro de borrar esta</string>
     <string name="error_obteniendo">Error al cargar</string>
     <string name="error_obteniendo_id">Error al recuperar id</string>
@@ -108,4 +108,14 @@
     <string name="agrega_almenos_un_tipo">Añade al menos un tipo para continuar</string>
     <string name="tipo_minuscula">" tipo"</string>
     <string name="app_widget_description">Widget de eventos</string>
+    <string name="excepcion_no_capturada">Excepción no capturada</string>
+    <string name="error_ocurrio">Ha ocurrido un error.</string>
+    <string name="quieres_enviar_informe">¿Querría enviar un informe?</string>
+    <string name="enviar">Enviar</string>
+    <string name="exito_insertando">Éxito al insertar</string>
+    <string name="exito_modificando">Éxito al modificar</string>
+    <string name="tiempos">" tiempos"</string>
+    <string name="exito_borrando">Éxito al borrar</string>
+    <string name="about_app">Sobre la aplicación</string>
+    <string name="about_text">Esta aplicación fue desarrollada en 2024 como trabajo de fin de grado por jmormar2412.</string>
 </resources>
