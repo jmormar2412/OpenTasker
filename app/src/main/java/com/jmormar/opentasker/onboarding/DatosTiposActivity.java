@@ -156,7 +156,7 @@ public class DatosTiposActivity extends AppCompatActivity implements TipoAdapter
 
                     tipo.setNombre(inputText);
 
-                    assert helper.actualizarTipo(tipo) : getString(R.string.error_guardando) + getString(R.string.tipo_minuscula);
+                    assert helper.actualizarTipo(tipo) : getString(R.string.error_modificando) + getString(R.string.tipo_minuscula);
                     assert rvTipos.getAdapter() != null : getString(R.string.adapter_no_nulo);
                     rvTipos.getAdapter().notifyItemChanged(position);
                 })

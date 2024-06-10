@@ -17,6 +17,8 @@ import com.jmormar.opentasker.R;
 import com.jmormar.opentasker.models.Tiempo;
 import com.jmormar.opentasker.util.DBHelper;
 
+import timber.log.Timber;
+
 public class NewTiempoActivity extends AppCompatActivity {
 
     private NumberPicker pickerMinutos, pickerSegundos;
@@ -70,13 +72,13 @@ public class NewTiempoActivity extends AppCompatActivity {
         tiempo.setRest(descanso);
         tiempo.setIdPomodoro(this.idPomodoro);
 
-        if(this.helper.insertarTiempo(tiempo)){
-            Intent resultIntent = new Intent();
-            resultIntent.putExtra("idPomodoro", this.idPomodoro);
-            setResult(RESULT_OK, resultIntent);
-            finish();
-        } else{
-            Toast.makeText(this, getString(R.string.error_insertando) + getString(R.string.tiempo), Toast.LENGTH_SHORT).show();
-        }
+        assert this.helper.insertarTiempo(tiempo) : getString(R.string.error_insertando) + getString(R.string.tiempo);
+
+        Timber.i( "%s%s", getString(R.string.exito_insertando), getString(R.string.tiempo));
+
+        Intent resultIntent = new Intent();
+        resultIntent.putExtra("idPomodoro", this.idPomodoro);
+        setResult(RESULT_OK, resultIntent);
+        finish();
     }
 }

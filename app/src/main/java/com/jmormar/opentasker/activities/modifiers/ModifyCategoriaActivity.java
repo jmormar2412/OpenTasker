@@ -14,6 +14,7 @@ import com.jmormar.opentasker.models.Categoria;
 import com.jmormar.opentasker.util.ColorManager;
 import com.jmormar.opentasker.util.DBHelper;
 
+import timber.log.Timber;
 import top.defaults.colorpicker.ColorWheelView;
 
 public class ModifyCategoriaActivity extends AppCompatActivity {
@@ -62,7 +63,9 @@ public class ModifyCategoriaActivity extends AppCompatActivity {
         if (darkened) categoria.setColor(colorWheelView.getColor());
         else categoria.setColor(ColorManager.darkenColor(colorWheelView.getColor()));
 
-        assert helper.actualizarCategoria(categoria) : getString(R.string.error_guardando) + getString(R.string.categoria_minuscula);
+        assert helper.actualizarCategoria(categoria) : getString(R.string.error_modificando) + getString(R.string.categoria_minuscula);
+
+        Timber.i("%s%s", getString(R.string.exito_modificando), getString(R.string.categoria_minuscula));
         finish();
     }
 

@@ -38,6 +38,8 @@ import com.jmormar.opentasker.widgets.WidgetEventos;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import timber.log.Timber;
+
 /**
  * A simple {@link Fragment} subclass.
  * Use the {@link HomeFragment#newInstance} factory method to
@@ -51,9 +53,6 @@ public class HomeFragment extends Fragment implements NotaAdapter.OnNoteClickLis
     private List<Nota> notas;
     private TextView tvEventosNoData, tvNotasNoData;
     private Context context;
-
-
-    public HomeFragment() {}
 
     public static HomeFragment newInstance(String param1, String param2) {
         HomeFragment fragment = new HomeFragment();
@@ -118,11 +117,13 @@ public class HomeFragment extends Fragment implements NotaAdapter.OnNoteClickLis
                     switch (direction) {
                         case ItemTouchHelper.LEFT:
                             assert helper.deleteEvento(evento.getIdEvento()) : getString(R.string.error_borrando) + getString(R.string.evento);
+                            Timber.i("%s%s", getString(R.string.exito_borrando), getString(R.string.evento));
                             cargarEventos();
                             break;
                         case ItemTouchHelper.RIGHT:
                             evento.setHecho(!evento.isHecho());
-                            assert helper.actualizarEvento(evento) : getString(R.string.error_guardando) + getString(R.string.evento);
+                            assert helper.actualizarEvento(evento) : getString(R.string.error_modificando) + getString(R.string.evento);
+                            Timber.i("%s%s", getString(R.string.exito_modificando), getString(R.string.evento));
                             cargarEventos();
                             break;
                     }

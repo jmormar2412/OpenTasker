@@ -28,6 +28,8 @@ import com.jmormar.opentasker.util.SwipeGesture;
 
 import java.util.List;
 
+import timber.log.Timber;
+
 public class TipoActivity extends AppCompatActivity implements TipoAdapter.OnTipoClickListener {
     private RecyclerView rvTipos;
     private TextView tvNoData;
@@ -92,7 +94,8 @@ public class TipoActivity extends AppCompatActivity implements TipoAdapter.OnTip
             @Override
             public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
                 Tipo tipo = tipos.get(viewHolder.getBindingAdapterPosition());
-                assert helper.deleteTipo(tipo.getIdTipo());
+                assert helper.deleteTipo(tipo.getIdTipo()) : getString(R.string.error_borrando) + getString(R.string.tipo_minuscula);
+                Timber.i("%s%s", getString(R.string.exito_borrando), getString(R.string.tipo_minuscula));
                 cargarTipos();
             }
         }).attachToRecyclerView(rvTipos);
@@ -143,7 +146,8 @@ public class TipoActivity extends AppCompatActivity implements TipoAdapter.OnTip
 
             tipo.setNombre(inputText);
 
-            assert helper.actualizarTipo(tipo) : getString(R.string.error_guardando) + getString(R.string.tipo_minuscula);
+            assert helper.actualizarTipo(tipo) : getString(R.string.error_modificando) + getString(R.string.tipo_minuscula);
+            Timber.i("%s%s", getString(R.string.exito_modificando), getString(R.string.tipo_minuscula));
             assert rvTipos.getAdapter() != null : getString(R.string.adapter_no_nulo);
             rvTipos.getAdapter().notifyItemChanged(position);
         });

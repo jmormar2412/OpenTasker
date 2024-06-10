@@ -31,6 +31,8 @@ import com.jmormar.opentasker.widgets.WidgetEventos;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import timber.log.Timber;
+
 public class EventosFragment extends Fragment implements EventoAdapter.OnEventoClickListener {
 
     private static final String ARG_PARAM1 = "param1", ARG_PARAM2 = "param2";
@@ -39,8 +41,6 @@ public class EventosFragment extends Fragment implements EventoAdapter.OnEventoC
     private List<Evento> eventos, eventosHechos;
     private DBHelper helper;
     private TextView tvEventosNoData, tvCompletedNoData;
-
-    public EventosFragment() {}
 
     public static EventosFragment newInstance(String param1, String param2) {
         EventosFragment fragment = new EventosFragment();
@@ -95,11 +95,13 @@ public class EventosFragment extends Fragment implements EventoAdapter.OnEventoC
                 switch (direction) {
                     case ItemTouchHelper.LEFT:
                         assert helper.deleteEvento(evento.getIdEvento()) : getString(R.string.error_borrando) + getString(R.string.evento);
+                        Timber.i("%s%s", getString(R.string.exito_borrando), getString(R.string.evento));
                         cargarEventos();
                         break;
                     case ItemTouchHelper.RIGHT:
                         evento.setHecho(!evento.isHecho());
-                        assert helper.actualizarEvento(evento) : getString(R.string.error_guardando) + getString(R.string.evento);
+                        assert helper.actualizarEvento(evento) : getString(R.string.error_modificando) + getString(R.string.evento);
+                        Timber.i("%s%s", getString(R.string.exito_modificando), getString(R.string.evento));
                         cargarEventos();
                         break;
                 }
@@ -114,11 +116,13 @@ public class EventosFragment extends Fragment implements EventoAdapter.OnEventoC
                 switch (direction) {
                     case ItemTouchHelper.LEFT:
                         assert helper.deleteEvento(evento.getIdEvento()) : getString(R.string.error_borrando) + getString(R.string.evento);
+                        Timber.i("%s%s", getString(R.string.exito_borrando), getString(R.string.evento));
                         cargarEventos();
                         break;
                     case ItemTouchHelper.RIGHT:
                         evento.setHecho(!evento.isHecho());
-                        assert helper.actualizarEvento(evento) : getString(R.string.error_guardando) + getString(R.string.evento);
+                        assert helper.actualizarEvento(evento) : getString(R.string.error_modificando) + getString(R.string.evento);
+                        Timber.i("%s%s", getString(R.string.exito_modificando), getString(R.string.evento));
                         cargarEventos();
                         break;
                 }

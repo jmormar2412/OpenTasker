@@ -7,7 +7,6 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Spinner;
-import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AlertDialog;
@@ -25,6 +24,7 @@ import com.jmormar.opentasker.util.DBHelper;
 import java.util.ArrayList;
 import java.util.List;
 
+import timber.log.Timber;
 import top.defaults.colorpicker.ColorWheelView;
 
 public class NewNotaActivity extends AppCompatActivity {
@@ -148,15 +148,9 @@ public class NewNotaActivity extends AppCompatActivity {
             nota.setIdCategoria(-1);
         }
 
-        boolean insertado;
-        insertado = helper.insertarNota(nota);
-        if(insertado){
-            setResult(RESULT_OK);
-            finish();
-        } else{
-            btGuardar.setEnabled(true);
-            btGuardar.setClickable(true);
-            Toast.makeText(this, getString(R.string.error_insertando) + getString(R.string.nota), Toast.LENGTH_SHORT).show();
-        }
+        assert helper.insertarNota(nota) : getString(R.string.error_modificando) + getString(R.string.nota);
+
+        Timber.i("%s%s", getString(R.string.exito_insertando), getString(R.string.nota));
+        finish();
     }
 }

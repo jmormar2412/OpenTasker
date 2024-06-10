@@ -10,7 +10,6 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
-import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
@@ -33,6 +32,8 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
+
+import timber.log.Timber;
 
 public class NewEventoActivity extends AppCompatActivity {
 
@@ -184,33 +185,27 @@ public class NewEventoActivity extends AppCompatActivity {
         btAceptar.setEnabled(false);
         btAceptar.setClickable(false);
 
-        if(helper!=null){
-            Evento evento = new Evento();
-            evento.setNombre(nombre);
-            evento.setFecha(fecha);
-            evento.setIdTipo(posicionesTipos.get(sTipo.getSelectedItemPosition()));
-            evento.setIdCategoria(posicionesCategoria.get(sCategoria.getSelectedItemPosition()));
-            evento.setIdAgenda(helper.getAgenda().getIdAgenda());
+        Evento evento = new Evento();
+        evento.setNombre(nombre);
+        evento.setFecha(fecha);
+        evento.setIdTipo(posicionesTipos.get(sTipo.getSelectedItemPosition()));
+        evento.setIdCategoria(posicionesCategoria.get(sCategoria.getSelectedItemPosition()));
+        evento.setIdAgenda(helper.getAgenda().getIdAgenda());
 
-            boolean insertado;
-            insertado = helper.insertarEvento(evento);
-            if(insertado){
-                setResult(RESULT_OK);
+        assert helper.insertarEvento(evento) : getString(R.string.error_modificando) + getString(R.string.evento);
 
-                Scheduler scheduler = new Scheduler(this);
-                scheduler.scheduleEventNotifications(evento);
+        setResult(RESULT_OK);
 
-                AppWidgetManager manager = AppWidgetManager.getInstance(this);
-                ComponentName name = new ComponentName(this, WidgetEventos.class);
-                int[] ids = manager.getAppWidgetIds(name);
-                manager.notifyAppWidgetViewDataChanged(ids, R.id.lv_eventos);
+        Scheduler scheduler = new Scheduler(this);
+        scheduler.scheduleEventNotifications(evento);
 
-                finish();
-            } else{
-                btAceptar.setEnabled(true);
-                btAceptar.setClickable(true);
-                Toast.makeText(this, getString(R.string.error_guardando) + getString(R.string.evento), Toast.LENGTH_SHORT).show();
-            }
-        }
+        AppWidgetManager manager = AppWidgetManager.getInstance(this);
+        ComponentName name = new ComponentName(this, WidgetEventos.class);
+        int[] ids = manager.getAppWidgetIds(name);
+        manager.notifyAppWidgetViewDataChanged(ids, R.id.lv_eventos);
+
+        Timber.i("%s%s", getString(R.string.exito_insertando), getString(R.string.evento));
+
+        finish();
     }
 }

@@ -31,6 +31,8 @@ import com.jmormar.opentasker.util.PomodoroTimer;
 
 import java.util.List;
 
+import timber.log.Timber;
+
 public class TiemposActivity extends AppCompatActivity implements PomodoroTimer.TimerCallback {
     private Pomodoro pomodoro;
     private DBHelper helper;
@@ -97,8 +99,9 @@ public class TiemposActivity extends AppCompatActivity implements PomodoroTimer.
 
     private void saveTiempos() {
         tiempos.forEach(t -> {
-            assert helper.actualizarTiempo(t) : getString(R.string.error_guardando) + getString(R.string.tiempo);
+            assert helper.actualizarTiempo(t) : getString(R.string.error_modificando) + getString(R.string.tiempo);
         });
+        Timber.i("%s%s", getString(R.string.exito_modificando), getString(R.string.tiempos));
     }
 
     @SuppressLint("NotifyDataSetChanged")

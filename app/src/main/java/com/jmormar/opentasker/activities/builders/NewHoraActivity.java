@@ -28,6 +28,8 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
 
+import timber.log.Timber;
+
 public class NewHoraActivity extends AppCompatActivity {
 
     private Spinner spDias, spCategorias;
@@ -177,7 +179,9 @@ public class NewHoraActivity extends AppCompatActivity {
         hora.setDiaSemana(diaSeleccionado);
         hora.setIdHorario(idHorario);
 
-        assert helper.insertarHora(hora) : getString(R.string.error_guardando) + getString(R.string.hora);
+        assert helper.insertarHora(hora) : getString(R.string.error_modificando) + getString(R.string.hora);
+
+        Timber.i("%s%s", getString(R.string.exito_insertando), getString(R.string.hora));
         finish();
     }
 }

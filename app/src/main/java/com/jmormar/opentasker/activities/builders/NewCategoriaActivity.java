@@ -14,6 +14,7 @@ import com.jmormar.opentasker.models.Categoria;
 import com.jmormar.opentasker.util.ColorManager;
 import com.jmormar.opentasker.util.DBHelper;
 
+import timber.log.Timber;
 import top.defaults.colorpicker.ColorWheelView;
 
 public class NewCategoriaActivity extends AppCompatActivity {
@@ -64,7 +65,9 @@ public class NewCategoriaActivity extends AppCompatActivity {
         categoria.setColor(ColorManager.darkenColor(colorWheelView.getColor()));
         categoria.setIdAgenda(helper.getAgenda().getIdAgenda());
 
-        assert helper.insertarCategoria(categoria) : getString(R.string.error_guardando) + getString(R.string.categoria_minuscula);
+        assert helper.insertarCategoria(categoria) : getString(R.string.error_insertando) + getString(R.string.categoria_minuscula);
+
+        Timber.i("%s%s", getString(R.string.exito_insertando), getString(R.string.categoria_minuscula));
         finish();
     }
 }

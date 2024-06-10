@@ -61,6 +61,11 @@
                 app:key="language"
                 app:title="@string/idioma"/>
 
+            <Preference
+                app:icon="@drawable/baseline_info_outline_24"
+                app:key="about"
+                app:title="@string/about_app" />
+
     </PreferenceCategory>
 <!--    <CheckBoxPreference-->
 <!--        app:key="notifications"-->

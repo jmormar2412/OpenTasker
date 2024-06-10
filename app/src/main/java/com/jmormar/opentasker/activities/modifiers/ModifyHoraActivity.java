@@ -30,6 +30,8 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
 
+import timber.log.Timber;
+
 public class ModifyHoraActivity extends AppCompatActivity {
 
     private int idHora;
@@ -72,6 +74,7 @@ public class ModifyHoraActivity extends AppCompatActivity {
 
     private void borrar() {
         assert helper.deleteHora(idHora) : getString(R.string.error_borrando) + getString(R.string.hora);
+        Timber.i("%s%s", getString(R.string.exito_borrando), getString(R.string.hora));
         finish();
     }
 
@@ -212,7 +215,9 @@ public class ModifyHoraActivity extends AppCompatActivity {
         hora.setDiaSemana(diaSeleccionado);
         hora.setIdHorario(idHorario);
 
-        assert helper.actualizarHora(hora) : getString(R.string.error_guardando) + getString(R.string.hora);
+        assert helper.actualizarHora(hora) : getString(R.string.error_modificando) + getString(R.string.hora);
+
+        Timber.i("%s%s", getString(R.string.exito_modificando), getString(R.string.hora));
         finish();
     }
 

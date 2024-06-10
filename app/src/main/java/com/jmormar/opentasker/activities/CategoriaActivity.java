@@ -27,6 +27,8 @@ import com.jmormar.opentasker.util.SwipeGesture;
 
 import java.util.List;
 
+import timber.log.Timber;
+
 public class CategoriaActivity extends AppCompatActivity implements CategoriaAdapter.OnCategoriaClickListener{
     private DBHelper helper;
     private RecyclerView rvCategorias;
@@ -81,7 +83,8 @@ public class CategoriaActivity extends AppCompatActivity implements CategoriaAda
             @Override
             public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
                 Categoria categoria = categorias.get(viewHolder.getBindingAdapterPosition());
-                assert helper.deleteCategoria(categoria.getIdCategoria()) : getString(R.string.error_borrando) + getString(R.string.categoria);
+                assert helper.deleteCategoria(categoria.getIdCategoria()) : getString(R.string.error_borrando) + getString(R.string.categoria_minuscula);
+                Timber.i("%s%s", getString(R.string.exito_borrando), getString(R.string.categoria_minuscula));
                 cargarCategorias();
             }
         }).attachToRecyclerView(rvCategorias);

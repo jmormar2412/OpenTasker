@@ -13,6 +13,7 @@ constraintlayout = "2.1.4"
 mockitoCore = "5.7.0"
 preference = "1.2.1"
 recyclerviewSwipedecorator = "1.4"
+timber = "5.0.1"
 
 [libraries]
 colorpicker = { module = "com.github.duanhong169:colorpicker", version.ref = "colorpicker" }
@@ -28,6 +29,7 @@ mockito-core = { module = "org.mockito:mockito-core", version.ref = "mockitoCore
 preference = { module = "androidx.preference:preference", version.ref = "preference" }
 projectlombok-lombok = { module = "org.projectlombok:lombok", version.ref = "lombokVersion" }
 recyclerview-swipedecorator = { module = "it.xabaras.android:recyclerview-swipedecorator", version.ref = "recyclerviewSwipedecorator" }
+timber = { module = "com.jakewharton.timber:timber", version.ref = "timber" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }

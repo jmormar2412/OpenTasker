@@ -37,9 +37,6 @@ public class NotasFragment extends Fragment implements NotaAdapter.OnNoteClickLi
     private TextView tvNotasNoData;
     private List<Nota> notas;
 
-    public NotasFragment() {}
-
-
     public static NotasFragment newInstance(String param1, String param2) {
         NotasFragment fragment = new NotasFragment();
         Bundle args = new Bundle();

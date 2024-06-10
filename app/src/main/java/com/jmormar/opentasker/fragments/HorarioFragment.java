@@ -34,8 +34,6 @@ public class HorarioFragment extends Fragment implements HoraAdapter.OnHoraClick
     private List<List<Hora>> horasByDay;
     private int preferredStartingDay;
 
-    public HorarioFragment() {}
-
     public static HorarioFragment newInstance(String param1, String param2) {
         HorarioFragment fragment = new HorarioFragment();
         Bundle args = new Bundle();

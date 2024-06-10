@@ -29,6 +29,8 @@ import com.jmormar.opentasker.util.SwipeGesture;
 
 import java.util.List;
 
+import timber.log.Timber;
+
 /**
  * A simple {@link Fragment} subclass.
  * Use the {@link PomodoroFragment#newInstance} factory method to
@@ -136,7 +138,7 @@ public class PomodoroFragment extends Fragment implements PomodoroAdapter.OnPomo
                 return;
             }
             pomodoro.setNombre(input.getText().toString());
-            assert helper.actualizarPomodoro(pomodoro) : getString(R.string.error_guardando) + getString(R.string.pomodoro_minuscula);
+            assert helper.actualizarPomodoro(pomodoro) : getString(R.string.error_modificando) + getString(R.string.pomodoro_minuscula);
             assert recyclerViewPomodoros.getAdapter() != null : getString(R.string.adapter_no_nulo);
             cargarPomodoros();
         });
@@ -149,7 +151,10 @@ public class PomodoroFragment extends Fragment implements PomodoroAdapter.OnPomo
     private void newPomodoro(String name) {
         Pomodoro pomodoro = new Pomodoro();
         pomodoro.setNombre(name);
-        assert helper.insertarPomodoro(pomodoro) : "Error al insertar pomodoro";
+        assert helper.insertarPomodoro(pomodoro) : getString(R.string.error_insertando) + getString(R.string.pomodoro_minuscula);
+
+        Timber.i("%s%s", getString(R.string.exito_insertando), getString(R.string.pomodoro_minuscula));
+
         pomodoro = helper.getPomodoros().get(helper.getPomodoros().size() - 1);
 
         Intent myIntent = new Intent(this.context, TiemposActivity.class);

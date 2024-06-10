@@ -42,6 +42,7 @@ dependencies {
     implementation(libs.preference)
     implementation(libs.recyclerview.swipedecorator)
     implementation(libs.lingver)
+    implementation(libs.timber)
     testImplementation(libs.junit)
     testImplementation(libs.mockito.core)
     androidTestImplementation(libs.ext.junit)

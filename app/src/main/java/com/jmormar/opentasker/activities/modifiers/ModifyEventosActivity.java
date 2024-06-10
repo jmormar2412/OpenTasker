@@ -11,7 +11,6 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
-import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -34,6 +33,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+
+import timber.log.Timber;
 
 public class ModifyEventosActivity extends AppCompatActivity {
 
@@ -196,23 +197,19 @@ public class ModifyEventosActivity extends AppCompatActivity {
             return;
         }
 
-        boolean insertado;
-        insertado = helper.actualizarEvento(evento);
-        if(insertado){
-            Scheduler scheduler = new Scheduler(this);
-            scheduler.clearAllNotifications(evento);
-            scheduler.scheduleEventNotifications(evento);
+        assert helper.actualizarEvento(evento) : getString(R.string.error_modificando) + getString(R.string.evento);
 
-            AppWidgetManager manager = AppWidgetManager.getInstance(this);
-            ComponentName name = new ComponentName(this, WidgetEventos.class);
-            int[] ids = manager.getAppWidgetIds(name);
-            manager.notifyAppWidgetViewDataChanged(ids, R.id.lv_eventos);
+        Timber.i("%s%s", getString(R.string.exito_modificando), getString(R.string.evento));
 
-            finish();
-        } else{
-            aceptar.setEnabled(true);
-            aceptar.setClickable(true);
-            Toast.makeText(this, "No se ha podido modificar el evento", Toast.LENGTH_SHORT).show();
-        }
+        Scheduler scheduler = new Scheduler(this);
+        scheduler.clearAllNotifications(evento);
+        scheduler.scheduleEventNotifications(evento);
+
+        AppWidgetManager manager = AppWidgetManager.getInstance(this);
+        ComponentName name = new ComponentName(this, WidgetEventos.class);
+        int[] ids = manager.getAppWidgetIds(name);
+        manager.notifyAppWidgetViewDataChanged(ids, R.id.lv_eventos);
+
+        finish();
     }
 }
