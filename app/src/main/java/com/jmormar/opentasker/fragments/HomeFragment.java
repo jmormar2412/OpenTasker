@@ -83,6 +83,12 @@ public class HomeFragment extends Fragment implements NotaAdapter.OnNoteClickLis
 
         recyclerViewEventos.suppressLayout(true);
 
+        addSwipingFunctionality();
+
+        recyclerViewEventos.setLayoutManager(new LinearLayoutManager(this.context));
+        recyclerViewEventos.setItemAnimator(new DefaultItemAnimator());
+        recyclerViewEventos.addItemDecoration(new DividerItemDecoration(this.context, DividerItemDecoration.VERTICAL));
+
         this.tvEventosNoData = rootView.findViewById(R.id.tv_main_eventos_nodata);
         this.tvNotasNoData = rootView.findViewById(R.id.tv_main_notas_nodata);
 
@@ -106,31 +112,6 @@ public class HomeFragment extends Fragment implements NotaAdapter.OnNoteClickLis
     }
 
     private void cargarEventos() {
-
-        if(recyclerViewEventos.getItemDecorationCount() == 0){
-            recyclerViewEventos.addItemDecoration(new DividerItemDecoration(this.context, DividerItemDecoration.VERTICAL));
-            new ItemTouchHelper(new SwipeGesture(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT, this.context) {
-                @Override
-                public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
-                    int position = viewHolder.getBindingAdapterPosition();
-                    Evento evento = eventos.get(position);
-                    switch (direction) {
-                        case ItemTouchHelper.LEFT:
-                            assert helper.deleteEvento(evento.getIdEvento()) : getString(R.string.error_borrando) + getString(R.string.evento);
-                            Timber.i("%s%s", getString(R.string.exito_borrando), getString(R.string.evento));
-                            cargarEventos();
-                            break;
-                        case ItemTouchHelper.RIGHT:
-                            evento.setHecho(!evento.isHecho());
-                            assert helper.actualizarEvento(evento) : getString(R.string.error_modificando) + getString(R.string.evento);
-                            Timber.i("%s%s", getString(R.string.exito_modificando), getString(R.string.evento));
-                            cargarEventos();
-                            break;
-                    }
-                }
-            }).attachToRecyclerView(recyclerViewEventos);
-        }
-
         if(helper == null) helper = DBHelper.getInstance(this.context);
         List<Evento> helperEventos = helper.getEventos();
 
@@ -145,14 +126,34 @@ public class HomeFragment extends Fragment implements NotaAdapter.OnNoteClickLis
         EventoAdapter eventoAdapter = new EventoAdapter(this.context, eventos, "unico");
         eventoAdapter.setOnEventoClickListener(this);
 
-        recyclerViewEventos.setLayoutManager(new LinearLayoutManager(this.context));
-        recyclerViewEventos.setItemAnimator(new DefaultItemAnimator());
-
         recyclerViewEventos.setAdapter(eventoAdapter);
 
         AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(this.context);
         ComponentName componentName = new ComponentName(this.context, WidgetEventos.class);
         appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetManager.getAppWidgetIds(componentName), R.id.lv_eventos);
+    }
+
+    private void addSwipingFunctionality() {
+        new ItemTouchHelper(new SwipeGesture(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT, this.context) {
+            @Override
+            public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
+                int position = viewHolder.getBindingAdapterPosition();
+                Evento evento = eventos.get(position);
+                switch (direction) {
+                    case ItemTouchHelper.LEFT:
+                        assert helper.deleteEvento(evento.getIdEvento()) : getString(R.string.error_borrando) + getString(R.string.evento);
+                        Timber.i("%s%s", getString(R.string.exito_borrando), getString(R.string.evento));
+                        cargarEventos();
+                        break;
+                    case ItemTouchHelper.RIGHT:
+                        evento.setHecho(!evento.isHecho());
+                        assert helper.actualizarEvento(evento) : getString(R.string.error_modificando) + getString(R.string.evento);
+                        Timber.i("%s%s", getString(R.string.exito_modificando), getString(R.string.evento));
+                        cargarEventos();
+                        break;
+                }
+            }
+        }).attachToRecyclerView(recyclerViewEventos);
     }
 
     private void cargarNotas() {

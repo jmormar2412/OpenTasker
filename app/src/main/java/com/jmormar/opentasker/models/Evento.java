@@ -16,5 +16,4 @@ public class Evento {
     private boolean hecho;
     private int idTipo;
     private int idCategoria;
-    private int idAgenda;
 }

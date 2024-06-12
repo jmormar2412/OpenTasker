@@ -85,7 +85,7 @@ public class ModifyHoraActivity extends AppCompatActivity {
         spDias.setSelection(hora.getDiaSemana());
         etHoraInicio.setText(hora.getTiempoInicio().format(DateTimeFormatter.ofPattern("HH:mm")));
         etHoraFin.setText(hora.getTiempoInicio().plus(hora.getTotalTiempo()).format(DateTimeFormatter.ofPattern("HH:mm")));
-        spCategorias.setSelection(posicionesCategorias.indexOf(posicionesCategorias.indexOf(hora.getIdCategoria())));
+        spCategorias.setSelection(posicionesCategorias.indexOf(hora.getIdCategoria()));
     }
 
     private void setElements() {

@@ -47,6 +47,11 @@ public class DatosCategoriaActivity extends AppCompatActivity implements Categor
         });
 
         setElements();
+
+        rvCategorias.setLayoutManager(new LinearLayoutManager(this));
+        rvCategorias.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
+        rvCategorias.setItemAnimator(new DefaultItemAnimator());
+
         setSliding(rvCategorias);
         addListeners();
         cargarCategorias();
@@ -91,9 +96,6 @@ public class DatosCategoriaActivity extends AppCompatActivity implements Categor
         adapter.setOnCategoriaClickListener(this);
 
         rvCategorias.setAdapter(adapter);
-        rvCategorias.setLayoutManager(new LinearLayoutManager(this));
-        rvCategorias.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
-        rvCategorias.setItemAnimator(new DefaultItemAnimator());
     }
 
     private void setSliding(RecyclerView rvCategorias) {

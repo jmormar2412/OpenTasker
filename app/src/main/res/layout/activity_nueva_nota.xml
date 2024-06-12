@@ -61,8 +61,8 @@
     <EditText
         android:id="@+id/et_nuevanota_text"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:minHeight="460sp"
+        android:layout_height="460sp"
+        android:maxHeight="460sp"
         android:layout_below="@id/invisibleass"
         android:gravity="start|top"
         android:hint="@string/escriba_aqui"

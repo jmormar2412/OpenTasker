@@ -105,8 +105,7 @@
           android:text="@string/modify_evento"
           android:layout_margin="60sp"
           android:layout_below="@id/tv_modifyevento_fecha"
-          android:layout_centerHorizontal="true"
-          android:onClick="aceptar"/>
+          android:layout_centerHorizontal="true"/>
 
     </RelativeLayout>
 </ScrollView>

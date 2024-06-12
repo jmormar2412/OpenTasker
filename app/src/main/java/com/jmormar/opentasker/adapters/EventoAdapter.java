@@ -21,14 +21,14 @@ import java.util.Locale;
 
 public class EventoAdapter extends RecyclerView.Adapter<EventoAdapter.EventoViewHolder> {
     private final List<Evento> eventos;
-    private final DBHelper helper;
+    private final Context context;
     private OnEventoClickListener mListener;
     private final String identificadorAdapter;
 
 
     public EventoAdapter(Context context, List<Evento> eventos, String identificadorAdapter) {
         this.eventos = eventos;
-        helper = DBHelper.getInstance(context);
+        this.context = context;
         this.identificadorAdapter = identificadorAdapter;
     }
 
@@ -61,6 +61,8 @@ public class EventoAdapter extends RecyclerView.Adapter<EventoAdapter.EventoView
         final TextView fecha;
         final TextView tipo;
         final TextView categoria;
+        final DBHelper helper;
+        final Context context;
 
         EventoViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -68,6 +70,8 @@ public class EventoAdapter extends RecyclerView.Adapter<EventoAdapter.EventoView
             fecha = itemView.findViewById(R.id.evli_fecha);
             tipo = itemView.findViewById(R.id.evli_tipo);
             categoria = itemView.findViewById(R.id.evli_categoria);
+            helper = DBHelper.getInstance(EventoAdapter.this.context);
+            context  = EventoAdapter.this.context;
 
             itemView.setOnClickListener(v -> {
                 int position = getBindingAdapterPosition();
@@ -78,7 +82,7 @@ public class EventoAdapter extends RecyclerView.Adapter<EventoAdapter.EventoView
         void bind(Evento evento) {
             nombre.setText(evento.getNombre());
 
-            SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd", new Locale("es_ES"));
+            SimpleDateFormat dateFormatter = new SimpleDateFormat(context.getString(R.string.date_format), new Locale("es"));
             fecha.setText(evento.getFecha() != null ? dateFormatter.format(evento.getFecha()) : "");
 
             Tipo tp = helper.getTipo(evento.getIdTipo());

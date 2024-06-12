@@ -49,6 +49,11 @@ public class DatosTiposActivity extends AppCompatActivity implements TipoAdapter
         });
 
         setElements();
+
+        rvTipos.setLayoutManager(new LinearLayoutManager(this));
+        rvTipos.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
+        rvTipos.setItemAnimator(new DefaultItemAnimator());
+
         setSliding(rvTipos);
         addListeners();
         cargarTipos();
@@ -126,9 +131,6 @@ public class DatosTiposActivity extends AppCompatActivity implements TipoAdapter
         adapter.setOnTipoClickListener(this);
 
         rvTipos.setAdapter(adapter);
-        rvTipos.setLayoutManager(new LinearLayoutManager(this));
-        rvTipos.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
-        rvTipos.setItemAnimator(new DefaultItemAnimator());
     }
 
     @Override

@@ -384,10 +384,8 @@ public class DBHelper extends SQLiteOpenHelper {
                 hecho INTEGER,
                 idTipo INTEGER,
                 idCategoria INTEGER,
-                idAgenda INTEGER,
                 FOREIGN KEY(idTipo) REFERENCES Tipo(idTipo),
-                FOREIGN KEY(idCategoria) REFERENCES Categoria(idCategoria),
-                FOREIGN KEY(idAgenda) REFERENCES Agenda(idAgenda)
+                FOREIGN KEY(idCategoria) REFERENCES Categoria(idCategoria)
             );
             """;
     private static final String SQL_DELETE_EVENTO = "DROP TABLE IF EXISTS Evento";
@@ -401,7 +399,6 @@ public class DBHelper extends SQLiteOpenHelper {
         values.put("hecho", evt.isHecho()?1:0);
         values.put("idTipo", evt.getIdTipo());
         values.put("idCategoria", evt.getIdCategoria());
-        values.put("idAgenda", evt.getIdAgenda());
 
         return db.insert("Evento", null, values) > 0;
     }
@@ -409,7 +406,7 @@ public class DBHelper extends SQLiteOpenHelper {
     public List<Evento> getEventos() {
         SQLiteDatabase db = this.getReadableDatabase();
 
-        String[] projection = {"idEvento", "nombre", "fecha", "hecho", "idTipo", "idCategoria", "idAgenda"};
+        String[] projection = {"idEvento", "nombre", "fecha", "hecho", "idTipo", "idCategoria"};
         Cursor c = db.query("Evento", projection, null, null, null, null, null);
 
         List<Evento> list = new ArrayList<>();
@@ -426,7 +423,6 @@ public class DBHelper extends SQLiteOpenHelper {
             }
             evt.setIdTipo(c.getInt(c.getColumnIndexOrThrow("idTipo")));
             evt.setIdCategoria(c.getInt(c.getColumnIndexOrThrow("idCategoria")));
-            evt.setIdAgenda(c.getInt(c.getColumnIndexOrThrow("idAgenda")));
             list.add(evt);
         }
         c.close();
@@ -450,7 +446,6 @@ public class DBHelper extends SQLiteOpenHelper {
         values.put("hecho", evt.isHecho()?1:0);
         values.put("idTipo", evt.getIdTipo());
         values.put("idCategoria", evt.getIdCategoria());
-        values.put("idAgenda", evt.getIdAgenda());
 
         String selection = "idEvento = ?";
 
@@ -462,7 +457,7 @@ public class DBHelper extends SQLiteOpenHelper {
     public Evento getEvento(int idEvento) {
         SQLiteDatabase db = this.getReadableDatabase();
 
-        String[] projection = {"idEvento", "nombre", "hecho", "fecha","idTipo", "idCategoria", "idAgenda"};
+        String[] projection = {"idEvento", "nombre", "hecho", "fecha","idTipo", "idCategoria"};
         String[] selectionArgs = {String.valueOf(idEvento)};
         String selection = "idEvento = ?";
 
@@ -481,7 +476,6 @@ public class DBHelper extends SQLiteOpenHelper {
             }
             evt.setIdTipo(c.getInt(c.getColumnIndexOrThrow("idTipo")));
             evt.setIdCategoria(c.getInt(c.getColumnIndexOrThrow("idCategoria")));
-            evt.setIdAgenda(c.getInt(c.getColumnIndexOrThrow("idAgenda")));
             lista.add(evt);
         }
         c.close();

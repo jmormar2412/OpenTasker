@@ -55,6 +55,10 @@ public class CategoriaActivity extends AppCompatActivity implements CategoriaAda
             startActivity(intent);
         });
 
+        rvCategorias.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
+        rvCategorias.setLayoutManager(new LinearLayoutManager(this));
+        rvCategorias.setItemAnimator(new DefaultItemAnimator());
+
         setSliding(rvCategorias);
         cargarCategorias();
     }
@@ -73,9 +77,6 @@ public class CategoriaActivity extends AppCompatActivity implements CategoriaAda
         adapter.setOnCategoriaClickListener(this);
 
         rvCategorias.setAdapter(adapter);
-        rvCategorias.setLayoutManager(new LinearLayoutManager(this));
-        rvCategorias.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
-        rvCategorias.setItemAnimator(new DefaultItemAnimator());
     }
 
     private void setSliding(RecyclerView rvCategorias) {

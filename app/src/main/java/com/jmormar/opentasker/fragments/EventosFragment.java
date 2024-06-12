@@ -80,6 +80,16 @@ public class EventosFragment extends Fragment implements EventoAdapter.OnEventoC
         tvCompletedNoData.setVisibility(View.VISIBLE);
         tvEventosNoData.setVisibility(View.VISIBLE);
 
+        recyclerViewEventos.setLayoutManager(new LinearLayoutManager(this.context));
+        recyclerViewEventos.setItemAnimator(new DefaultItemAnimator());
+        recyclerViewEventosCompletados.addItemDecoration(new DividerItemDecoration(this.context, DividerItemDecoration.VERTICAL));
+
+        recyclerViewEventosCompletados.setLayoutManager(new LinearLayoutManager(this.context));
+        recyclerViewEventosCompletados.setItemAnimator(new DefaultItemAnimator());
+        recyclerViewEventos.addItemDecoration(new DividerItemDecoration(this.context, DividerItemDecoration.VERTICAL));
+
+        addSwipeGestures();
+
         addListenerToButton(rootView);
         cargarEventos();
 
@@ -139,12 +149,6 @@ public class EventosFragment extends Fragment implements EventoAdapter.OnEventoC
     }
 
     private void cargarEventos() {
-        if(recyclerViewEventos.getItemDecorationCount() == 0 || recyclerViewEventosCompletados.getItemDecorationCount() == 0){
-            recyclerViewEventos.addItemDecoration(new DividerItemDecoration(this.context, DividerItemDecoration.VERTICAL));
-            recyclerViewEventosCompletados.addItemDecoration(new DividerItemDecoration(this.context, DividerItemDecoration.VERTICAL));
-            addSwipeGestures();
-        }
-
         if(helper == null) helper = DBHelper.getInstance(this.context);
         List<Evento> helperEventos = helper.getEventos();
 
@@ -170,37 +174,11 @@ public class EventosFragment extends Fragment implements EventoAdapter.OnEventoC
         eventoAdapterCompletados.setOnEventoClickListener(this);
 
         recyclerViewEventos.setAdapter(eventoAdapter);
-        recyclerViewEventos.setLayoutManager(new LinearLayoutManager(this.context));
-        recyclerViewEventos.setItemAnimator(new DefaultItemAnimator());
-
         recyclerViewEventosCompletados.setAdapter(eventoAdapterCompletados);
-        recyclerViewEventosCompletados.setLayoutManager(new LinearLayoutManager(this.context));
-        recyclerViewEventosCompletados.setItemAnimator(new DefaultItemAnimator());
-
-        adjustRecyclerViewHeight(recyclerViewEventos);
-        adjustRecyclerViewHeight(recyclerViewEventosCompletados);
 
         AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(this.context);
         ComponentName componentName = new ComponentName(this.context, WidgetEventos.class);
         appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetManager.getAppWidgetIds(componentName), R.id.lv_eventos);
-    }
-
-    private void adjustRecyclerViewHeight(RecyclerView rv) {
-        if (rv.getAdapter() == null) return;
-
-        RecyclerView.Adapter<?> adapter = rv.getAdapter();
-        int totalHeight = 0;
-
-        for (int i = 0; i < adapter.getItemCount(); i++) {
-            View item = adapter.createViewHolder(rv, adapter.getItemViewType(i)).itemView;
-            item.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
-            totalHeight += item.getMeasuredHeight();
-        }
-
-        ViewGroup.LayoutParams params = rv.getLayoutParams();
-        int minHeight = rv.getMinimumHeight();
-        params.height = Math.max(totalHeight + (rv.getItemDecorationCount() * 10), minHeight);
-        rv.setLayoutParams(params);
     }
 
     @Override

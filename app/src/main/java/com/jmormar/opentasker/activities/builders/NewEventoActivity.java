@@ -190,7 +190,6 @@ public class NewEventoActivity extends AppCompatActivity {
         evento.setFecha(fecha);
         evento.setIdTipo(posicionesTipos.get(sTipo.getSelectedItemPosition()));
         evento.setIdCategoria(posicionesCategoria.get(sCategoria.getSelectedItemPosition()));
-        evento.setIdAgenda(helper.getAgenda().getIdAgenda());
 
         assert helper.insertarEvento(evento) : getString(R.string.error_modificando) + getString(R.string.evento);
 

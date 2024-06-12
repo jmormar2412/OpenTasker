@@ -19,7 +19,7 @@
     <string name="categoria">Category</string>
     <string name="tipo">Type</string>
     <string name="fecha_evento">Date of the event</string>
-    <string name="date_format" translatable="false">dd/mm/yyyy</string>
+    <string name="date_format">yyyy-MM-dd</string>
     <string name="crear_evento">Create event</string>
     <string name="titulo">Title</string>
     <string name="incluir_categoria">Include category?</string>

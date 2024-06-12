@@ -23,9 +23,10 @@
     <TextView
         android:id="@+id/tv_texto"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:minHeight="450sp"
-        android:textSize="16sp" />
+        android:layout_height="460sp"
+        android:maxHeight="460sp"
+        android:textSize="16sp"
+        android:scrollbars="vertical"/>
 
     <RelativeLayout
         android:layout_width="match_parent"

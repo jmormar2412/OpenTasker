@@ -26,9 +26,6 @@ public class OpentaskerExceptionHandler implements Thread.UncaughtExceptionHandl
         Timber.e(throwable, context.getString(R.string.excepcion_no_capturada));
 
         showExceptionDialog(throwable);
-
-        assert Thread.getDefaultUncaughtExceptionHandler() != null;
-        Thread.getDefaultUncaughtExceptionHandler().uncaughtException(thread, throwable);
     }
 
     private void showExceptionDialog(Throwable throwable) {

@@ -6,7 +6,6 @@ import android.appwidget.AppWidgetManager;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -38,7 +37,7 @@ import timber.log.Timber;
 
 public class ModifyEventosActivity extends AppCompatActivity {
 
-    private int idEvento, idAgenda;
+    private int idEvento;
     private DBHelper helper;
     private List<Integer> posicionesCategoria, posicionesTipo;
     private DatePickerDialog datePickerFecha;
@@ -60,6 +59,7 @@ public class ModifyEventosActivity extends AppCompatActivity {
         if(helper==null) helper = DBHelper.getInstance(this);
 
         setElements();
+        aceptar.setOnClickListener(v -> aceptar());
         populateCategorias();
         populateTipos();
         loadData();
@@ -72,7 +72,6 @@ public class ModifyEventosActivity extends AppCompatActivity {
         spinnerTipo = findViewById(R.id.sp_modifyevento_tipo);
         etFecha = findViewById(R.id.et_modifyevento_fecha);
         aceptar = findViewById(R.id.bt_modifyevento_aceptar);
-
     }
 
     private void prepararFecha() {
@@ -157,7 +156,6 @@ public class ModifyEventosActivity extends AppCompatActivity {
         Evento evento = helper.getEvento(id);
 
         this.idEvento = evento.getIdEvento();
-        this.idAgenda = evento.getIdAgenda();
 
         int positionTipo = posicionesTipo.indexOf(evento.getIdTipo());
         int positionCategoria = posicionesTipo.indexOf(evento.getIdCategoria());
@@ -168,17 +166,17 @@ public class ModifyEventosActivity extends AppCompatActivity {
         etFecha.setText(formatter.format(evento.getFecha()));
     }
 
-    public void aceptar(View view) {
+    public void aceptar() {
 
         SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy", new Locale("es_ES"));
 
         if(nombre.getText().toString().isEmpty()){
-            nombre.setError("No has rellenado este campo");
+            nombre.setError(getString(R.string.nombre_es_obligatorio));
             return;
         }
 
         if(etFecha.getText().toString().isEmpty()){
-            etFecha.setError("No has rellenado este campo");
+            etFecha.setError(getString(R.string.fecha_es_obligatoria));
             return;
         }
 
@@ -189,7 +187,6 @@ public class ModifyEventosActivity extends AppCompatActivity {
         evento.setIdCategoria(posicionesCategoria.get(spinnerCategoria.getSelectedItemPosition()));
 
         evento.setIdTipo(posicionesTipo.get(spinnerTipo.getSelectedItemPosition()));
-        evento.setIdAgenda(idAgenda);
         try{
             evento.setFecha(formatter.parse(etFecha.getText().toString()));
         } catch (ParseException e) {

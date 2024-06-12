@@ -22,6 +22,7 @@
         android:textStyle="bold"
         android:layout_alignParentEnd="true"
         android:layout_marginEnd="10sp"
+        android:layout_marginStart="10sp"
         android:layout_below="@id/noli_titulo"
         android:text="Mates" />
 
@@ -29,6 +30,7 @@
         android:id="@+id/noli_texto"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:maxLines="9"
         android:layout_below="@id/noli_categoria"
         android:layout_margin="10dp"
         android:text="Hacer la tarea que nos mandaron el otro día, ya no me acuerdo en verdad"

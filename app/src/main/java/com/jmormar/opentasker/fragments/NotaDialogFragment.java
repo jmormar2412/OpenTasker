@@ -8,6 +8,7 @@ import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.LayerDrawable;
 import android.os.Bundle;
+import android.text.method.ScrollingMovementMethod;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -74,6 +75,8 @@ public class NotaDialogFragment extends DialogFragment {
 
         btBorrar.setVisibility(View.VISIBLE);
         btEditar.setVisibility(View.VISIBLE);
+
+        tvTexto.setMovementMethod(new ScrollingMovementMethod());
 
         if (nota != null) {
             tvTitulo.setText(nota.getTitulo());

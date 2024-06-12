@@ -21,6 +21,7 @@
     <string name="categoria">" Categoría"</string>
     <string name="tipo">Tipo</string>
     <string name="fecha_evento">Fecha del evento</string>
+    <string name="date_format">dd/MM/yyyy</string>
     <string name="crear_evento">Crear evento</string>
     <string name="start_pause">Empezar o parar</string>
     <string name="error_bd">Error al ejecutar la petición</string>

@@ -59,9 +59,9 @@
     <EditText
         android:id="@+id/et_modifynota_text"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="390sp"
         android:autofillHints="text"
-        android:minHeight="390sp"
+        android:maxHeight="390sp"
         android:layout_below="@id/invisibleass"
         android:gravity="start|top"
         android:hint="@string/escriba_aqui"

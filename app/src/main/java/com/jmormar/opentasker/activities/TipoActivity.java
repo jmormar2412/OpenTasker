@@ -35,7 +35,6 @@ public class TipoActivity extends AppCompatActivity implements TipoAdapter.OnTip
     private TextView tvNoData;
     private DBHelper helper;
     private List<Tipo> tipos;
-    private AlertDialog.Builder addBuilder;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,39 +53,38 @@ public class TipoActivity extends AppCompatActivity implements TipoAdapter.OnTip
         tvNoData = findViewById(R.id.tv_tipo_nodata);
 
         FloatingActionButton btAddTipo = findViewById(R.id.fab_nuevo_tipo);
-        btAddTipo.setOnClickListener(v -> this.addBuilder.show());
+        btAddTipo.setOnClickListener(v -> launchAddBuilder());
+
+        rvTipos.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
+        rvTipos.setLayoutManager(new LinearLayoutManager(this));
+        rvTipos.setItemAnimator(new DefaultItemAnimator());
 
         setSliding(rvTipos);
-        createAddBuilder();
         cargarTipos();
     }
 
-    private void createAddBuilder() {
-        this.addBuilder = new AlertDialog.Builder(this);
-        addBuilder.setTitle(getString(R.string.nombre_tipo));
-
+    private void launchAddBuilder() {
         final EditText input = new EditText(this);
         input.setInputType(InputType.TYPE_CLASS_TEXT);
-        addBuilder.setView(input);
 
-        addBuilder.setPositiveButton(getString(R.string.aceptar), (dialog, which) ->{
-            if(input.getText().toString().isEmpty()){
-                input.setError(getString(R.string.nombre_es_obligatorio));
-                return;
-            }
-            newTipo(input.getText().toString());
-        });
-        addBuilder.setNegativeButton(getString(R.string.cancelar), (dialog, which) ->{
-            dialog.cancel();
-            createAddBuilder();
-        } );
-    }
+        new AlertDialog.Builder(this)
+                .setTitle(getString(R.string.nombre_tipo))
+                .setView(input)
+                .setPositiveButton(getString(R.string.aceptar), (dialog, which) -> {
+                    if (input.getText().toString().isEmpty()) {
+                        input.setError(getString(R.string.nombre_es_obligatorio));
+                        return;
+                    }
+                    String nombre = input.getText().toString();
 
-    private void newTipo(String nombre) {
-        Tipo tipo = new Tipo();
-        tipo.setNombre(nombre);
-        assert helper.insertarTipo(tipo) : getString(R.string.error_insertando) + getString(R.string.tipo_minuscula);
-        cargarTipos();
+                    Tipo tipo = new Tipo();
+                    tipo.setNombre(nombre);
+                    assert helper.insertarTipo(tipo) : getString(R.string.error_insertando) + getString(R.string.tipo_minuscula);
+                    Timber.i("%s%s", getString(R.string.exito_insertando), getString(R.string.tipo_minuscula));
+                    cargarTipos();
+                })
+                .setNegativeButton(getString(R.string.cancelar), (dialog, which) -> dialog.cancel())
+                .create().show();
     }
 
     private void setSliding(RecyclerView rvTipos) {
@@ -115,9 +113,6 @@ public class TipoActivity extends AppCompatActivity implements TipoAdapter.OnTip
         adapter.setOnTipoClickListener(this);
 
         rvTipos.setAdapter(adapter);
-        rvTipos.setLayoutManager(new LinearLayoutManager(this));
-        rvTipos.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
-        rvTipos.setItemAnimator(new DefaultItemAnimator());
     }
 
     @Override
